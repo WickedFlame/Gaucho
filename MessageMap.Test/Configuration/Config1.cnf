@@ -1,0 +1,16 @@
+﻿Id: pipeline1
+
+InputHandler
+	Type:MessageMap.Test.GenericInputHandler`1[[MessageMap.Test.LogMessage, MessageMap.Test]], MessageMap.Test
+
+OutputHandler
+	Type: MessageMap.Test.ConsoleOutputHandler, MessageMap.Test
+	Filters
+		Message -> msg
+
+OutputHandler
+	Type: MessageMap.Test.LogQueueHandler, MessageMap.Test
+	Filters
+		Message -> msg
+		Level -> lvl
+
