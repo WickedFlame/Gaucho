@@ -70,7 +70,7 @@ namespace MessageMap.Test.Configuration
         }
 
         [Test]
-        public void ConfigurationReader_ReadFromFile_Filters()
+        public void ConfigurationReader_ReadFromFile_OutputHandlers_Filters()
         {
             var reader = new ConfigurationReader();
             var config = reader.Read("Config1.cnf");
@@ -84,6 +84,17 @@ namespace MessageMap.Test.Configuration
             Assert.That(config.OutputHandlers.Last().Filters[0].Destination == "msg");
             Assert.That(config.OutputHandlers.Last().Filters[1].Source == "Level");
             Assert.That(config.OutputHandlers.Last().Filters[1].Destination == "lvl");
+        }
+
+        [Test]
+        public void ConfigurationReader_ReadFromFile_InputHandlers_Filters()
+        {
+            var reader = new ConfigurationReader();
+            var config = reader.Read("Config1.cnf");
+
+            Assert.That(config.InputHandler.Filters.Count() == 1);
+            Assert.That(config.InputHandler.Filters[0].Source == "Message");
+            Assert.That(config.InputHandler.Filters[0].Destination == "msg");
         }
     }
 }

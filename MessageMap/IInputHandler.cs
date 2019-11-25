@@ -3,6 +3,8 @@ namespace MessageMap
 {
     public interface IInputHandler
     {
+        IConverter Converter { get; set; }
+
         string PipelineId { get; set; }
     }
 

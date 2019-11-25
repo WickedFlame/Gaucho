@@ -66,7 +66,7 @@ namespace MessageMap.Test.Configuration
                     return pipeline;
                 });
 
-                s.Register(_pluginMgr.GetHandler(config));
+                s.Register(_pluginMgr.GetInputHandler(config));
             });
 
             var client = new Client();
@@ -107,7 +107,7 @@ namespace MessageMap.Test.Configuration
                     return pipeline;
                 });
 
-                s.Register(_pluginMgr.GetHandler(config));
+                s.Register(_pluginMgr.GetInputHandler(config));
             });
 
             var client = new Client();

@@ -11,20 +11,16 @@ namespace MessageMap.Configuration
 {
     public class ConfigurationReader
     {
-        private Dictionary<string, ITestDataReader> _dataReaders;
+        private readonly Dictionary<string, INodeReader<PipelineConfiguration>> _dataReaders;
 
         public ConfigurationReader()
         {
-            _dataReaders = new Dictionary<string, ITestDataReader>();
-            _dataReaders.Add("default", new PropertyReader());
-            _dataReaders.Add("inputhandler", new InputHandlerReader());
-            _dataReaders.Add("outputhandler", new OutputHandlerReader());
-            _dataReaders.Add("filters", new FilterReader());
-        }
-
-        public string ReadString(string file)
-        {
-            return string.Join(Environment.NewLine, ReadAllLines(file));
+            _dataReaders = new Dictionary<string, INodeReader<PipelineConfiguration>>
+            {
+                {"default", new PropertyReader<PipelineConfiguration>()},
+                {"inputhandler", new InputHandlerReader()},
+                {"outputhandler", new OutputHandlerReader()}
+            };
         }
 
         public string[] ReadAllLines(string file)
@@ -99,15 +95,19 @@ namespace MessageMap.Configuration
                     continue;
                 }
 
-                var key = line.Trim().ToLower();
-                if (_dataReaders.ContainsKey(key))
+                if(reader  == null)
                 {
-                    reader = _dataReaders[key];
-                    reader.Initialize();
+                    var key = line.Trim().ToLower();
+                    if (_dataReaders.ContainsKey(key))
+                    {
+                        reader = _dataReaders[key];
+                        reader.Initialize();
+                    }
                 }
 
                 if (reader == null)
                 {
+                    //TODO: Log message
                     continue;
                 }
 
@@ -118,33 +118,33 @@ namespace MessageMap.Configuration
         }
     }
 
-    public interface ITestDataReader
+    public interface INodeReader<T>
     {
         void Initialize();
 
-        void ReadLine(string line, PipelineConfiguration item);
+        void ReadLine(string line, T item);
     }
 
-    public class PropertyReader : ITestDataReader
+    public class PropertyReader<T> : INodeReader<T>
     {
-        private readonly PropertyMapper<PipelineConfiguration> _mapper;
+        private readonly PropertyMapper<T> _mapper;
 
         public PropertyReader()
         {
-            _mapper = new PropertyMapper<PipelineConfiguration>();
+            _mapper = new PropertyMapper<T>();
         }
 
         public void Initialize()
         {
         }
 
-        public void ReadLine(string line, PipelineConfiguration item)
+        public void ReadLine(string line, T item)
         {
             _mapper.ReadLine(line, item);
         }
     }
 
-    public class FilterReader : ITestDataReader
+    public class FilterReader : INodeReader<HandlerNode>
     {
         private readonly PropertyMapper<HandlerNode> _mapper;
 
@@ -157,14 +157,8 @@ namespace MessageMap.Configuration
         {
         }
 
-        public void ReadLine(string line, PipelineConfiguration item)
+        public void ReadLine(string line, HandlerNode handler)
         {
-            var handler = item.OutputHandlers.LastOrDefault();
-            if (handler == null)
-            {
-                return;
-            }
-
             if (handler.Filters == null)
             {
                 handler.Filters = new List<FilterNode>();
@@ -181,17 +175,23 @@ namespace MessageMap.Configuration
         }
     }
 
-    public class InputHandlerReader : ITestDataReader
+    public class InputHandlerReader : INodeReader<PipelineConfiguration>
     {
-        private readonly PropertyMapper<HandlerNode> _mapper;
+        private readonly Dictionary<string, INodeReader<HandlerNode>> _dataReaders;
+        private INodeReader<HandlerNode> _reader;
 
         public InputHandlerReader()
         {
-            _mapper = new PropertyMapper<HandlerNode>();
+            _dataReaders = new Dictionary<string, INodeReader<HandlerNode>>
+            {
+                {"default", new PropertyReader<HandlerNode>()}, 
+                {"filters", new FilterReader()}
+            };
         }
 
         public void Initialize()
         {
+            _reader = _dataReaders["default"];
         }
 
         public void ReadLine(string line, PipelineConfiguration item)
@@ -201,23 +201,36 @@ namespace MessageMap.Configuration
                 item.InputHandler = new HandlerNode();
             }
 
-            _mapper.ReadLine(line, item.InputHandler);
+            var key = line.Trim().ToLower();
+            if (_dataReaders.ContainsKey(key))
+            {
+                _reader = _dataReaders[key];
+                _reader.Initialize();
+            }
+
+            _reader.ReadLine(line, item.InputHandler);
         }
     }
 
-    public class OutputHandlerReader : ITestDataReader
+    public class OutputHandlerReader : INodeReader<PipelineConfiguration>
     {
-        private readonly PropertyMapper<HandlerNode> _mapper;
+        private readonly Dictionary<string, INodeReader<HandlerNode>> _dataReaders;
+        private INodeReader<HandlerNode> _reader;
         private HandlerNode _handler;
 
         public OutputHandlerReader()
         {
-            _mapper = new PropertyMapper<HandlerNode>();
+            _dataReaders = new Dictionary<string, INodeReader<HandlerNode>>
+            {
+                {"default", new PropertyReader<HandlerNode>()}, 
+                {"filters", new FilterReader()}
+            };
         }
 
         public void Initialize()
         {
             _handler = null;
+            _reader = _dataReaders["default"];
         }
 
         public void ReadLine(string line, PipelineConfiguration item)
@@ -234,147 +247,16 @@ namespace MessageMap.Configuration
                 item.OutputHandlers.Add(_handler);
             }
 
-            _mapper.ReadLine(line, _handler);
+            var key = line.Trim().ToLower();
+            if (_dataReaders.ContainsKey(key))
+            {
+                _reader = _dataReaders[key];
+                _reader.Initialize();
+            }
+
+            _reader.ReadLine(line, _handler);
         }
     }
 
-    public class PropertyMapper<T>
-    {
-        private readonly PropertyInfo[] _properties;
-
-        public PropertyMapper()
-        {
-            _properties = typeof(T).GetProperties();
-        }
-
-        public void ReadLine(string line, T item)
-        {
-            var index = line.IndexOf(':');
-            if (index < 0)
-            {
-                return;
-            }
-
-            var propertyName = line.Substring(0, index).TrimStart();
-            var propertyInfo = _properties.FirstOrDefault(p => p.Name == propertyName);
-            if (propertyInfo == null)
-            {
-                return;
-            }
-
-            var value = line.Substring(index + 1);
-
-            PropertyMapper.ParsePrimitive(propertyInfo, item, value);
-        }
-    }
-
-    public class PropertyMapper
-    {
-        public static void ParsePrimitive(PropertyInfo prop, object entity, object value)
-        {
-            if (prop.PropertyType == typeof(string))
-            {
-                prop.SetValue(entity, value.ToString().Trim(), null);
-            }
-            else if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
-            {
-                if (value == null)
-                {
-                    prop.SetValue(entity, null, null);
-                }
-                else
-                {
-                    prop.SetValue(entity, ParseBoolean(value.ToString()), null);
-                }
-            }
-            else if (prop.PropertyType == typeof(long))
-            {
-                prop.SetValue(entity, long.Parse(value.ToString()), null);
-            }
-            else if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
-            {
-                if (value == null)
-                {
-                    prop.SetValue(entity, null, null);
-                }
-                else
-                {
-                    prop.SetValue(entity, int.Parse(value.ToString()), null);
-                }
-            }
-            else if (prop.PropertyType == typeof(decimal))
-            {
-                prop.SetValue(entity, decimal.Parse(value.ToString()), null);
-            }
-            else if (prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?))
-            {
-                var isValid = double.TryParse(value.ToString(), out _);
-                if (isValid)
-                {
-                    prop.SetValue(entity, double.Parse(value.ToString()), null);
-                }
-            }
-            else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(Nullable<DateTime>))
-            {
-                var isValid = DateTime.TryParse(value.ToString(), out var date);
-                if (isValid)
-                {
-                    prop.SetValue(entity, date, null);
-                }
-                else
-                {
-                    isValid = DateTime.TryParseExact(value.ToString(), "yyyyMMdd", new CultureInfo("de-CH"), DateTimeStyles.AssumeLocal, out date);
-                    if (isValid)
-                    {
-                        prop.SetValue(entity, date, null);
-                    }
-                }
-            }
-            else if (prop.PropertyType == typeof(Guid))
-            {
-                var isValid = Guid.TryParse(value.ToString(), out var guid);
-                if (isValid)
-                {
-                    prop.SetValue(entity, guid, null);
-                }
-                else
-                {
-                    isValid = Guid.TryParseExact(value.ToString(), "B", out guid);
-                    if (isValid)
-                    {
-                        prop.SetValue(entity, guid, null);
-                    }
-                }
-            }
-            else if (prop.PropertyType == typeof(Type))
-            {
-                var type = Type.GetType(value.ToString());
-                prop.SetValue(entity, type, null);
-            }
-        }
-
-        public static bool ParseBoolean(object value)
-        {
-            if (value == null || value == DBNull.Value)
-            {
-                return false;
-            }
-
-            switch (value.ToString().ToLowerInvariant())
-            {
-                case "1":
-                case "y":
-                case "yes":
-                case "true":
-                    return true;
-
-                case "0":
-                case "n":
-                case "no":
-                case "false":
-                default:
-                    return false;
-            }
-        }
-    }
+    
 }

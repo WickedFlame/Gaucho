@@ -63,9 +63,10 @@ namespace MessageMap.Test
             {
                 s.Register(() =>
                 {
+                    cnt = cnt + 1;
+
                     var pipeline = new EventPipeline();
                     pipeline.AddHandler(output);
-                    cnt = cnt + 1;
 
                     return pipeline;
                 });
@@ -78,11 +79,9 @@ namespace MessageMap.Test
             client.Process(pipelineId, new LogMessage { Message = "PluginManagerTests_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "PluginManagerTests_NewPipelinePerEvent2" });
 
-            Assert.That(cnt == 0);
-
             ProcessingServer.Server.WaitAll(pipelineId);
 
-            Assert.That(cnt == 1);
+            Assert.That(cnt == 1, () => $"Count is {cnt} but is expected to be 1");
         }
 
         [Test]
@@ -108,13 +107,16 @@ namespace MessageMap.Test
                     return pipeline;
                 });
 
-                s.Register(_pluginMgr.GetHandler(config));
+                s.Register(_pluginMgr.GetInputHandler(config));
             });
 
             var bus = server.EventBusFactory.GetEventBus(pipelineId);
             var pipeline = bus.PipelineSetup.Setup();
 
-            Assert.IsNotNull(server.GetHandler<LogMessage>(pipelineId));
+            var inputhandler = server.GetHandler<LogMessage>(pipelineId);
+            Assert.IsNotNull(inputhandler);
+            Assert.That(inputhandler.Converter.Filters.Any());
+
             Assert.That(pipeline.Handlers.Count() == 2);
             Assert.That(pipeline.Handlers.All(h => h.Converter.Filters.Any()));
         }

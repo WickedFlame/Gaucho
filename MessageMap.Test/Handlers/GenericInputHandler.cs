@@ -6,6 +6,10 @@ namespace MessageMap.Test
 {
     public class GenericInputHandler<T> : IInputHandler<T>
     {
+        public IConverter Converter { get; set; }
+        
+        public string PipelineId { get; set; }
+
         public Event ProcessInput(T input)
         {
             var factory = new EventDataFactory();
@@ -13,7 +17,5 @@ namespace MessageMap.Test
 
             return new Event(PipelineId, data);
         }
-
-        public string PipelineId { get; set; }
     }
 }

@@ -10,6 +10,8 @@ namespace MessageMap.Test
         {
         }
 
+        public IConverter Converter { get; set; }
+
         public string PipelineId { get; set; }
 
         public Event ProcessInput(LogMessage message)

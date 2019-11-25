@@ -166,18 +166,25 @@ namespace MessageMap
 
     public static class PluginManagerExtensions
     {
-        public static IInputHandler GetHandler(this PluginManager mgr, PipelineConfiguration config)
-        {
-            var inputPlugin = mgr.GetPlugin(config.InputHandler.Type);
-            var input = inputPlugin.CreateInstance<IInputHandler>();
-
-            return input;
-        }
-
         public static IInputHandler GetInputHandler(this PluginManager mgr, PipelineConfiguration config)
         {
-            var inputPlugin = mgr.GetPlugin(typeof(IInputHandler), config.InputHandler.Name);
+            var node = config.InputHandler;
+
+            var inputPlugin = mgr.GetPlugin(typeof(IInputHandler), config.InputHandler);
             var input = inputPlugin.CreateInstance<IInputHandler>();
+
+            if (node.Filters != null)
+            {
+                foreach (var filter in node.Filters)
+                {
+                    if (input.Converter == null)
+                    {
+                        input.Converter = new Converter();
+                    }
+
+                    input.Converter.Add(new PropertyFilter(filter.Source, filter.Destination));
+                }
+            }
 
             return input;
         }
@@ -191,10 +198,15 @@ namespace MessageMap
                 var outputPlugin = mgr.GetPlugin(typeof(IOutputHandler), node);
                 var output = outputPlugin.CreateInstance<IOutputHandler>();
 
-                if(node.Filters!= null)
+                if (node.Filters != null)
                 {
                     foreach (var filter in node.Filters)
                     {
+                        if (output.Converter == null)
+                        {
+                            output.Converter = new Converter();
+                        }
+
                         output.Converter.Add(new PropertyFilter(filter.Source, filter.Destination));
                     }
                 }
