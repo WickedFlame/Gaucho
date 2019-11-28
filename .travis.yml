@@ -1,0 +1,20 @@
+# Travis is now container based which doesn't support sudo
+sudo: false
+language: csharp
+solution: MessageMap.sln
+
+notifications:
+  email:
+#    recipients:
+#      - one@example.com
+#      - other@example.com
+    on_success: never #[always|never|change] # default: change
+    on_failure: always #[always|never|change] # default: always
+    
+install:
+  - nuget restore MessageMap.sln
+  - nuget install NUnit.Console -Version 3.0.1 -OutputDirectory testrunner
+ 
+script:
+  - xbuild /p:Configuration=Release MessageMap.sln
+  - mono ./testrunner/NUnit.Console.3.0.1/tools/nunit3-console.exe ./src/Tests/MessageMap.Test/bin/Release/MessageMap.Test.dll
