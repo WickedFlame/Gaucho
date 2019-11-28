@@ -148,6 +148,13 @@ namespace MessageMap
             if (plugin == null)
             {
                 System.Diagnostics.Trace.WriteLine($"Plugin {node.Name}, {node.Type} does not exist");
+                if (node.Type != null)
+                {
+                    return new Plugin
+                    {
+                        Type = node.Type
+                    };
+                }
             }
 
             return plugin;

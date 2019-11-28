@@ -12,6 +12,8 @@ namespace MessageMap
             _queue = new Queue<Event>();
         }
 
+        public int Count => _queue.Count;
+        
         public void Enqueue(Event @event)
         {
             lock (_syncRoot)

@@ -76,7 +76,13 @@ namespace MessageMap
         public void Publish(Event @event)
         {
             _queue.Enqueue(@event);
-            foreach (var thread in _threads)
+
+            if (_queue.Count / _threads.Count > 10)
+            {
+                SetupWorkers(_threads.Count + 1);
+            }
+
+            foreach (var thread in _threads.ToList())
             {
                 thread.Start();
             }
@@ -95,6 +101,8 @@ namespace MessageMap
             {
                 pipeline.Run(@event);
             }
+
+            RemoveEndedWorkers();
         }
 
         private void SetupWorkers(int threadCount)
@@ -111,6 +119,7 @@ namespace MessageMap
                     var thread = new WorkerThread(() => Process(), _logger);
 
                     _threads.Add(thread);
+                    _logger.Write($"Add Worker to EventBus. Workers: {i}", Category.Log, source: "EventBus");
                 }
 
                 var toRemove = _threads.Count - threadCount;
@@ -132,6 +141,30 @@ namespace MessageMap
 
                         toRemove--;
                     }
+                }
+            }
+        }
+
+        public void RemoveEndedWorkers()
+        {
+            lock (_syncRoot)
+            {
+                foreach (var thread in _threads.ToList())
+                {
+                    if (thread.IsWorking)
+                    {
+                        continue;
+                    }
+
+                    if (_threads.Count == 1)
+                    {
+                        return;
+                    }
+
+                    _threads.Remove(thread);
+                    thread.Dispose();
+
+                    _logger.Write($"Remove Worker from EventBus. Workers: {_threads.Count}", Category.Log, source: "EventBus");
                 }
             }
         }
@@ -167,12 +200,23 @@ namespace MessageMap
 
             private bool _isWorking;
 
-            public Task Task { get; private set; }
-
             public WorkerThread(Action action, ILogger logger)
             {
                 _action = action;
                 _logger = logger;
+            }
+
+            public Task Task { get; private set; }
+
+            public bool IsWorking
+            {
+                get
+                {
+                    lock (_syncRoot)
+                    {
+                        return _isWorking;
+                    }
+                }
             }
 
             public void Dispose()
