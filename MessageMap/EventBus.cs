@@ -59,7 +59,7 @@ namespace MessageMap
         public void WaitAll()
         {
             var tasks = _threads.Select(t => t.Task)
-                .Where(t => t != null && t.Status == TaskStatus.Running)
+                .Where(t => t != null/* && t.Status == TaskStatus.Running*/)
                 .ToList();
 
             if(tasks.Any())

@@ -59,7 +59,8 @@ namespace MessageMap.Test
 
             var cnt = 0;
 
-            ProcessingServer.SetupPipeline(pipelineId, s =>
+            var server = new ProcessingServer();
+            ProcessingServer.SetupPipeline(pipelineId, server, s =>
             {
                 s.Register(() =>
                 {
@@ -75,11 +76,11 @@ namespace MessageMap.Test
             });
 
 
-            var client = new Client();
+            var client = new Client(server);
             client.Process(pipelineId, new LogMessage { Message = "PluginManagerTests_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "PluginManagerTests_NewPipelinePerEvent2" });
 
-            ProcessingServer.Server.WaitAll(pipelineId);
+            server.WaitAll(pipelineId);
 
             Assert.That(cnt == 1, () => $"Count is {cnt} but is expected to be 1");
         }
