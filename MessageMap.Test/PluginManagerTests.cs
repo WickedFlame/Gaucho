@@ -57,6 +57,14 @@ namespace MessageMap.Test
 
             var pipelineId = Guid.NewGuid().ToString();
 
+            var loghandler = new LogQueueHandler
+            {
+                Converter = new Converter
+                {
+                    new PropertyFilter("Message", "Message")
+                }
+            };
+
             var cnt = 0;
 
             var server = new ProcessingServer();
@@ -64,10 +72,11 @@ namespace MessageMap.Test
             {
                 s.Register(() =>
                 {
-                    cnt = cnt + 1;
-
                     var pipeline = new EventPipeline();
                     pipeline.AddHandler(output);
+                    pipeline.AddHandler(loghandler);
+
+                    cnt = cnt + 1;
 
                     return pipeline;
                 });
@@ -77,12 +86,13 @@ namespace MessageMap.Test
 
 
             var client = new Client(server);
-            client.Process(pipelineId, new LogMessage { Message = "PluginManagerTests_NewPipelinePerEvent1" });
-            client.Process(pipelineId, new LogMessage { Message = "PluginManagerTests_NewPipelinePerEvent2" });
+            client.Process(pipelineId, new LogMessage { Message = "Event1" });
+            client.Process(pipelineId, new LogMessage { Message = "Event2" });
 
             server.WaitAll(pipelineId);
 
-            Assert.That(cnt == 1, () => $"Count is {cnt} but is expected to be 1");
+            //Assert.That(cnt == 1, () => $"Count is {cnt} but is expected to be 1");
+            Assert.That(loghandler.Log.Count() == 2, () => $"Logcount is {loghandler.Log.Count()} but is expected to be 2");
         }
 
         [Test]
