@@ -3,6 +3,7 @@
 
 # version format
 version: 0.1.0.{build}
+rcversion: 0.1.0-RC0{build}
 
 # you can use {branch} name in version format too
 # version: 1.0.{build}-{branch}
@@ -30,7 +31,7 @@ dotnet_csproj:
   patch: true
   file: '**\*.csproj'
   version: '{version}'
-  package_version: '{version}'
+  package_version: '{rcversion}'
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
