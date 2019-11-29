@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -9,6 +9,7 @@
   <ItemGroup>
     <None Remove="Configuration\Config1.cnf" />
     <None Remove="Configuration\Config2.cnf" />
+    <None Remove="Configuration\Config2.yml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Configuration\Config2.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Configuration\Config2.cnf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -1,0 +1,15 @@
+﻿Id: pipeline2
+
+InputHandler:
+  Name:GenericLogMessage
+
+OutputHandlers:
+  - Name: ConsoleOutput
+    Filters:
+      - Message -> msg
+
+  - Name: LogOutput
+    Filters:
+      - Message -> msg
+      - Level -> lvl
+
