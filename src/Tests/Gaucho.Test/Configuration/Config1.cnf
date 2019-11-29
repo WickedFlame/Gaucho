@@ -1,0 +1,18 @@
+﻿Id: pipeline1
+
+InputHandler
+	Type:Gaucho.Test.GenericInputHandler`1[[Gaucho.Test.LogMessage, Gaucho.Test]], Gaucho.Test
+	Filters
+		Message -> msg
+
+OutputHandler
+	Type: Gaucho.Test.ConsoleOutputHandler, Gaucho.Test
+	Filters
+		Message -> msg
+
+OutputHandler
+	Type: Gaucho.Test.LogQueueHandler, Gaucho.Test
+	Filters
+		Message -> msg
+		Level -> lvl
+

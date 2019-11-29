@@ -24,7 +24,7 @@ os: Visual Studio 2019
 install:
   - set PATH=C:\Program Files (x86)\MSBuild\16.0\Bin;%PATH%
 #  - sudo apt-get install nunit-console
-#  - nuget restore MessageMap.sln
+#  - nuget restore Gaucho.sln
  
 dotnet_csproj:
   patch: true
@@ -53,7 +53,7 @@ before_build:
 
 build:
   parallel: true                  # enable MSBuild parallel builds
-  project: MessageMap.sln         # path to Visual Studio solution or project
+  project: Gaucho.sln         # path to Visual Studio solution or project
   publish_wap: false              # package Web Application Projects (WAP) for Web Deploy
   publish_wap_xcopy: false        # package Web Application Projects (WAP) for XCopy deployment
   publish_azure: false            # package Azure Cloud Service projects and push to artifacts
@@ -108,8 +108,8 @@ test_script:
 #---------------------------------#
 
 artifacts:
-  - path: src\MessageMap\bin\Release\netstandard2.0\MessageMap.dll
-    name: MessageMap.dll
+  - path: src\Gaucho\bin\Release\netstandard2.0\Gaucho.dll
+    name: Gaucho.dll
 
   # pushing all *.nupkg files in directory
   - path: '.\*.nupkg'

@@ -1,7 +1,7 @@
 # Travis is now container based which doesn't support sudo
 sudo: false
 language: csharp
-solution: MessageMap.sln
+solution: Gaucho.sln
 mono: none
 dotnet: 3.0.100
 
