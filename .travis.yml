@@ -2,6 +2,8 @@
 sudo: false
 language: csharp
 solution: MessageMap.sln
+mono: none
+dotnet: 3.0.100
 
 notifications:
   email:
@@ -12,9 +14,9 @@ notifications:
     on_failure: always #[always|never|change] # default: always
     
 install:
-  - nuget restore MessageMap.sln
-  - nuget install NUnit.Console -Version 3.0.1 -OutputDirectory testrunner
- 
+  - sudo apt-get install -qq dotnet-sdk-2.0.0
+  - dotnet restore
+
 script:
-  - xbuild /p:Configuration=Release MessageMap.sln
-  - mono ./testrunner/NUnit.Console.3.0.1/tools/nunit3-console.exe ./src/Tests/MessageMap.Test/bin/Release/MessageMap.Test.dll
+  - dotnet build
+  - dotnet test
