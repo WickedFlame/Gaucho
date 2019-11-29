@@ -21,13 +21,13 @@ namespace MessageMap
             }
         }
 
-        public static void SetupPipeline(string pipelineId, Action<ServerSetupContext> setup)
+        public static void SetupPipeline(string pipelineId, Action<ServerRegistrationContext> setup)
             => SetupPipeline(pipelineId, Server, setup);
 
-        public static void SetupPipeline(string pipelineId, ProcessingServer server, Action<ServerSetupContext> setup)
+        public static void SetupPipeline(string pipelineId, ProcessingServer server, Action<ServerRegistrationContext> setup)
         {
-            var setupObj = new ServerSetupContext(pipelineId, server);
-            setup(setupObj);
+            var context = new ServerRegistrationContext(pipelineId, server);
+            setup(context);
         }
 
         public static void SetupPipeline(string pipelineId, PipelineConfiguration config)

@@ -2,12 +2,12 @@
 
 namespace MessageMap
 {
-    public class ServerSetupContext
+    public class ServerRegistrationContext
     {
         private readonly ProcessingServer _server;
         private readonly string _pipelineId;
 
-        internal ServerSetupContext(string pipelineId, ProcessingServer server)
+        internal ServerRegistrationContext(string pipelineId, ProcessingServer server)
         {
             _pipelineId = pipelineId;
             _server = server;
