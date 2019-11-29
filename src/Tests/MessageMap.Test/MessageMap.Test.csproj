@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MessageMap\MessageMap.csproj" />
+    <ProjectReference Include="..\..\MessageMap\MessageMap.csproj" />
   </ItemGroup>
 
   <ItemGroup>
