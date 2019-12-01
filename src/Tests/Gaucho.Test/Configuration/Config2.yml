@@ -1,7 +1,7 @@
 ﻿Id: pipeline2
 
 InputHandler:
-  Name:GenericLogMessage
+  Name: GenericLogMessage
 
 OutputHandlers:
   - Name: ConsoleOutput

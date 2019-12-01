@@ -84,9 +84,9 @@ namespace Gaucho.Test.Configuration
                 {
                     new HandlerNode("ConsoleOutput")
                     {
-                        Filters = new List<FilterNode>
+                        Filters = new List<string>
                         {
-                            new FilterNode("Message", "msg")
+                            "Message -> msg"
                         }
                     }
                 }

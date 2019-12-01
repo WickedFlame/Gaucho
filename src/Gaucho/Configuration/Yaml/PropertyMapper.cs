@@ -3,41 +3,44 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace Gaucho.Configuration
+namespace WickedFlame.Yaml
 {
-    public class PropertyMapper<T>
+    public class PropertyMapper
     {
         private readonly PropertyInfo[] _properties;
 
-        public PropertyMapper()
+        public PropertyMapper(Type type)
         {
-            _properties = typeof(T).GetProperties();
-        }
-
-        public void ReadLine(string line, T item)
-        {
-            var index = line.IndexOf(':');
-            if (index < 0)
+            if (type.IsGenericType)
             {
-                return;
+                type = type.GetGenericArguments()[0];
             }
 
-            var propertyName = line.Substring(0, index).TrimStart();
-            var propertyInfo = _properties.FirstOrDefault(p => p.Name == propertyName);
+            _properties = type.GetProperties();
+        }
+
+        public bool TryAppendProperty(YamlLine line, object item)
+        {
+            if (string.IsNullOrEmpty(line.Property))
+            {
+                return false;
+            }
+
+            var propertyInfo = _properties.FirstOrDefault(p => p.Name == line.Property);
             if (propertyInfo == null)
             {
-                return;
+                return false;
             }
 
-            var value = line.Substring(index + 1);
-
-            PropertyMapper.ParsePrimitive(propertyInfo, item, value);
+            return PropertyMapper.ParsePrimitive(propertyInfo, item, line.Value);
         }
-    }
 
-    public class PropertyMapper
-    {
-        public static void ParsePrimitive(PropertyInfo prop, object entity, object value)
+        public PropertyInfo GetProperty(YamlLine line)
+        {
+            return _properties.FirstOrDefault(p => p.Name == line.Property);
+        }
+
+        public static bool ParsePrimitive(PropertyInfo prop, object entity, object value)
         {
             if (prop.PropertyType == typeof(string))
             {
@@ -118,6 +121,12 @@ namespace Gaucho.Configuration
                 var type = Type.GetType(value.ToString());
                 prop.SetValue(entity, type, null);
             }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static bool ParseBoolean(object value)

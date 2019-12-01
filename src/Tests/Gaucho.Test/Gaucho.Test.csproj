@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Configuration\Config1.cnf" />
-    <None Remove="Configuration\Config2.cnf" />
+    <None Remove="Configuration\Config1.yml" />
     <None Remove="Configuration\Config2.yml" />
+    <None Remove="Configuration\YamlTest.yml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,13 +24,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Configuration\Config1.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Configuration\YamlTest.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Configuration\Config2.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configuration\Config2.cnf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Configuration\Config1.cnf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

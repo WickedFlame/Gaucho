@@ -1,0 +1,30 @@
+﻿Id: id
+
+SimpleObject:
+  Name:Object name
+
+Nested:
+  Nested:
+     Name: nested object
+  Name: first object
+
+StringList:
+  - one
+  - two
+  - three
+
+EnumerableList:
+  - one
+  - two
+  - three
+
+#OutputHandlers:
+#  - Name: ConsoleOutput
+#    Filters:
+#      - Message -> msg
+
+#  - Name: LogOutput
+#    Filters:
+#      - Message -> msg
+#      - Level -> lvl
+

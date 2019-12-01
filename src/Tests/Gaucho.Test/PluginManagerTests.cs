@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Gaucho.Configuration;
 using NUnit.Framework;
+using WickedFlame.Yaml;
 
 namespace Gaucho.Test
 {
@@ -98,8 +99,8 @@ namespace Gaucho.Test
         [Test]
         public void PluginManagerTests_ReadConfigFromFile()
         {
-            var reader = new ConfigurationReader();
-            var config = reader.Read("Config1.cnf");
+            var reader = new YamlReader();
+            var config = reader.Read("Config1.yml");
 
             var pipelineId = Guid.NewGuid().ToString();
 

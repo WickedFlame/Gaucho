@@ -21,10 +21,10 @@ namespace Gaucho.Test.LoadTests
                 {
                     new HandlerNode("ConsoleOutput")
                     {
-                        Filters = new List<FilterNode>
+                        Filters = new List<string>
                         {
-                            new FilterNode("Message", "msg"),
-                            new FilterNode("Level", "lvl")
+                            "Message -> msg",
+                            "Level -> lvl"
                         }
                     },
                     new HandlerNode(typeof(ApiTests.ThreadWaitHandler))

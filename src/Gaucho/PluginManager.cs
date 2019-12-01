@@ -189,7 +189,7 @@ namespace Gaucho
                         input.Converter = new Converter();
                     }
 
-                    input.Converter.Add(new PropertyFilter(filter.Source, filter.Destination));
+                    input.Converter.Add(FilterFactory.CreateFilter(filter));
                 }
             }
 
@@ -214,7 +214,7 @@ namespace Gaucho
                             output.Converter = new Converter();
                         }
 
-                        output.Converter.Add(new PropertyFilter(filter.Source, filter.Destination));
+                        output.Converter.Add(FilterFactory.CreateFilter(filter));
                     }
                 }
 

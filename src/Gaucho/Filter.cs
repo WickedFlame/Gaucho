@@ -15,6 +15,16 @@ namespace Gaucho
         Property Filter(EventData data);
     }
 
+    public class FilterFactory
+    {
+        public static IFilter CreateFilter(string input)
+        {
+            var source = input.Substring(0, input.IndexOf("->"));
+            var destination = input.Substring(input.IndexOf("->") + 2);
+            return new PropertyFilter(source, destination);
+        }
+    }
+
     public class PropertyFilter : IFilter
     {
         private readonly string _source;
