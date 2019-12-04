@@ -66,7 +66,7 @@ namespace Gaucho
             _pipelineFactory = factory;
 
             _inputHandlers = new InputHandlerCollection();
-            _logger = Logger.Setup();
+            _logger = LoggerConfiguration.Setup();
         }
 
         public IEventBusFactory EventBusFactory => _pipelineFactory;

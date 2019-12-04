@@ -50,7 +50,7 @@ namespace Gaucho.Test
             var server = new ProcessingServer(factory);
             server.Register(pipelineId, new LogInputHandler());
 
-            var client = new Client(server);
+            var client = new EventDispatcher(server);
             client.Process(pipelineId, new LogMessage { Message = "InstanceServer" });
         }
 
@@ -72,7 +72,7 @@ namespace Gaucho.Test
             var server = new ProcessingServer(factory);
             server.Register(pipelineId, new LogInputHandler());
 
-            var client = new Client(server);
+            var client = new EventDispatcher(server);
             client.Process(pipelineId, new LogMessage { Message = "InstanceServer" });
         }
 
@@ -92,7 +92,7 @@ namespace Gaucho.Test
             server.Register(pipelineId, new LogInputHandler());
 
 
-            var client = new Client(server);
+            var client = new EventDispatcher(server);
             client.Process(pipelineId, new LogMessage { Message = "InstanceServer" });
         }
 
@@ -113,7 +113,7 @@ namespace Gaucho.Test
             server.Register(pipelineId, new LogInputHandler());
 
 
-            var client = new Client(server);
+            var client = new EventDispatcher(server);
             client.Process(pipelineId, new LogMessage { Message = "InstanceServer" });
         }
 
@@ -132,7 +132,7 @@ namespace Gaucho.Test
             ProcessingServer.Server.Register(pipelineId, new LogInputHandler());
 
 
-            var client = new Client();
+            var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage {Message = "StaticServer" });
         }
 
@@ -155,7 +155,7 @@ namespace Gaucho.Test
             });
 
 
-            var client = new Client();
+            var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "StaticServer" });
         }
 
@@ -179,7 +179,7 @@ namespace Gaucho.Test
             });
 
 
-            var client = new Client(server);
+            var client = new EventDispatcher(server);
             client.Process(pipelineId, new LogMessage { Message = "SetupPipeline_SimpleServer" });
         }
 
@@ -205,7 +205,7 @@ namespace Gaucho.Test
             });
 
 
-            var client = new Client();
+            var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent2" });
 
@@ -239,7 +239,7 @@ namespace Gaucho.Test
             });
 
 
-            var client = new Client();
+            var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent2" });
 
@@ -269,7 +269,7 @@ namespace Gaucho.Test
             });
 
 
-            var client = new Client();
+            var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent2" });
 

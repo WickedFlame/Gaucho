@@ -6,11 +6,13 @@ namespace Gaucho.Diagnostics
     public class Logger : ILogger
     {
         private readonly List<ILogWriter> _writers;
-
+        
         public Logger()
         {
             _writers = new List<ILogWriter>();
         }
+
+        public List<ILogWriter> Writers => _writers;
 
         public void Write(string message, Category category, LogLevel level = LogLevel.Info, string source = null)
         {
@@ -18,14 +20,6 @@ namespace Gaucho.Diagnostics
             {
                 writer.Write(message, level, source);
             }
-        }
-
-        public static Logger Setup()
-        {
-            var logger = new Logger();
-            logger._writers.Add(new TraceLogWriter());
-
-            return logger;
         }
     }
 }

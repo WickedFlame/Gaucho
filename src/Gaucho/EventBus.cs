@@ -48,7 +48,7 @@ namespace Gaucho
         public EventBus()
         {
             _queue = new EventQueue();
-            _logger = Logger.Setup();
+            _logger = LoggerConfiguration.Setup();
             SetupWorkers(1);
         }
 
@@ -267,7 +267,7 @@ namespace Gaucho
         {
             _queue = new EventQueue();
 
-            _logger = Logger.Setup();
+            _logger = LoggerConfiguration.Setup();
         }
 
         public string PipelineId { get; set; }

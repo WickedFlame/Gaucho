@@ -38,7 +38,7 @@ namespace Gaucho.Test.LoadTests
             var result = ProfilerSession.StartSession()
                 .Task(ctx =>
                 {
-                    var client = new Client();
+                    var client = new EventDispatcher();
                     client.Process(pipelineId, new LogMessage {Level = "Info", Message = $"Loadtesting {ctx.Get<int>(ContextKeys.Iteration)} on Thread {ctx.Get<int>(ContextKeys.ThreadId)}", Title = "Loadtest" });
                 })
                 .SetIterations(100)

@@ -34,7 +34,7 @@ namespace Gaucho.Test.Configuration
 
             ProcessingServer.SetupPipeline(pipelineId, config);
 
-            var client = new Client();
+            var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent2" });
         }
@@ -69,7 +69,7 @@ namespace Gaucho.Test.Configuration
                 s.Register(_pluginMgr.GetInputHandler(config));
             });
 
-            var client = new Client();
+            var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent2" });
         }
@@ -110,7 +110,7 @@ namespace Gaucho.Test.Configuration
                 s.Register(_pluginMgr.GetInputHandler(config));
             });
 
-            var client = new Client();
+            var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent2" });
 

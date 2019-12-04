@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Gaucho.Configuration;
 using Gaucho.Diagnostics;
+using Gaucho.Filters;
 
 namespace Gaucho
 {
@@ -82,7 +83,7 @@ namespace Gaucho
 
             _plugins = plugins;
 
-            var logger = Logger.Setup();
+            var logger = LoggerConfiguration.Setup();
             foreach (var plugin in _plugins)
             {
                 logger.Write($"Loaded Plugin: {plugin.Name}", Category.Log, LogLevel.Info, "PluginManager");
@@ -177,19 +178,27 @@ namespace Gaucho
         {
             var node = config.InputHandler;
 
-            var inputPlugin = mgr.GetPlugin(typeof(IInputHandler), config.InputHandler);
+            var inputPlugin = mgr.GetPlugin(typeof(IInputHandler), node);
             var input = inputPlugin.CreateInstance<IInputHandler>();
 
             if (node.Filters != null)
             {
-                foreach (var filter in node.Filters)
+                foreach (var filterString in node.Filters)
                 {
                     if (input.Converter == null)
                     {
                         input.Converter = new Converter();
                     }
 
-                    input.Converter.Add(FilterFactory.CreateFilter(filter));
+                    var filter = FilterFactory.CreateFilter(filterString);
+                    if (filter == null)
+                    {
+                        var logger = LoggerConfiguration.Setup();
+                        logger.Write($"Could not convert '{filterString}' to a Filter", Category.Log, LogLevel.Warning, source: "FilterFactory");
+                        continue;
+                    }
+
+                    input.Converter.Add(filter);
                 }
             }
 
@@ -207,14 +216,22 @@ namespace Gaucho
 
                 if (node.Filters != null)
                 {
-                    foreach (var filter in node.Filters)
+                    foreach (var filterString in node.Filters)
                     {
                         if (output.Converter == null)
                         {
                             output.Converter = new Converter();
                         }
 
-                        output.Converter.Add(FilterFactory.CreateFilter(filter));
+                        var filter = FilterFactory.CreateFilter(filterString);
+                        if (filter == null)
+                        {
+                            var logger = LoggerConfiguration.Setup();
+                            logger.Write($"Could not convert '{filterString}' to a Filter", Category.Log, LogLevel.Warning, source: "FilterFactory");
+                            continue;
+                        }
+
+                        output.Converter.Add(filter);
                     }
                 }
 

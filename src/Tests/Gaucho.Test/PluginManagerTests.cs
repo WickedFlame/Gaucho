@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Gaucho.Configuration;
+using Gaucho.Filters;
 using NUnit.Framework;
 using WickedFlame.Yaml;
 
@@ -86,7 +87,7 @@ namespace Gaucho.Test
             });
 
 
-            var client = new Client(server);
+            var client = new EventDispatcher(server);
             client.Process(pipelineId, new LogMessage { Message = "Event1" });
             client.Process(pipelineId, new LogMessage { Message = "Event2" });
 
@@ -123,14 +124,14 @@ namespace Gaucho.Test
             });
 
             var bus = server.EventBusFactory.GetEventBus(pipelineId);
-            var pipeline = bus.PipelineSetup.Setup();
+            var p = bus.PipelineSetup.Setup();
 
             var inputhandler = server.GetHandler<LogMessage>(pipelineId);
             Assert.IsNotNull(inputhandler);
             Assert.That(inputhandler.Converter.Filters.Any());
 
-            Assert.That(pipeline.Handlers.Count() == 2);
-            Assert.That(pipeline.Handlers.All(h => h.Converter.Filters.Any()));
+            Assert.That(p.Handlers.Count() == 2);
+            Assert.That(p.Handlers.All(h => h.Converter.Filters.Any()));
         }
     }
 }

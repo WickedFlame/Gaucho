@@ -1,13 +1,13 @@
 ﻿
 namespace Gaucho
 {
-    public class Client
+    public class EventDispatcher
     {
         private readonly ProcessingServer _server;
 
-        public Client() : this(ProcessingServer.Server) { }
+        public EventDispatcher() : this(ProcessingServer.Server) { }
 
-        public Client(ProcessingServer server)
+        public EventDispatcher(ProcessingServer server)
         {
             _server = server;
         }
