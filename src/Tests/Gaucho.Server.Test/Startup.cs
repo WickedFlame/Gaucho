@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,7 +59,9 @@ namespace Gaucho.Server.Test
 
             GlobalConfiguration.Configuration.UseProcessingServer(p =>
             {
-                p.BuildPipeline("LogMessage.yml");
+                var reader = new WickedFlame.Yaml.YamlReader();
+                var config = reader.Read<PipelineConfiguration>("LogMessage.yml");
+                p.BuildPipeline(config);
             });
 
             LoggerConfiguration.AddLogWriter(new ConsoleLogWriter());

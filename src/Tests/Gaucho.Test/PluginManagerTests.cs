@@ -5,7 +5,6 @@ using System.Threading;
 using Gaucho.Configuration;
 using Gaucho.Filters;
 using NUnit.Framework;
-using WickedFlame.Yaml;
 
 namespace Gaucho.Test
 {
@@ -97,41 +96,41 @@ namespace Gaucho.Test
             Assert.That(loghandler.Log.Count() == 2, () => $"Logcount is {loghandler.Log.Count()} but is expected to be 2");
         }
 
-        [Test]
-        public void PluginManagerTests_ReadConfigFromFile()
-        {
-            var reader = new YamlReader();
-            var config = reader.Read("Config1.yml");
+        //[Test]
+        //public void PluginManagerTests_ReadConfigFromFile()
+        //{
+        //    var reader = new YamlReader();
+        //    var config = reader.Read("Config1.yml");
 
-            var pipelineId = Guid.NewGuid().ToString();
+        //    var pipelineId = Guid.NewGuid().ToString();
 
-            var server = new ProcessingServer();
+        //    var server = new ProcessingServer();
             
-            ProcessingServer.SetupPipeline(pipelineId, server, s =>
-            {
-                s.Register(() =>
-                {
-                    var pipeline = new EventPipeline();
-                    foreach (var handler in _pluginMgr.GetOutputHandlers(config))
-                    {
-                        pipeline.AddHandler(handler);
-                    }
+        //    ProcessingServer.SetupPipeline(pipelineId, server, s =>
+        //    {
+        //        s.Register(() =>
+        //        {
+        //            var pipeline = new EventPipeline();
+        //            foreach (var handler in _pluginMgr.GetOutputHandlers(config))
+        //            {
+        //                pipeline.AddHandler(handler);
+        //            }
 
-                    return pipeline;
-                });
+        //            return pipeline;
+        //        });
 
-                s.Register(_pluginMgr.GetInputHandler(config));
-            });
+        //        s.Register(_pluginMgr.GetInputHandler(config));
+        //    });
 
-            var bus = server.EventBusFactory.GetEventBus(pipelineId);
-            var p = bus.PipelineSetup.Setup();
+        //    var bus = server.EventBusFactory.GetEventBus(pipelineId);
+        //    var p = bus.PipelineSetup.Setup();
 
-            var inputhandler = server.GetHandler<LogMessage>(pipelineId);
-            Assert.IsNotNull(inputhandler);
-            Assert.That(inputhandler.Converter.Filters.Any());
+        //    var inputhandler = server.GetHandler<LogMessage>(pipelineId);
+        //    Assert.IsNotNull(inputhandler);
+        //    Assert.That(inputhandler.Converter.Filters.Any());
 
-            Assert.That(p.Handlers.Count() == 2);
-            Assert.That(p.Handlers.All(h => h.Converter.Filters.Any()));
-        }
+        //    Assert.That(p.Handlers.Count() == 2);
+        //    Assert.That(p.Handlers.All(h => h.Converter.Filters.Any()));
+        //}
     }
 }

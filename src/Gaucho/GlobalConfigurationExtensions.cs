@@ -1,6 +1,5 @@
 ﻿using System;
 using Gaucho.Configuration;
-using WickedFlame.Yaml;
 
 namespace Gaucho
 {
@@ -24,11 +23,8 @@ namespace Gaucho
             _pluginMgr = new PluginManager();
         }
 
-        public void BuildPipeline(string filename)
+        public void BuildPipeline(PipelineConfiguration config)
         {
-            var reader = new YamlReader();
-            var config = reader.Read(filename);
-
             ProcessingServer.SetupPipeline(config.Id, s =>
             {
                 s.Register(() =>

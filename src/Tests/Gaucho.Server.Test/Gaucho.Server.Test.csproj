@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
+    <PackageReference Include="WickedFlame.Yaml" Version="0.1.0-RC15" />
   </ItemGroup>
 
   <ItemGroup>
