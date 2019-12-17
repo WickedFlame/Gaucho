@@ -1,20 +1,25 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Config\LogMessage.yml" />
+    <None Remove="Config\APILogMessage.yml" />
+    <None Remove="Config\RecurringJob.yml" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Config\LogMessage.yml">
+    <Content Include="Config\RecurringJob.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\APILogMessage.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Broadcast" Version="0.5.0-RC14" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
     <PackageReference Include="WickedFlame.Yaml" Version="0.1.0-RC15" />
   </ItemGroup>

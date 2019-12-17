@@ -39,7 +39,7 @@ namespace Gaucho.Server.Test
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
         {
             if (env.IsDevelopment())
             {
@@ -60,7 +60,10 @@ namespace Gaucho.Server.Test
             GlobalConfiguration.Configuration.UseProcessingServer(p =>
             {
                 var reader = new WickedFlame.Yaml.YamlReader();
-                var config = reader.Read<PipelineConfiguration>("LogMessage.yml");
+                var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
+                p.BuildPipeline(config);
+
+                config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
                 p.BuildPipeline(config);
             });
 
@@ -79,6 +82,11 @@ namespace Gaucho.Server.Test
             });
             ILogger logger = loggerFactory.CreateLogger<Program>();
             logger.LogInformation("Initialize Gaucho Server");
+
+            applicationLifetime.ApplicationStopping.Register(() =>
+            {
+                // notify long-running tasks of pending doom  
+            });
         }
     }
 }
