@@ -3,11 +3,11 @@ namespace Gaucho
 {
     public class EventDispatcher
     {
-        private readonly ProcessingServer _server;
+        private readonly IProcessingServer _server;
 
         public EventDispatcher() : this(ProcessingServer.Server) { }
 
-        public EventDispatcher(ProcessingServer server)
+        public EventDispatcher(IProcessingServer server)
         {
             _server = server;
         }

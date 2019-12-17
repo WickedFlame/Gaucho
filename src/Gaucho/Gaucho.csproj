@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>A .NET Message Broker for handling, converting and delegating messages</Description>
+    <Description>A .NET Message Broker Middleware for handling, converting and delegating log messages</Description>
     <Company>WickedFlame</Company>
     <Authors>Christian Walpen</Authors>
     <Copyright>@ WickedFlame 2019</Copyright>

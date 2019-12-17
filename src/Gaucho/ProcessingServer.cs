@@ -4,11 +4,29 @@ using Gaucho.Diagnostics;
 
 namespace Gaucho
 {
-    //TODO: RENAME TO MessageBroker??
-    public class ProcessingServer
+    public interface IProcessingServer
     {
-        static ProcessingServer _server;
-        public static ProcessingServer Server
+        void Register(string pipelineId, Func<EventPipeline> factory);
+
+        void Register(string pipelineId, IEventBus eventBus);
+
+        void Register(string pipelineId, IInputHandler plugin);
+
+        IInputHandler<T> GetHandler<T>(string pipelineId);
+
+        void Publish(Event @event);
+
+        /// <summary>
+        /// Wait for all events to be handled in the pipeline
+        /// </summary>
+        /// <param name="pipelineId">The Pipeline to wait for</param>
+        void WaitAll(string pipelineId);
+    }
+
+    public class ProcessingServer : IProcessingServer, IDisposable
+    {
+        static IProcessingServer _server;
+        public static IProcessingServer Server
         {
             get
             {
@@ -24,7 +42,7 @@ namespace Gaucho
         public static void SetupPipeline(string pipelineId, Action<ServerRegistrationContext> setup)
             => SetupPipeline(pipelineId, Server, setup);
 
-        public static void SetupPipeline(string pipelineId, ProcessingServer server, Action<ServerRegistrationContext> setup)
+        public static void SetupPipeline(string pipelineId, IProcessingServer server, Action<ServerRegistrationContext> setup)
         {
             var context = new ServerRegistrationContext(pipelineId, server);
             setup(context);
@@ -85,6 +103,11 @@ namespace Gaucho
 
         public void Register(string pipelineId, IInputHandler plugin)
         {
+            if (plugin is IServerInitialize init)
+            {
+                init.Initialize(this);
+            }
+
             _inputHandlers.Register(pipelineId, plugin);
         }
 
@@ -118,6 +141,17 @@ namespace Gaucho
             }
 
             eventBus.WaitAll();
+        }
+
+        public void Dispose()
+        {
+            foreach (var handler in _inputHandlers)
+            {
+                var dispose = handler as IDisposable;
+                dispose?.Dispose();
+            }
+
+            _logger.Write("ProcessingServer stopped", Category.Log);
         }
     }
 }

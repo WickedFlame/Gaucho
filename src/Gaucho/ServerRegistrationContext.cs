@@ -4,10 +4,10 @@ namespace Gaucho
 {
     public class ServerRegistrationContext
     {
-        private readonly ProcessingServer _server;
+        private readonly IProcessingServer _server;
         private readonly string _pipelineId;
 
-        internal ServerRegistrationContext(string pipelineId, ProcessingServer server)
+        internal ServerRegistrationContext(string pipelineId, IProcessingServer server)
         {
             _pipelineId = pipelineId;
             _server = server;
