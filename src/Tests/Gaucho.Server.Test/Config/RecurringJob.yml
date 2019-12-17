@@ -1,8 +1,7 @@
 ﻿Id: RecurringJob
 
 InputHandler:
-  Type: Gaucho.Server.Test.Handlers.RecurringPlugin, Gaucho.Server.Test
-#  Type: Gaucho.Server.Test.Handlers.LogMessageInputHandler, Gaucho.Server.Test
+  Type: Gaucho.Server.Test.Handlers.RecurringInputHandler, Gaucho.Server.Test
 #  Filters:
 #    - Message -> msg
 

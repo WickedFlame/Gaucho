@@ -178,16 +178,24 @@ namespace Gaucho
         {
             var node = config.InputHandler;
 
-            var inputPlugin = mgr.GetPlugin(typeof(IInputHandler), node);
-            var input = inputPlugin.CreateInstance<IInputHandler>();
+            var handler = mgr.GetPlugin(typeof(IInputHandler), node);
+            if (handler == null)
+            {
+                var logger = LoggerConfiguration.Setup();
+                logger.Write($"Invalid InputHandler defined in configuration for Pipelilne: {config.Id}", Category.Log, LogLevel.Error);
+                
+                return null;
+            }
+
+            var instance = handler.CreateInstance<IInputHandler>();
 
             if (node.Filters != null)
             {
                 foreach (var filterString in node.Filters)
                 {
-                    if (input.Converter == null)
+                    if (instance.Converter == null)
                     {
-                        input.Converter = new Converter();
+                        instance.Converter = new Converter();
                     }
 
                     var filter = FilterFactory.CreateFilter(filterString);
@@ -198,11 +206,11 @@ namespace Gaucho
                         continue;
                     }
 
-                    input.Converter.Add(filter);
+                    instance.Converter.Add(filter);
                 }
             }
 
-            return input;
+            return instance;
         }
 
         public static IEnumerable<IOutputHandler> GetOutputHandlers(this PluginManager mgr, PipelineConfiguration config)
@@ -211,16 +219,16 @@ namespace Gaucho
 
             foreach(var node in config.OutputHandlers)
             {
-                var outputPlugin = mgr.GetPlugin(typeof(IOutputHandler), node);
-                var output = outputPlugin.CreateInstance<IOutputHandler>();
+                var handler = mgr.GetPlugin(typeof(IOutputHandler), node);
+                var instance = handler.CreateInstance<IOutputHandler>();
 
                 if (node.Filters != null)
                 {
                     foreach (var filterString in node.Filters)
                     {
-                        if (output.Converter == null)
+                        if (instance.Converter == null)
                         {
-                            output.Converter = new Converter();
+                            instance.Converter = new Converter();
                         }
 
                         var filter = FilterFactory.CreateFilter(filterString);
@@ -231,11 +239,11 @@ namespace Gaucho
                             continue;
                         }
 
-                        output.Converter.Add(filter);
+                        instance.Converter.Add(filter);
                     }
                 }
 
-                handlers.Add(output);
+                handlers.Add(instance);
             }
 
             return handlers;

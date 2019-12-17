@@ -25,6 +25,11 @@ namespace Gaucho
 
         public void Register(IInputHandler plugin)
         {
+            if (plugin == null)
+            {
+                return;
+            }
+
             _server.Register(_pipelineId, plugin);
         }
     }

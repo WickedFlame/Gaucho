@@ -96,6 +96,21 @@ namespace Gaucho.Test
             Assert.That(loghandler.Log.Count() == 2, () => $"Logcount is {loghandler.Log.Count()} but is expected to be 2");
         }
 
+        [Test]
+        public void PluginManagerTests_InvalidPlugin()
+        {
+            var config = new PipelineConfiguration()
+            {
+                Id = "invalidplugin",
+                InputHandler = new HandlerNode()
+            };
+            var mgr = new PluginManager();
+
+            var handlier = mgr.GetInputHandler(config);
+
+            Assert.IsNull(handlier);
+        }
+
         //[Test]
         //public void PluginManagerTests_ReadConfigFromFile()
         //{
@@ -105,7 +120,7 @@ namespace Gaucho.Test
         //    var pipelineId = Guid.NewGuid().ToString();
 
         //    var server = new ProcessingServer();
-            
+
         //    ProcessingServer.SetupPipeline(pipelineId, server, s =>
         //    {
         //        s.Register(() =>
