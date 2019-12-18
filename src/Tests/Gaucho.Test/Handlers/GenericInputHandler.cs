@@ -6,8 +6,6 @@ namespace Gaucho.Test
 {
     public class GenericInputHandler<T> : IInputHandler<T>
     {
-        public IConverter Converter { get; set; }
-        
         public string PipelineId { get; set; }
 
         public Event ProcessInput(T input)

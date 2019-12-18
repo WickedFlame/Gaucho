@@ -5,12 +5,12 @@ namespace Gaucho.Server.Test.Handlers
 {
     public class ConsoleOutputHandler : IOutputHandler
     {
-        static ConsoleOutputHandler()
+        public ConsoleOutputHandler(IEventDataConverter converter)
         {
-            
+            Converter = converter;
         }
 
-        public IConverter Converter { get; set; } = new Converter();
+        public IEventDataConverter Converter { get; }
 
         public void Handle(Event @event)
         {

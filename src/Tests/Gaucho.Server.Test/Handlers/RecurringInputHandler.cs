@@ -14,8 +14,6 @@ namespace Gaucho.Server.Test.Handlers
             _arguments = arguments;
         }
 
-        public IConverter Converter { get; set; }
-
         public string PipelineId { get; set; }
 
         public void Initialize(IProcessingServer server)

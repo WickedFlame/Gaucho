@@ -183,12 +183,40 @@ namespace Gaucho
                 return null;
             }
 
-            var arguments = new Dictionary<Type, object>();
+            var arguments = BuildArguments(node);
+
+            return handler.Type.CreateInstance<IInputHandler>(arguments);
+        }
+
+        public static IEnumerable<IOutputHandler> GetOutputHandlers(this PluginManager mgr, PipelineConfiguration config)
+        {
+            var handlers = new List<IOutputHandler>();
+
+            foreach(var node in config.OutputHandlers)
+            {
+                var handler = mgr.GetPlugin(typeof(IOutputHandler), node);
+                var arguments = BuildArguments(node);
+
+                var instance = handler.Type.CreateInstance<IOutputHandler>(arguments);
+
+                handlers.Add(instance);
+            }
+
+            return handlers;
+        }
+
+        private static Dictionary<Type, object> BuildArguments(HandlerNode node)
+        {
+            var arguments = new Dictionary<Type, object>
+            {
+                {typeof(IEventDataConverter), new EventDataConverter()},
+                {typeof(ConfiguredArgumentsCollection), new ConfiguredArgumentsCollection()}
+            };
 
             if (node.Filters != null)
             {
-                var converter = new Converter();
-                arguments.Add(typeof(IConverter), converter);
+                var converter = new EventDataConverter();
+                arguments[typeof(IEventDataConverter)] = converter;
 
                 foreach (var filterString in node.Filters)
                 {
@@ -207,7 +235,7 @@ namespace Gaucho
             if (node.Arguments != null)
             {
                 var collection = new ConfiguredArgumentsCollection();
-                arguments.Add(typeof(ConfiguredArgumentsCollection), collection);
+                arguments[typeof(ConfiguredArgumentsCollection)] = collection;
 
                 foreach (var item in node.Arguments)
                 {
@@ -215,43 +243,7 @@ namespace Gaucho
                 }
             }
 
-            return node.Type.CreateInstance<IInputHandler>(arguments);
-        }
-
-        public static IEnumerable<IOutputHandler> GetOutputHandlers(this PluginManager mgr, PipelineConfiguration config)
-        {
-            var handlers = new List<IOutputHandler>();
-
-            foreach(var node in config.OutputHandlers)
-            {
-                var arguments = new Dictionary<Type, object>();
-                var handler = mgr.GetPlugin(typeof(IOutputHandler), node);
-
-                if (node.Filters != null)
-                {
-                    var converter = new Converter();
-                    arguments.Add(typeof(IConverter), converter);
-
-                    foreach (var filterString in node.Filters)
-                    {
-                        var filter = FilterFactory.CreateFilter(filterString);
-                        if (filter == null)
-                        {
-                            var logger = LoggerConfiguration.Setup();
-                            logger.Write($"Could not convert '{filterString}' to a Filter", Category.Log, LogLevel.Warning, source: "FilterFactory");
-                            continue;
-                        }
-
-                        converter.Add(filter);
-                    }
-                }
-
-                var instance = handler.Type.CreateInstance<IOutputHandler>(arguments);
-
-                handlers.Add(instance);
-            }
-
-            return handlers;
+            return arguments;
         }
     }
 }

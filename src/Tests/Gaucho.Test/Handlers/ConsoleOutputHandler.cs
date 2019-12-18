@@ -6,7 +6,17 @@ namespace Gaucho.Test
 {
     public class ConsoleOutputHandler : IOutputHandler
     {
-        public IConverter Converter { get; set; } = new Converter();
+        public ConsoleOutputHandler() 
+            : this(new EventDataConverter())
+        {
+        }
+
+        public ConsoleOutputHandler(IEventDataConverter converter)
+        {
+            Converter = converter;
+        }
+
+        public IEventDataConverter Converter { get; }
 
         public void Handle(Event @event)
         {

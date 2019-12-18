@@ -6,8 +6,6 @@ namespace Gaucho.Test
 {
     public class CustomInputHandler : IInputHandler<LogMessage>
     {
-        public IConverter Converter { get; set; }
-
         public string PipelineId { get; set; }
 
         public Event ProcessInput(LogMessage input)

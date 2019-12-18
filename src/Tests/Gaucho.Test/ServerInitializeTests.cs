@@ -23,8 +23,6 @@ namespace Gaucho.Test
         {
             public IProcessingServer Server { get; set; }
 
-            public IConverter Converter { get; set; }
-            
             public string PipelineId { get; set; }
 
             public void Initialize(IProcessingServer server)

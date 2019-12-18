@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Gaucho.Server
 {
     public class HandlerActivator
     {
-        public T CreateInstance<T>(Type type, Dictionary<Type, object> arguments)
+        public T CreateInstance<T>(Type type, Dictionary<Type, object> dependencies)
         {
-            var parameters = SubstituteArguments(type, arguments);
+            var parameters = SubstituteArguments(type, dependencies);
             if(parameters.Any())
             {
                 return (T) Activator.CreateInstance(type, parameters);
@@ -18,9 +17,9 @@ namespace Gaucho.Server
             return (T)Activator.CreateInstance(type);
         }
 
-        private static object[] SubstituteArguments(Type type, Dictionary<Type, object> arguments)
+        private static object[] SubstituteArguments(Type type, Dictionary<Type, object> dependencies)
         {
-            var ctor = type.GetConstructors().FirstOrDefault(c => c.GetParameters().Count() == arguments.Count && c.GetParameters().All(p => arguments.ContainsKey(p.ParameterType)));
+            var ctor = type.GetConstructors().OrderByDescending(c => c.GetParameters().Count()).FirstOrDefault(c => c.GetParameters().All(p => dependencies.ContainsKey(p.ParameterType)));
             if (ctor == null)
             {
                 ctor = type.GetConstructors().FirstOrDefault(c => !c.GetParameters().Any());
@@ -33,8 +32,8 @@ namespace Gaucho.Server
             {
                 var parameter = parameters[i];
 
-                var value = arguments.ContainsKey(parameter.ParameterType)
-                    ? arguments[parameter.ParameterType]
+                var value = dependencies.ContainsKey(parameter.ParameterType)
+                    ? dependencies[parameter.ParameterType]
                     : null;
 
                 result.Add(value);

@@ -59,13 +59,7 @@ namespace Gaucho.Test
 
             var pipelineId = Guid.NewGuid().ToString();
 
-            var loghandler = new LogQueueHandler
-            {
-                Converter = new Converter
-                {
-                    new PropertyFilter("Message", "Message")
-                }
-            };
+            var loghandler = new LogQueueHandler();
 
             var cnt = 0;
 

@@ -287,8 +287,6 @@ namespace Gaucho.Test
 
         public class ThreadWaitHandler : IOutputHandler
         {
-            public IConverter Converter { get; set; }
-
             public void Handle(Event @event)
             {
                 Thread.Sleep(5000);

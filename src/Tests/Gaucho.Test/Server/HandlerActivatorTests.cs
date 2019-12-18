@@ -32,6 +32,20 @@ namespace Gaucho.Test.Server
         }
 
         [Test]
+        public void Server_HandlerActivator_CreateInstance_WithMoreArguments()
+        {
+            var builder = new HandlerActivator();
+            var dependencies = new Dictionary<Type, object>
+            {
+                {typeof(Simple), new Simple()},
+                {typeof(Complex), new object() }
+            };
+            var instance = builder.CreateInstance<Complex>(typeof(Complex), dependencies);
+
+            Assert.IsNotNull(instance);
+        }
+
+        [Test]
         public void Server_HandlerActivator_CreateInstance_MultipleCtor()
         {
             var builder = new HandlerActivator();
@@ -74,6 +88,8 @@ namespace Gaucho.Test.Server
 
         public class Extended
         {
+            public Extended() { }
+
             public Extended(Simple simple)
             {
                 Simple = simple;

@@ -6,8 +6,6 @@ namespace Gaucho.Server.Test.Handlers
     {
         public string PipelineId { get; set; }
 
-        public IConverter Converter { get; set; }
-        
         public Event ProcessInput(LogMessage input)
         {
             var factory = new EventDataFactory();

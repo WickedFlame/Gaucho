@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Gaucho
 {
-    public interface IConverter
+    public interface IEventDataConverter
     {
         IEnumerable<IFilter> Filters { get; }
 
@@ -15,11 +15,11 @@ namespace Gaucho
         EventData Convert(EventData data);
     }
 
-    public class Converter : System.Collections.IEnumerable, IConverter
+    public class EventDataConverter : System.Collections.IEnumerable, IEventDataConverter
     {
         private readonly List<IFilter> _filters;
 
-        public Converter()
+        public EventDataConverter()
         {
             _filters = new List<IFilter>();
         }

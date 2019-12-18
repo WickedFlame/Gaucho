@@ -8,8 +8,6 @@ namespace Gaucho.Test
     {
         private readonly List<string> _log = new List<string>();
 
-        public IConverter Converter { get; set; } = new Converter();
-
         public void Handle(Event @event)
         {
             var sb = new StringBuilder();

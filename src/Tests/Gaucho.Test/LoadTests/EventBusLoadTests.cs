@@ -9,6 +9,7 @@ namespace Gaucho.Test.LoadTests
 {
     [TestFixture]
     [Explicit]
+    [Ignore("Loadtesting")]
     public class EventBusLoadTests
     {
         [Test]

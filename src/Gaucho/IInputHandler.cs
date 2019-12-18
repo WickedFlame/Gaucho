@@ -3,8 +3,6 @@ namespace Gaucho
 {
     public interface IInputHandler
     {
-        IConverter Converter { get; set; }
-
         string PipelineId { get; set; }
     }
 

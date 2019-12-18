@@ -14,14 +14,11 @@ namespace Gaucho.Test
         [Test]
         public void Gaucho_Filter()
         {
-            var handler = new FilterOutputHandler
+            var handler = new FilterOutputHandler(new EventDataConverter
             {
-                Converter = new Converter
-                {
-                    new PropertyFilter("Level", "dst_lvl"),
-                    new PropertyFilter("Message")
-                }
-            };
+                new PropertyFilter("Level", "dst_lvl"),
+                new PropertyFilter("Message")
+            });
 
             var input = new LogMessage
             {
@@ -44,9 +41,14 @@ namespace Gaucho.Test
     {
         private readonly List<string> _log = new List<string>();
 
+        public FilterOutputHandler(IEventDataConverter converter)
+        {
+            Converter = converter;
+        }
+
         public IEnumerable<string> Log => _log;
 
-        public IConverter Converter { get; set; } = new Converter();
+        public IEventDataConverter Converter { get; }
 
         public void Handle(Event @event)
         {
