@@ -21,8 +21,13 @@ namespace Gaucho.Server.Test.Handlers
             _server = server;
             _broadcaster = new Broadcaster(ProcessorMode.Background);
 
-            //TODO: Recurring Interval should be passed in as Parameter
-            _broadcaster.Recurring(Process, TimeSpan.FromSeconds(2));
+            var interval = _arguments.GetValue<int>("Interval");
+            if (interval == 0)
+            {
+                interval = 10;
+            }
+
+            _broadcaster.Recurring(Process, TimeSpan.FromSeconds(interval));
         }
 
         private int _count = 0;
