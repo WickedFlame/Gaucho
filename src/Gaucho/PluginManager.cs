@@ -7,6 +7,7 @@ using System.Text;
 using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using Gaucho.Filters;
+using Gaucho.Server;
 
 namespace Gaucho
 {
@@ -15,11 +16,6 @@ namespace Gaucho
         public string Name { get; set; }
 
         public Type Type { get; set; }
-
-        public T CreateInstance<T>()
-        {
-            return (T)Activator.CreateInstance(Type);
-        }
     }
 
     public abstract class HandlerRegistration
@@ -187,17 +183,15 @@ namespace Gaucho
                 return null;
             }
 
-            var instance = handler.CreateInstance<IInputHandler>();
+            var arguments = new Dictionary<Type, object>();
 
             if (node.Filters != null)
             {
+                var converter = new Converter();
+                arguments.Add(typeof(IConverter), converter);
+
                 foreach (var filterString in node.Filters)
                 {
-                    if (instance.Converter == null)
-                    {
-                        instance.Converter = new Converter();
-                    }
-
                     var filter = FilterFactory.CreateFilter(filterString);
                     if (filter == null)
                     {
@@ -206,11 +200,22 @@ namespace Gaucho
                         continue;
                     }
 
-                    instance.Converter.Add(filter);
+                    converter.Add(filter);
                 }
             }
 
-            return instance;
+            if (node.Arguments != null)
+            {
+                var collection = new ConfiguredArgumentsCollection();
+                arguments.Add(typeof(ConfiguredArgumentsCollection), collection);
+
+                foreach (var item in node.Arguments)
+                {
+                    collection.Add(item.Key, item.Value);
+                }
+            }
+
+            return node.Type.CreateInstance<IInputHandler>(arguments);
         }
 
         public static IEnumerable<IOutputHandler> GetOutputHandlers(this PluginManager mgr, PipelineConfiguration config)
@@ -219,18 +224,16 @@ namespace Gaucho
 
             foreach(var node in config.OutputHandlers)
             {
+                var arguments = new Dictionary<Type, object>();
                 var handler = mgr.GetPlugin(typeof(IOutputHandler), node);
-                var instance = handler.CreateInstance<IOutputHandler>();
 
                 if (node.Filters != null)
                 {
+                    var converter = new Converter();
+                    arguments.Add(typeof(IConverter), converter);
+
                     foreach (var filterString in node.Filters)
                     {
-                        if (instance.Converter == null)
-                        {
-                            instance.Converter = new Converter();
-                        }
-
                         var filter = FilterFactory.CreateFilter(filterString);
                         if (filter == null)
                         {
@@ -239,9 +242,11 @@ namespace Gaucho
                             continue;
                         }
 
-                        instance.Converter.Add(filter);
+                        converter.Add(filter);
                     }
                 }
+
+                var instance = handler.Type.CreateInstance<IOutputHandler>(arguments);
 
                 handlers.Add(instance);
             }

@@ -22,7 +22,8 @@ namespace Gaucho.Configuration
 
         public Type Type { get; set; }
 
-        //public List<FilterNode> Filters { get; set; }
         public List<string> Filters { get; set; }
+
+        public Dictionary<string, string> Arguments { get; set; }
     }
 }

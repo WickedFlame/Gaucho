@@ -7,6 +7,12 @@ namespace Gaucho.Server.Test.Handlers
     {
         private IProcessingServer _server;
         private Broadcaster _broadcaster;
+        private ConfiguredArgumentsCollection _arguments;
+
+        public RecurringInputHandler(ConfiguredArgumentsCollection arguments)
+        {
+            _arguments = arguments;
+        }
 
         public IConverter Converter { get; set; }
 

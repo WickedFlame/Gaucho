@@ -2,6 +2,8 @@
 
 InputHandler:
   Type: Gaucho.Server.Test.Handlers.RecurringInputHandler, Gaucho.Server.Test
+  Arguments:
+    Interval: 3
 #  Filters:
 #    - Message -> msg
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Gaucho.Configuration;
 using Gaucho.Filters;
+using Gaucho.Server;
 using NUnit.Framework;
 
 namespace Gaucho.Test
@@ -33,7 +34,7 @@ namespace Gaucho.Test
             var plugins = _pluginMgr.GetPlugins(typeof(IInputHandler));
 
             var plugin = plugins.First(p => p.Name == "LogInput");
-            var obj = plugin.CreateInstance<IInputHandler>();
+            var obj = plugin.Type.CreateInstance<IInputHandler>();
 
             Assert.That(obj is LogInputHandler);
         }
@@ -42,7 +43,7 @@ namespace Gaucho.Test
         public void PluginManagerTests_GetPlugin()
         {
             var plugin = _pluginMgr.GetPlugin(typeof(IInputHandler), "LogInput");
-            var obj = plugin.CreateInstance<IInputHandler>();
+            var obj = plugin.Type.CreateInstance<IInputHandler>();
 
             Assert.That(obj is LogInputHandler);
         }
@@ -51,10 +52,10 @@ namespace Gaucho.Test
         public void PluginManagerTests_BuildConfig()
         {
             var inputPlugin = _pluginMgr.GetPlugin(typeof(IInputHandler), "CustomInput");
-            var input = inputPlugin.CreateInstance<IInputHandler>();
+            var input = inputPlugin.Type.CreateInstance<IInputHandler>();
 
             var outputPlugin = _pluginMgr.GetPlugin(typeof(IOutputHandler), "ConsoleOutput");
-            var output = outputPlugin.CreateInstance<IOutputHandler>();
+            var output = outputPlugin.Type.CreateInstance<IOutputHandler>();
 
             var pipelineId = Guid.NewGuid().ToString();
 
