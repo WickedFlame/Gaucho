@@ -2,11 +2,11 @@
 
 namespace Gaucho.Server.Test.Handlers
 {
-    public class LogMessageInputHandler : IInputHandler<LogMessage>
+    public class GenericInputHandler<T> : IInputHandler<T>
     {
         public string PipelineId { get; set; }
 
-        public Event ProcessInput(LogMessage input)
+        public Event ProcessInput(T input)
         {
             var factory = new EventDataFactory();
             var data = factory.BuildFrom(input);
