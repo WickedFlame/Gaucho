@@ -67,6 +67,11 @@ namespace Gaucho
                     var types = assembly.GetTypes().Where(x => typeof(HandlerRegistration).IsAssignableFrom(x));
                     foreach(var type in types)
                     {
+                        if (type.IsAbstract)
+                        {
+                            continue;
+                        }
+
                         var registration = (HandlerRegistration)Activator.CreateInstance(type);
                         plugins.AddRange(registration.GetPlugins());
                     }
