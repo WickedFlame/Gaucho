@@ -12,6 +12,11 @@ namespace Gaucho
 
             return config;
         }
+
+        public static void Register<T>(this IGlobalConfiguration config, T item)
+        {
+            config.Context.Add(item.GetType().Name, item);
+        }
     }
 
     public class PipelineBuilder

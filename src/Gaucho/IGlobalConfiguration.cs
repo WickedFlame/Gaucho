@@ -6,5 +6,6 @@ namespace Gaucho
 {
     public interface IGlobalConfiguration
     {
+        Dictionary<string, object> Context { get; }
     }
 }
