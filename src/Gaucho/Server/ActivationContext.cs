@@ -12,8 +12,12 @@ namespace Gaucho.Server
         void Register<TService>(Func<TService> instanceCreator);
         
         T Resolve<T>();
-        
+
+        T Resolve<T>(Type serviceType);
+
         object Resolve(Type serviceType);
+        
+        IActivationContext ChildContext();
     }
 
     public class ActivationContext : IActivationContext
@@ -48,6 +52,11 @@ namespace Gaucho.Server
             return (T)Resolve(typeof(T));
         }
 
+        public T Resolve<T>(Type serviceType)
+        {
+            return (T) Resolve(serviceType);
+        }
+
         public object Resolve(Type serviceType)
         {
             if (_registrations.TryGetValue(serviceType, out var creator))
@@ -63,9 +72,20 @@ namespace Gaucho.Server
             throw new InvalidOperationException("No registration for " + serviceType);
         }
 
+        public IActivationContext ChildContext()
+        {
+            var ctx = new ActivationContext();
+            foreach (var registration in _registrations)
+            {
+                ctx._registrations.Add(registration.Key, registration.Value);
+            }
+
+            return ctx;
+        }
+
         private object CreateInstance(Type implementationType)
         {
-            var ctor = implementationType.GetConstructors().Single();
+            var ctor = implementationType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
             var parameterTypes = ctor.GetParameters().Select(p => p.ParameterType);
             var dependencies = parameterTypes.Select(t => Resolve(t)).ToArray();
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Gaucho.Server;
 
 namespace Gaucho.Configuration
 {
@@ -19,21 +20,36 @@ namespace Gaucho.Configuration
 
         public void BuildPipeline(IProcessingServer server, PipelineConfiguration config)
         {
+            var rootCtx = _config.Resolve<IActivationContext>() ?? new ActivationContext();
+            
             server.SetupPipeline(config.Id, s =>
             {
                 s.Register(() =>
                 {
                     var pipeline = new EventPipeline();
-                    foreach (var handler in _pluginMgr.GetOutputHandlers(config))
+                    foreach (var node in config.OutputHandlers)
                     {
-                        pipeline.AddHandler(handler);
+                        var outputHandler = BuildHandler<IOutputHandler>(rootCtx.ChildContext(), node);
+                        pipeline.AddHandler(outputHandler);
                     }
 
                     return pipeline;
                 });
 
-                s.Register(_pluginMgr.GetInputHandler(config));
+                var inputHandler = BuildHandler<IInputHandler>(rootCtx.ChildContext(), config.InputHandler);
+                s.Register(inputHandler);
             });
+        }
+
+        public T BuildHandler<T>(IActivationContext nodeCtx, HandlerNode node)
+        {
+            nodeCtx.Register<IEventDataConverter>(() => node.BuildEventData());
+            nodeCtx.Register<ConfiguredArgumentsCollection>(() => node.BuildArguments());
+
+            var plugin = _pluginMgr.GetPlugin(typeof(T), node);
+            var handler = nodeCtx.Resolve<T>(plugin.Type);
+
+            return handler;
         }
     }
 

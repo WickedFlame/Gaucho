@@ -44,8 +44,10 @@ namespace Gaucho.Test.Configuration
         [Test]
         public void ConfigurationTests_Configuration_HandlerPerType()
         {
+            var pipelineId = Guid.NewGuid().ToString();
             var config = new PipelineConfiguration
             {
+                Id = pipelineId,
                 InputHandler = new HandlerNode(typeof(GenericInputHandler<LogMessage>)),
                 OutputHandlers = new List<HandlerNode>
                 {
@@ -53,24 +55,9 @@ namespace Gaucho.Test.Configuration
                 }
             };
 
-            var pipelineId = Guid.NewGuid().ToString();
-
-            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
-            {
-                s.Register(() =>
-                {
-                    var pipeline = new EventPipeline();
-                    foreach (var handler in _pluginMgr.GetOutputHandlers(config))
-                    {
-                        pipeline.AddHandler(handler);
-                    }
-
-                    return pipeline;
-                });
-
-                s.Register(_pluginMgr.GetInputHandler(config));
-            });
-
+            var builder = new PipelineBuilder();
+            builder.BuildPipeline(ProcessingServer.Server, config);
+            
             var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent2" });
@@ -79,8 +66,10 @@ namespace Gaucho.Test.Configuration
         [Test]
         public void ConfigurationTests_Configuration_Filters()
         {
+            var pipelineId = Guid.NewGuid().ToString();
             var config = new PipelineConfiguration
             {
+                Id = pipelineId,
                 InputHandler = new HandlerNode(typeof(GenericInputHandler<LogMessage>)),
                 OutputHandlers = new List<HandlerNode>
                 {
@@ -94,23 +83,9 @@ namespace Gaucho.Test.Configuration
                 }
             };
 
-            var pipelineId = Guid.NewGuid().ToString();
 
-            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
-            {
-                s.Register(() =>
-                {
-                    var pipeline = new EventPipeline();
-                    foreach (var handler in _pluginMgr.GetOutputHandlers(config))
-                    {
-                        pipeline.AddHandler(handler);
-                    }
-
-                    return pipeline;
-                });
-
-                s.Register(_pluginMgr.GetInputHandler(config));
-            });
+            var builder = new PipelineBuilder();
+            builder.BuildPipeline(ProcessingServer.Server, config);
 
             var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent1" });

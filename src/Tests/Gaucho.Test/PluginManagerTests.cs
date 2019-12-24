@@ -94,16 +94,10 @@ namespace Gaucho.Test
         [Test]
         public void PluginManagerTests_InvalidPlugin()
         {
-            var config = new PipelineConfiguration()
-            {
-                Id = "invalidplugin",
-                InputHandler = new HandlerNode()
-            };
             var mgr = new PluginManager();
+            var plugin = mgr.GetPlugin(typeof(IInputHandler), new HandlerNode());
 
-            var handlier = mgr.GetInputHandler(config);
-
-            Assert.IsNull(handlier);
+            Assert.IsNull(plugin);
         }
 
         //[Test]
