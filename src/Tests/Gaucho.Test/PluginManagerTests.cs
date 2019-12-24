@@ -64,7 +64,7 @@ namespace Gaucho.Test
             var cnt = 0;
 
             var server = new ProcessingServer();
-            ProcessingServer.SetupPipeline(pipelineId, server, s =>
+            server.SetupPipeline(pipelineId, s =>
             {
                 s.Register(() =>
                 {

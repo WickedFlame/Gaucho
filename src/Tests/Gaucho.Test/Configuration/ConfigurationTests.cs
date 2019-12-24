@@ -55,7 +55,7 @@ namespace Gaucho.Test.Configuration
 
             var pipelineId = Guid.NewGuid().ToString();
 
-            ProcessingServer.SetupPipeline(pipelineId, s =>
+            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
             {
                 s.Register(() =>
                 {
@@ -96,7 +96,7 @@ namespace Gaucho.Test.Configuration
 
             var pipelineId = Guid.NewGuid().ToString();
 
-            ProcessingServer.SetupPipeline(pipelineId, s =>
+            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
             {
                 s.Register(() =>
                 {

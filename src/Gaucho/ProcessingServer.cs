@@ -39,15 +39,6 @@ namespace Gaucho
             }
         }
 
-        public static void SetupPipeline(string pipelineId, Action<ServerRegistrationContext> setup)
-            => SetupPipeline(pipelineId, Server, setup);
-
-        public static void SetupPipeline(string pipelineId, IProcessingServer server, Action<ServerRegistrationContext> setup)
-        {
-            var context = new ServerRegistrationContext(pipelineId, server);
-            setup(context);
-        }
-
         private readonly IEventBusFactory _pipelineFactory;
         private readonly InputHandlerCollection _inputHandlers;
 

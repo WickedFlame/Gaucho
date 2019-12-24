@@ -141,7 +141,7 @@ namespace Gaucho.Test
         {
             var pipelineId = Guid.NewGuid().ToString();
 
-            ProcessingServer.SetupPipeline(pipelineId, s =>
+            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
             {
                 s.Register(() =>
                 {
@@ -165,7 +165,7 @@ namespace Gaucho.Test
             var pipelineId = new Guid("42C75D31-8679-49B4-B0EE-2B90D4C6B893").ToString();
 
             var server = new ProcessingServer();
-            ProcessingServer.SetupPipeline(pipelineId, server, s =>
+            server.SetupPipeline(pipelineId, s =>
             {
                 s.Register(() =>
                 {
@@ -190,7 +190,7 @@ namespace Gaucho.Test
 
             var cnt = 0;
 
-            ProcessingServer.SetupPipeline(pipelineId, s =>
+            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
             {
                 s.Register(() =>
                 {
@@ -223,7 +223,7 @@ namespace Gaucho.Test
 
             var cnt = 0;
 
-            ProcessingServer.SetupPipeline(pipelineId, s =>
+            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
             {
                 s.Register(() =>
                 {
@@ -253,7 +253,7 @@ namespace Gaucho.Test
 
             var logHandler = new LogQueueHandler();
 
-            ProcessingServer.SetupPipeline(pipelineId, s =>
+            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
             {
                 s.Register(() =>
                 {
