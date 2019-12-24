@@ -22,9 +22,13 @@ namespace Gaucho
     public class PipelineBuilder
     {
         private readonly PluginManager _pluginMgr;
+        private readonly IGlobalConfiguration _config;
 
-        public PipelineBuilder()
+        public PipelineBuilder() : this(GlobalConfiguration.Configuration) { }
+
+        public PipelineBuilder(IGlobalConfiguration config)
         {
+            _config = config;
             _pluginMgr = new PluginManager();
         }
 

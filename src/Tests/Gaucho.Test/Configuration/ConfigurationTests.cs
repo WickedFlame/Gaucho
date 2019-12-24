@@ -21,8 +21,10 @@ namespace Gaucho.Test.Configuration
         [Test]
         public void ConfigurationTests_Configuration()
         {
+            var pipelineId = Guid.NewGuid().ToString();
             var config = new PipelineConfiguration
             {
+                Id = pipelineId,
                 InputHandler = new HandlerNode("CustomInput"),
                 OutputHandlers = new List<HandlerNode>
                 {
@@ -30,9 +32,9 @@ namespace Gaucho.Test.Configuration
                 }
             };
 
-            var pipelineId = Guid.NewGuid().ToString();
 
-            ProcessingServer.SetupPipeline(pipelineId, config);
+            var builder = new PipelineBuilder();
+            builder.BuildPipeline(config);
 
             var client = new EventDispatcher();
             client.Process(pipelineId, new LogMessage { Message = "ConfigurationTests_NewPipelinePerEvent1" });

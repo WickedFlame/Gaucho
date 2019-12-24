@@ -15,8 +15,10 @@ namespace Gaucho.Test.LoadTests
         [Test]
         public void LoadTesting()
         {
+            var pipelineId = Guid.NewGuid().ToString();
             var config = new PipelineConfiguration
             {
+                Id = pipelineId,
                 InputHandler = new HandlerNode("CustomInput"),
                 OutputHandlers = new List<HandlerNode>
                 {
@@ -32,9 +34,8 @@ namespace Gaucho.Test.LoadTests
                 }
             };
 
-            var pipelineId = Guid.NewGuid().ToString();
-
-            ProcessingServer.SetupPipeline(pipelineId, config);
+            var builder = new PipelineBuilder();
+            builder.BuildPipeline(config);
 
             var result = ProfilerSession.StartSession()
                 .Task(ctx =>

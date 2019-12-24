@@ -48,27 +48,6 @@ namespace Gaucho
             setup(context);
         }
 
-        public static void SetupPipeline(string pipelineId, PipelineConfiguration config)
-        {
-            var pluginMgr = new PluginManager();
-
-            SetupPipeline(pipelineId, s =>
-            {
-                s.Register(() =>
-                {
-                    var pipeline = new EventPipeline();
-                    foreach (var handler in pluginMgr.GetOutputHandlers(config))
-                    {
-                        pipeline.AddHandler(handler);
-                    }
-
-                    return pipeline;
-                });
-
-                s.Register(pluginMgr.GetInputHandler(config));
-            });
-        }
-
         private readonly IEventBusFactory _pipelineFactory;
         private readonly InputHandlerCollection _inputHandlers;
 
