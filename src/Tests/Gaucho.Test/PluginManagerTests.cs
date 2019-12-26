@@ -34,7 +34,8 @@ namespace Gaucho.Test
             var plugins = _pluginMgr.GetPlugins(typeof(IInputHandler));
 
             var plugin = plugins.First(p => p.Name == "LogInput");
-            var obj = plugin.Type.CreateInstance<IInputHandler>();
+            var ctx = new ActivationContext();
+            var obj = ctx.Resolve<IInputHandler>(plugin.Type);
 
             Assert.That(obj is LogInputHandler);
         }
@@ -43,7 +44,8 @@ namespace Gaucho.Test
         public void PluginManagerTests_GetPlugin()
         {
             var plugin = _pluginMgr.GetPlugin(typeof(IInputHandler), "LogInput");
-            var obj = plugin.Type.CreateInstance<IInputHandler>();
+            var ctx = new ActivationContext();
+            var obj = ctx.Resolve<IInputHandler>(plugin.Type);
 
             Assert.That(obj is LogInputHandler);
         }
@@ -51,11 +53,14 @@ namespace Gaucho.Test
         [Test]
         public void PluginManagerTests_BuildConfig()
         {
+            var ctx = new ActivationContext();
+            ctx.Register<IEventDataConverter, EventDataConverter>();
+
             var inputPlugin = _pluginMgr.GetPlugin(typeof(IInputHandler), "CustomInput");
-            var input = inputPlugin.Type.CreateInstance<IInputHandler>();
+            var input = ctx.Resolve<IInputHandler>(inputPlugin.Type);
 
             var outputPlugin = _pluginMgr.GetPlugin(typeof(IOutputHandler), "ConsoleOutput");
-            var output = outputPlugin.Type.CreateInstance<IOutputHandler>();
+            var output = ctx.Resolve<IOutputHandler>(outputPlugin.Type);
 
             var pipelineId = Guid.NewGuid().ToString();
 
