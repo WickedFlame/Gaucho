@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Gaucho.Configuration;
+using Gaucho.Server;
 using NUnit.Framework;
 
 namespace Gaucho.Test.Configuration

@@ -3,7 +3,7 @@ using Gaucho.Server.Test.Handlers;
 
 namespace Gaucho.Server.Test
 {
-    public class HandlerRegistration : Gaucho.HandlerRegistration
+    public class HandlerRegistration : Gaucho.Server.HandlerRegistration
     {
         public override void RegisterHandlers(HandlerRegistrationContext context)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MeasureMap;
 using Gaucho.Configuration;
+using Gaucho.Server;
 using NUnit.Framework;
 
 namespace Gaucho.Test.LoadTests

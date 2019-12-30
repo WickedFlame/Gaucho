@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Gaucho.Server;
+﻿using Gaucho.Configuration;
 
-namespace Gaucho.Configuration
+namespace Gaucho.Server
 {
     public class PipelineBuilder
     {

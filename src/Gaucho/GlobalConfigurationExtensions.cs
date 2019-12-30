@@ -1,5 +1,5 @@
 ﻿using System;
-using Gaucho.Configuration;
+using Gaucho.Server;
 
 namespace Gaucho
 {

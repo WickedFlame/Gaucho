@@ -6,10 +6,8 @@ using System.Reflection;
 using System.Text;
 using Gaucho.Configuration;
 using Gaucho.Diagnostics;
-using Gaucho.Filters;
-using Gaucho.Server;
 
-namespace Gaucho
+namespace Gaucho.Server
 {
     public class Plugin
     {
