@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Gaucho.Configuration;
+using Gaucho.Dashboard;
 using Gaucho.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,6 +33,9 @@ namespace Gaucho.Server.Test
             services.AddControllers();
 
             services.AddMvc();
+
+            services.AddHangfire();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
@@ -57,6 +61,7 @@ namespace Gaucho.Server.Test
                 endpoints.MapControllers();
             });
 
+
             GlobalConfiguration.Configuration.UseProcessingServer(p =>
             {
                 var reader = new WickedFlame.Yaml.YamlReader();
@@ -66,6 +71,11 @@ namespace Gaucho.Server.Test
                 config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
                 p.BuildPipeline(config);
             });
+
+            app.UseHangfireDashboard();
+
+
+
 
             LoggerConfiguration.AddLogWriter(new ConsoleLogWriter());
 

@@ -1,0 +1,27 @@
+﻿@* Generator: Template TypeVisibility: Public GeneratePrettyNames: True *@
+@using System.Reflection
+@using Gaucho.Dashboard
+@inherits RazorPage
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Gaucho - @Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="none">
+    @*<meta name="csrf-header" content="@Context.AntiforgeryHeader">
+        <meta name="csrf-token" content="@Context.AntiforgeryToken">*@
+    @{ var version = GetType().GetTypeInfo().Assembly.GetName().Version; }
+    <link rel="stylesheet" href="@Url.To($"/css{version.Major}{version.Minor}{version.Build}")">
+</head>
+<body>
+<div class="container" style="margin-bottom: 20px;">
+    @RenderBody()
+</div>
+
+<script src="@Url.To($"/js{version.Major}{version.Minor}{version.Build}")"></script>
+</body>
+</html>
