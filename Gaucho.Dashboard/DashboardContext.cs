@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Gaucho.Server.Monitoring;
 using Microsoft.AspNetCore.Http;
 
 namespace Gaucho.Dashboard
 {
     public class DashboardContext
     {
-        public DashboardContext(HttpContext httpContext)
+        public DashboardContext(HttpContext httpContext, IServerMonitor monitor, DashboardOptions options)
         {
             if (httpContext == null)
             {
@@ -16,6 +17,9 @@ namespace Gaucho.Dashboard
             HttpContext = httpContext;
             Request = new DashboardRequest(httpContext);
             Response = new DashboardResponse(httpContext);
+
+            ServerMonitor = monitor;
+            Options = options;
 
             //var antiforgery = HttpContext.RequestServices.GetService<IAntiforgery>();
 
@@ -29,6 +33,10 @@ namespace Gaucho.Dashboard
         }
 
         public HttpContext HttpContext { get; }
+
+        public IServerMonitor ServerMonitor { get; }
+
+        public DashboardOptions Options { get; }
 
         //public override IBackgroundJobClient GetBackgroundJobClient()
         //{

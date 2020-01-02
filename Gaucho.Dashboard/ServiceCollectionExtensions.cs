@@ -8,7 +8,7 @@ namespace Gaucho.Dashboard
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddGaucho(this IServiceCollection services)
+        public static IServiceCollection AddGaucho(this IServiceCollection services, IProcessingServer server)
         {
             if (services == null)
             {
@@ -19,6 +19,7 @@ namespace Gaucho.Dashboard
 
             //services.TryAddSingletonChecked(_ => JobStorage.Current);
             //services.TryAddSingletonChecked(_ => JobActivator.Current);
+            services.TryAddSingletonChecked(_ => server.GetServerMornitor());
             services.TryAddSingletonChecked(_ => DashboardRoutes.Routes);
             //services.TryAddSingletonChecked<IJobFilterProvider>(_ => JobFilterProviders.Providers);
 
@@ -64,7 +65,10 @@ namespace Gaucho.Dashboard
         {
             serviceCollection.TryAddSingleton<T>(serviceProvider =>
             {
-                if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
+                if (serviceProvider == null)
+                {
+                    throw new ArgumentNullException(nameof(serviceProvider));
+                }
 
                 // ensure the configuration was performed
                 //serviceProvider.GetRequiredService<IGlobalConfiguration>();

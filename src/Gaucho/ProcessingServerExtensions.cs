@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Gaucho.Server.Monitoring;
 
 namespace Gaucho
 {
@@ -13,6 +14,14 @@ namespace Gaucho
         {
             var context = new ServerRegistrationContext(pipelineId, server);
             setup(context);
+        }
+
+        public static IServerMonitor GetServerMornitor(this IProcessingServer server)
+        {
+            return new ServerMonitor(server)
+            {
+
+            };
         }
     }
 }

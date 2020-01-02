@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Gaucho.Server.Monitoring;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,8 +13,10 @@ namespace Gaucho.Dashboard
     {
         private readonly RequestDelegate _next;
         private readonly RouteCollection _routes;
+        private readonly IServerMonitor _monitor;
+        private readonly DashboardOptions _options;
 
-        public DashboardMiddleware(RequestDelegate next, RouteCollection routes)
+        public DashboardMiddleware(RequestDelegate next, RouteCollection routes, IServerMonitor monitor, DashboardOptions options)
         {
             if (next == null)
             {
@@ -25,13 +28,25 @@ namespace Gaucho.Dashboard
                 throw new ArgumentNullException(nameof(routes));
             }
 
+            if (monitor == null)
+            {
+                throw new ArgumentNullException(nameof(monitor));
+            }
+
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             _next = next;
             _routes = routes;
+            _monitor = monitor;
+            _options = options;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
-            var context = new DashboardContext(httpContext);
+            var context = new DashboardContext(httpContext, _monitor, _options);
             var findResult = _routes.FindDispatcher(httpContext.Request.Path.Value);
 
             if (findResult == null)

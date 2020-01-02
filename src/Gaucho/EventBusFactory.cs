@@ -5,6 +5,8 @@ namespace Gaucho
 {
     public interface IEventBusFactory
     {
+        IEnumerable<string> Pipelines { get; }
+
         void Register(string pipelineId, Func<IEventPipeline> factory);
 
         void Register(string pipelineId, IEventBus eventBus);
@@ -22,6 +24,8 @@ namespace Gaucho
             _pipelineRegistrations = new Dictionary<string, IPipelineSetup>();
             _activeEventBus = new Dictionary<string, IEventBus>();
         }
+
+        public IEnumerable<string> Pipelines => _pipelineRegistrations.Keys;
 
         public void Register(string pipelineId, Func<IEventPipeline> factory)
         {

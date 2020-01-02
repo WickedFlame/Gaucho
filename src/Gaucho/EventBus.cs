@@ -11,7 +11,9 @@ namespace Gaucho
     {
         string PipelineId { get; set; }
 
-        IPipelineSetup PipelineSetup { get; }
+        int ThreadCount { get; }
+
+        int QueueSize { get; }
 
         void SetPipeline(IPipelineSetup factory);
 
@@ -54,8 +56,10 @@ namespace Gaucho
 
         public string PipelineId { get; set; }
 
-        public IPipelineSetup PipelineSetup => _pipelineFactory;
+        public int ThreadCount => _threads.Count;
 
+        public int QueueSize => _queue.Count;
+        
         public void WaitAll()
         {
             var tasks = _threads.Select(t => t.Task)
@@ -247,71 +251,6 @@ namespace Gaucho
                     }
                 }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
-        }
-    }
-
-    public class SimpleEventBus : IEventBus
-    {
-        private readonly EventQueue _queue;
-        private readonly ILogger _logger;
-        private IPipelineSetup _pipelineFactory;
-        private IEventPipeline _pipeline;
-
-        public SimpleEventBus(IPipelineSetup pipelineFactory)
-            : this()
-        {
-            _pipelineFactory = pipelineFactory;
-        }
-
-        public SimpleEventBus()
-        {
-            _queue = new EventQueue();
-
-            _logger = LoggerConfiguration.Setup();
-        }
-
-        public string PipelineId { get; set; }
-
-        public IPipelineSetup PipelineSetup => _pipelineFactory;
-
-        public void SetPipeline(IPipelineSetup factory)
-        {
-            _pipelineFactory = factory;
-        }
-
-        public void Publish(Event @event)
-        {
-            _queue.Enqueue(@event);
-            Process();
-        }
-
-        public void Process()
-        {
-            var pipeline = GetPipeline();
-            if (pipeline == null)
-            {
-                _logger.Write($"Pipeline with the Id {PipelineId} does not exist. Event could not be sent to any Pipeline.", Category.Log, LogLevel.Error, "SimpleEventBus");
-                return;
-            }
-
-            while (_queue.TryDequeue(out var @event))
-            {
-                pipeline.Run(@event);
-            }
-        }
-
-        private IEventPipeline GetPipeline()
-        {
-            if (_pipeline == null)
-            {
-                _pipeline = _pipelineFactory.Setup();
-            }
-
-            return _pipeline;
-        }
-
-        public void Dispose()
-        {
         }
     }
 }

@@ -18,8 +18,20 @@
     <link rel="stylesheet" href="@Url.To($"/css{version.Major}{version.Minor}{version.Build}")">
 </head>
 <body>
-<div class="container" style="margin-bottom: 20px;">
-    @RenderBody()
+    <div class="header">
+        <div></div>
+        <div class="container">
+            <h1>@Title</h1>
+        </div>
+        <div></div>
+    </div>
+
+<div class="main-wrapper">
+    <div></div>
+    <div class="container" style="margin-bottom: 20px;">
+        @RenderBody()
+    </div>
+    <div></div>
 </div>
 
 <script src="@Url.To($"/js{version.Major}{version.Minor}{version.Build}")"></script>

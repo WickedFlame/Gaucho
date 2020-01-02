@@ -13,7 +13,7 @@ namespace Gaucho.Dashboard.Pages
 {
     using System;
     
-    #line 3 "..\..\Pages\HomePage.cshtml"
+    #line 3 "..\..\Pages\EventBusPartial.cshtml"
     using System.Collections.Generic;
     
     #line default
@@ -21,20 +21,20 @@ namespace Gaucho.Dashboard.Pages
     using System.Linq;
     using System.Text;
     
-    #line 2 "..\..\Pages\HomePage.cshtml"
+    #line 2 "..\..\Pages\EventBusPartial.cshtml"
     using Gaucho.Dashboard;
     
     #line default
     #line hidden
     
-    #line 4 "..\..\Pages\HomePage.cshtml"
+    #line 4 "..\..\Pages\EventBusPartial.cshtml"
     using Gaucho.Dashboard.Pages;
     
     #line default
     #line hidden
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
-    internal partial class HomePage : RazorPage
+    public partial class EventBusPartial : RazorPage
     {
 #line hidden
 
@@ -48,31 +48,33 @@ WriteLiteral("\r\n");
 
 
 
+WriteLiteral("\r\n<div>\r\n");
+
 
             
-            #line 6 "..\..\Pages\HomePage.cshtml"
-  
-    Layout = new LayoutPage("Dashboard");
-
+            #line 8 "..\..\Pages\EventBusPartial.cshtml"
+     foreach (var pipeline in ServerMonitor.GetPipelines())
+    {
+        
+            
+            #line default
+            #line hidden
+            
+            #line 10 "..\..\Pages\EventBusPartial.cshtml"
+   Write(Html.RenderPartial(new PipelinePartial(pipeline)));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n");
-
-
-
-WriteLiteral("\r\n<div>\r\n    ");
-
-
             
-            #line 12 "..\..\Pages\HomePage.cshtml"
-Write(Html.RenderPartial(new EventBusPartial()));
+            #line 10 "..\..\Pages\EventBusPartial.cshtml"
+                                                          
+    }
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n</div>");
+WriteLiteral("</div>");
 
 
         }

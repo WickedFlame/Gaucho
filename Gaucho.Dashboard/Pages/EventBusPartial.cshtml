@@ -1,0 +1,12 @@
+﻿@* Generator: Template TypeVisibility: Public GeneratePrettyNames: True *@
+@using Gaucho.Dashboard
+@using System.Collections.Generic
+@using Gaucho.Dashboard.Pages
+@inherits RazorPage
+
+<div>
+    @foreach (var pipeline in ServerMonitor.GetPipelines())
+    {
+        @Html.RenderPartial(new PipelinePartial(pipeline))
+    }
+</div>

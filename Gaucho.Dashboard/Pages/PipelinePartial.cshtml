@@ -1,0 +1,31 @@
+﻿@* Generator: Template TypeVisibility: Public GeneratePrettyNames: True *@
+@using Gaucho.Dashboard
+@using System.Collections.Generic
+@using Gaucho.Dashboard.Pages
+@inherits RazorPage
+
+<div class="pipeline-item">
+    <div class="pipeline-item-container">
+        <div class="pipeline-item-header">
+            <h3>@Pipeline.Name</h3>
+        </div>
+        <div class="pipeline-item-content">
+            <div>
+                <div class="label">Threads</div>
+                <div>@Pipeline.Threads</div>
+            </div>
+            <div>
+                <div class="label">Events in Queue</div>
+                <div>@Pipeline.QueueCount</div>
+            </div>
+            <div>
+                <div class="label">Processed Events</div>
+                <div>@Pipeline.ProcessedCount</div>
+            </div>
+            <div>
+                <div class="label">Handlers</div>
+                <div>@Pipeline.HandlerCount</div>
+            </div>
+        </div>
+    </div>
+</div> 

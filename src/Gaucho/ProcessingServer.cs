@@ -1,11 +1,13 @@
 ﻿using System;
-using Gaucho.Configuration;
 using Gaucho.Diagnostics;
+using Gaucho.Server.Monitoring;
 
 namespace Gaucho
 {
     public interface IProcessingServer
     {
+        IEventBusFactory EventBusFactory { get; }
+
         void Register(string pipelineId, Func<EventPipeline> factory);
 
         void Register(string pipelineId, IEventBus eventBus);
@@ -21,6 +23,8 @@ namespace Gaucho
         /// </summary>
         /// <param name="pipelineId">The Pipeline to wait for</param>
         void WaitAll(string pipelineId);
+
+        PipelineMonitor Monitor(string pipelineId);
     }
 
     public class ProcessingServer : IProcessingServer, IDisposable
@@ -111,6 +115,13 @@ namespace Gaucho
             }
 
             eventBus.WaitAll();
+        }
+
+        public PipelineMonitor Monitor(string pipelineId)
+        {
+            var handlers = 0;
+            var eventBus = _pipelineFactory.GetEventBus(pipelineId);
+            return new PipelineMonitor(pipelineId, eventBus.ThreadCount, eventBus.QueueSize, handlers);
         }
 
         public void Dispose()

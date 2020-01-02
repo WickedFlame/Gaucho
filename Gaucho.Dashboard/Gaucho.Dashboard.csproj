@@ -23,6 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\src\Gaucho\Gaucho.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Pages\EventBusPartial.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EventBusPartial.cshtml</DependentUpon>
+    </Compile>
     <Compile Update="Pages\HomePage.generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -36,9 +45,18 @@
     <Compile Update="Pages\LayoutPage.cs">
       <DependentUpon>LayoutPage.cshtml</DependentUpon>
     </Compile>
+    <Compile Update="Pages\PipelinePartial.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PipelinePartial.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Pages\EventBusPartial.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>EventBusPartial.generated.cs</LastGenOutput>
+    </None>
     <None Update="Pages\HomePage.cshtml">
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>HomePage.generated.cs</LastGenOutput>
@@ -46,6 +64,10 @@
     <None Update="Pages\LayoutPage.cshtml">
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>LayoutPage.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Pages\PipelinePartial.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>PipelinePartial.generated.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

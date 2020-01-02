@@ -79,21 +79,34 @@ WriteLiteral("    <link rel=\"stylesheet\" href=\"");
             
             #line default
             #line hidden
-WriteLiteral("\">\r\n</head>\r\n<body>\r\n<div class=\"container\" style=\"margin-bottom: 20px;\">\r\n    ");
+WriteLiteral("\">\r\n</head>\r\n<body>\r\n    <div class=\"header\">\r\n        <div></div>\r\n        <div " +
+"class=\"container\">\r\n            <h1>");
 
 
             
-            #line 22 "..\..\Pages\LayoutPage.cshtml"
-Write(RenderBody());
+            #line 24 "..\..\Pages\LayoutPage.cshtml"
+           Write(Title);
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n</div>\r\n\r\n<script src=\"");
+WriteLiteral("</h1>\r\n        </div>\r\n        <div></div>\r\n    </div>\r\n\r\n<div class=\"main-wrappe" +
+"r\">\r\n    <div></div>\r\n    <div class=\"container\" style=\"margin-bottom: 20px;\">\r\n" +
+"        ");
 
 
             
-            #line 25 "..\..\Pages\LayoutPage.cshtml"
+            #line 32 "..\..\Pages\LayoutPage.cshtml"
+   Write(RenderBody());
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n    </div>\r\n    <div></div>\r\n</div>\r\n\r\n<script src=\"");
+
+
+            
+            #line 37 "..\..\Pages\LayoutPage.cshtml"
         Write(Url.To($"/js{version.Major}{version.Minor}{version.Build}"));
 
             

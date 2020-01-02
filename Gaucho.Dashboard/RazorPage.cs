@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text;
+using Gaucho.Server.Monitoring;
 
 namespace Gaucho.Dashboard
 {
@@ -7,6 +8,13 @@ namespace Gaucho.Dashboard
     {
         private readonly StringBuilder _content = new StringBuilder();
         private string _body;
+
+        protected RazorPage()
+        {
+            Html = new HtmlHelper(this);
+        }
+
+        public HtmlHelper Html { get; set; }
 
         public RazorPage Layout { get; protected set; }
 
@@ -18,6 +26,10 @@ namespace Gaucho.Dashboard
 
         public DashboardRequest Request { get; set; }
 
+        public IServerMonitor ServerMonitor { get; private set; }
+
+        public DashboardOptions DashboardOptions { get; private set; }
+
         /// <exclude />
         public void Assign(RazorPage parentPage)
         {
@@ -25,6 +37,8 @@ namespace Gaucho.Dashboard
             Request = parentPage.Request;
             Response = parentPage.Response;
             //AppPath = parentPage.AppPath;
+            ServerMonitor = parentPage.ServerMonitor;
+            DashboardOptions = parentPage.DashboardOptions;
             Url = parentPage.Url;
 
             //GenerationTime = parentPage.GenerationTime;
@@ -37,9 +51,9 @@ namespace Gaucho.Dashboard
             Request = context.Request;
             Response = context.Response;
 
-            //Storage = context.Storage;
             //AppPath = context.Options.AppPath;
-            //DashboardOptions = context.Options;
+            ServerMonitor = context.ServerMonitor;
+            DashboardOptions = context.Options;
             Url = new UrlHelper(context);
 
             //_statisticsLazy = new Lazy<StatisticsDto>(() =>
