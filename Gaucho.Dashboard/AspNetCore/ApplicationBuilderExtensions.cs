@@ -9,7 +9,7 @@ namespace Gaucho.Dashboard
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseHangfireDashboard(this IApplicationBuilder app, string pathMatch = "/gaucho")
+        public static IApplicationBuilder UseGauchoDashboard(this IApplicationBuilder app, string pathMatch = "/gaucho")
         {
             if (app == null)
             {
@@ -39,7 +39,7 @@ namespace Gaucho.Dashboard
             //var configuration = app.ApplicationServices.GetService<IGlobalConfiguration>();
             //if (configuration == null)
             //{
-            //    throw new InvalidOperationException("Unable to find the required services. Please add all the required services by calling 'IServiceCollection.AddHangfire' inside the call to 'ConfigureServices(...)' in the application startup code.");
+            //    throw new InvalidOperationException("Unable to find the required services. Please add all the required services by calling 'IServiceCollection.AddGaucho' inside the call to 'ConfigureServices(...)' in the application startup code.");
             //}
         }
     }

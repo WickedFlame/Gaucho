@@ -8,7 +8,7 @@ namespace Gaucho.Dashboard
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddHangfire(this IServiceCollection services)
+        public static IServiceCollection AddGaucho(this IServiceCollection services)
         {
             if (services == null)
             {

@@ -34,7 +34,7 @@ namespace Gaucho.Server.Test
 
             services.AddMvc();
 
-            services.AddHangfire();
+            services.AddGaucho();
 
             services.AddSwaggerGen(c =>
             {
@@ -72,7 +72,7 @@ namespace Gaucho.Server.Test
                 p.BuildPipeline(config);
             });
 
-            app.UseHangfireDashboard();
+            app.UseGauchoDashboard();
 
 
 
