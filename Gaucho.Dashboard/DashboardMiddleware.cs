@@ -8,12 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Gaucho.Dashboard
 {
-    public class AspNetCoreDashboardMiddleware
+    public class DashboardMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly RouteCollection _routes;
 
-        public AspNetCoreDashboardMiddleware(RequestDelegate next, RouteCollection routes)
+        public DashboardMiddleware(RequestDelegate next, RouteCollection routes)
         {
             if (next == null)
             {
@@ -31,7 +31,7 @@ namespace Gaucho.Dashboard
 
         public async Task Invoke(HttpContext httpContext)
         {
-            var context = new AspNetCoreDashboardContext(httpContext);
+            var context = new DashboardContext(httpContext);
             var findResult = _routes.FindDispatcher(httpContext.Request.Path.Value);
 
             if (findResult == null)

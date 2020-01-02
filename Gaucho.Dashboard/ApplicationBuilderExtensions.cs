@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,13 +21,9 @@ namespace Gaucho.Dashboard
 
             ThrowIfNotConfigured(app);
 
-            var services = app.ApplicationServices;
-
-            //storage = storage ?? services.GetRequiredService<JobStorage>();
-            //options = options ?? services.GetService<DashboardOptions>() ?? new DashboardOptions();
             var routes = app.ApplicationServices.GetRequiredService<RouteCollection>();
 
-            app.Map(new PathString(pathMatch), x => x.UseMiddleware<AspNetCoreDashboardMiddleware>(routes));
+            app.Map(new PathString(pathMatch), x => x.UseMiddleware<DashboardMiddleware>(routes));
 
             return app;
         }
