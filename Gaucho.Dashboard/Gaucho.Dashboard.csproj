@@ -50,6 +50,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>PipelinePartial.cshtml</DependentUpon>
     </Compile>
+    <Compile Update="Pages\PipelinePartial.cs">
+      <DependentUpon>PipelinePartial.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

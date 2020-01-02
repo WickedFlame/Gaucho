@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Gaucho.Server.Monitoring
 {
@@ -23,31 +21,7 @@ namespace Gaucho.Server.Monitoring
         {
             var pipelines = _server.EventBusFactory.Pipelines;
 
-            return pipelines.Select(p =>
-            {
-                return _server.Monitor(p);
-            });
+            return pipelines.Select(p => _server.Monitor(p));
         }
-    }
-
-    public class PipelineMonitor
-    {
-        public PipelineMonitor(string name, int threads, int queued, int handlerCount)
-        {
-            Name = name;
-            HandlerCount = handlerCount;
-            Threads = threads;
-            QueueCount = queued;
-        }
-
-        public string Name { get; }
-
-        public int HandlerCount { get; }
-
-        public int Threads { get; }
-
-        public int QueueCount { get; }
-
-        public int ProcessedCount { get; }
     }
 }
