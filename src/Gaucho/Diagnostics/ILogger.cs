@@ -3,6 +3,6 @@ namespace Gaucho.Diagnostics
 {
     public interface ILogger
     {
-        void Write(string message, Category category, LogLevel level = LogLevel.Info, string source = null);
+        void Write<T>(T @event, Category category) where T : ILogEvent;
     }
 }

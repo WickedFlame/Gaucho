@@ -2,13 +2,21 @@
 
 namespace Gaucho.Server.Test
 {
-    public class ConsoleLogWriter : ILogWriter
+    public class ConsoleLogWriter : ILogWriter<LogEvent>
     {
         public Category Category => Category.Log;
 
-        public void Write(string message, LogLevel level, string source)
+        public void Write(ILogEvent @event)
         {
-            System.Console.WriteLine($"[{source}] [{level}] {message}");
+            if (@event is LogEvent e)
+            {
+                Write(e);
+            }
+        }
+
+        public void Write(LogEvent @event)
+        {
+            System.Console.WriteLine($"[{@event.Source}] [{@event.Level}] {@event.Message}");
         }
     }
 }

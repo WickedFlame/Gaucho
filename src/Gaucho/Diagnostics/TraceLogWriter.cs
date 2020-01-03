@@ -1,13 +1,21 @@
 ﻿
 namespace Gaucho.Diagnostics
 {
-    public class TraceLogWriter : ILogWriter
+    public class TraceLogWriter : ILogWriter<LogEvent>
     {
         public Category Category => Category.Log;
 
-        public void Write(string message, LogLevel level, string source)
+        public void Write(ILogEvent @event)
         {
-            System.Diagnostics.Trace.WriteLine($"[{source}] [{level}] {message}");
+            if (@event is LogEvent e)
+            {
+                Write(e);
+            }
+        }
+
+        public void Write(LogEvent @event)
+        {
+            System.Diagnostics.Trace.WriteLine($"[{@event.Source}] [{@event.Level}] {@event.Message}");
         }
     }
 }

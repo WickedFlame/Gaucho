@@ -6,6 +6,7 @@ namespace Gaucho.Diagnostics
 {
     public enum Category
     {
-        Log
+        Log,
+        EventStatistic
     }
 }

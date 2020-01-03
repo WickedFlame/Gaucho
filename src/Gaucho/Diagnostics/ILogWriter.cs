@@ -5,6 +5,11 @@ namespace Gaucho.Diagnostics
     {
         Category Category { get; }
 
-        void Write(string message, LogLevel level, string source = null);
+        void Write(ILogEvent @event);
+    }
+
+    public interface ILogWriter<T> : ILogWriter where T : ILogEvent
+    {
+        void Write(T @event);
     }
 }

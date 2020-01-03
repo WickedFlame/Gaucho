@@ -36,9 +36,9 @@ namespace Gaucho
 
         private readonly List<WorkerThread> _threads = new List<WorkerThread>();
 
-        public EventBus(Func<IEventPipeline> factory):this(new PipelineSetup(factory))
+        public EventBus(Func<IEventPipeline> factory)
+            : this(new PipelineSetup(factory))
         {
-
         }
 
         public EventBus(IPipelineSetup pipelineFactory)
@@ -50,7 +50,10 @@ namespace Gaucho
         public EventBus()
         {
             _queue = new EventQueue();
-            _logger = LoggerConfiguration.Setup();
+            _logger = LoggerConfiguration.Setup
+            (
+                s => s.AddWriter(new EventStatisticWriter())
+            );
             SetupWorkers(1);
         }
 
@@ -104,6 +107,7 @@ namespace Gaucho
             while (_queue.TryDequeue(out var @event))
             {
                 pipeline.Run(@event);
+                _logger.Write(@event.Id, EventMetric.ProcessedEvent);
             }
 
             RemoveEndedWorkers();
