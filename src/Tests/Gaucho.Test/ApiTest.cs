@@ -217,36 +217,6 @@ namespace Gaucho.Test
         }
 
         [Test]
-        public void StaticServer_SamePipelineAllEvents_Sync()
-        {
-            var pipelineId = Guid.NewGuid().ToString();
-
-            var cnt = 0;
-
-            ProcessingServer.Server.SetupPipeline(pipelineId, s =>
-            {
-                s.Register(() =>
-                {
-                    var pipeline = new EventPipeline();
-                    pipeline.AddHandler(new ConsoleOutputHandler());
-                    cnt = cnt + 1;
-
-                    return pipeline;
-                });
-
-                s.Register(new SimpleEventBus());
-                s.Register(new CustomInputHandler());
-            });
-
-
-            var client = new EventDispatcher();
-            client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent1" });
-            client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent2" });
-
-            Assert.That(cnt == 1);
-        }
-
-        [Test]
         public void StaticServer_WaitAll()
         {
             var pipelineId = Guid.NewGuid().ToString();
