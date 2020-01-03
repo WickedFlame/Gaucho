@@ -23,5 +23,11 @@ namespace Gaucho
 
             };
         }
+
+        public static PipelineMonitor Monitor(this IProcessingServer server, string pipelineId)
+        {
+            var eventBus = server.EventBusFactory.GetEventBus(pipelineId);
+            return new PipelineMonitor(pipelineId, eventBus);
+        }
     }
 }

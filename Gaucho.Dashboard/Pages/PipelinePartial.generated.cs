@@ -76,7 +76,7 @@ WriteLiteral("</div>\r\n            </div>\r\n            <div>\r\n             
 
             
             #line 19 "..\..\Pages\PipelinePartial.cshtml"
-                Write(Pipeline.QueueCount);
+                Write(Pipeline.QueueSize);
 
             
             #line default

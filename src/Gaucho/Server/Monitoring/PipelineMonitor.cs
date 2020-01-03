@@ -3,12 +3,12 @@ namespace Gaucho.Server.Monitoring
 {
     public class PipelineMonitor
     {
-        public PipelineMonitor(string name, int threads, int queued, int handlerCount)
+        public PipelineMonitor(string name, IEventBus eventBus)
         {
             Name = name;
-            HandlerCount = handlerCount;
-            Threads = threads;
-            QueueCount = queued;
+            HandlerCount = 0;
+            Threads = eventBus.ThreadCount;
+            QueueSize = eventBus.QueueSize;
         }
 
         public string Name { get; }
@@ -17,7 +17,7 @@ namespace Gaucho.Server.Monitoring
 
         public int Threads { get; }
 
-        public int QueueCount { get; }
+        public int QueueSize { get; }
 
         public int ProcessedCount { get; }
     }

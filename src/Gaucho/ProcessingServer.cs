@@ -23,8 +23,6 @@ namespace Gaucho
         /// </summary>
         /// <param name="pipelineId">The Pipeline to wait for</param>
         void WaitAll(string pipelineId);
-
-        PipelineMonitor Monitor(string pipelineId);
     }
 
     public class ProcessingServer : IProcessingServer, IDisposable
@@ -43,7 +41,7 @@ namespace Gaucho
             }
         }
 
-        private readonly IEventBusFactory _pipelineFactory;
+        private readonly IEventBusFactory _eventBusFactory;
         private readonly InputHandlerCollection _inputHandlers;
 
         private readonly ILogger _logger;
@@ -55,24 +53,24 @@ namespace Gaucho
 
         public ProcessingServer(IEventBusFactory factory)
         {
-            _pipelineFactory = factory;
+            _eventBusFactory = factory;
 
             _inputHandlers = new InputHandlerCollection();
             _logger = LoggerConfiguration.Setup();
         }
 
-        public IEventBusFactory EventBusFactory => _pipelineFactory;
+        public IEventBusFactory EventBusFactory => _eventBusFactory;
 
-        public InputHandlerCollection InputHandlers => _inputHandlers;
+        //public InputHandlerCollection InputHandlers => _inputHandlers;
 
         public void Register(string pipelineId, Func<EventPipeline> factory)
         {
-            _pipelineFactory.Register(pipelineId, factory);
+            _eventBusFactory.Register(pipelineId, factory);
         }
 
         public void Register(string pipelineId, IEventBus eventBus)
         {
-            _pipelineFactory.Register(pipelineId, eventBus);
+            _eventBusFactory.Register(pipelineId, eventBus);
         }
 
         public void Register(string pipelineId, IInputHandler plugin)
@@ -92,7 +90,7 @@ namespace Gaucho
 
         public void Publish(Event @event)
         {
-            var pipeline = _pipelineFactory.GetEventBus(@event.PipelineId);
+            var pipeline = _eventBusFactory.GetEventBus(@event.PipelineId);
             if (pipeline == null)
             {
                 _logger.Write($"Pipeline with the Id {@event.PipelineId} does not exist. Event {@event.Id} could not be sent to any Pipeline.", Category.Log, LogLevel.Error, "EventBus");
@@ -108,20 +106,13 @@ namespace Gaucho
         /// <param name="pipelineId">The Pipeline to wait for</param>
         public void WaitAll(string pipelineId)
         {
-            var eventBus = _pipelineFactory.GetEventBus(pipelineId) as IAsyncEventBus;
+            var eventBus = _eventBusFactory.GetEventBus(pipelineId) as IAsyncEventBus;
             if (eventBus == null)
             {
                 return;
             }
 
             eventBus.WaitAll();
-        }
-
-        public PipelineMonitor Monitor(string pipelineId)
-        {
-            var handlers = 0;
-            var eventBus = _pipelineFactory.GetEventBus(pipelineId);
-            return new PipelineMonitor(pipelineId, eventBus.ThreadCount, eventBus.QueueSize, handlers);
         }
 
         public void Dispose()

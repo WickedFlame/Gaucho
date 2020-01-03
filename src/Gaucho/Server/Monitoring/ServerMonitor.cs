@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Gaucho.Server.Monitoring
@@ -23,5 +24,17 @@ namespace Gaucho.Server.Monitoring
 
             return pipelines.Select(p => _server.Monitor(p));
         }
+
+        public IEnumerable<Metric> GetMetrics(string pipelineId)
+        {
+            var eventBus = _server.EventBusFactory.GetEventBus(pipelineId);
+
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Metric
+    {
+
     }
 }
