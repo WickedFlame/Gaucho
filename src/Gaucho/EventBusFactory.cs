@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gaucho.Server.Monitoring;
 
 namespace Gaucho
 {
@@ -39,9 +40,13 @@ namespace Gaucho
                 throw new Exception($"Pipeline {pipelineId} is already running. The EventBus for the Pipeline {pipelineId} cannot be changed.");
             }
 
+            if (pipelineId != eventBus.PipelineId)
+            {
+                throw new Exception($"The EventBus with PipelineId {eventBus.PipelineId} cannot be registered to the pipeline {pipelineId}");
+            }
+
             var factory = _pipelineRegistrations[pipelineId];
             eventBus.SetPipeline(factory);
-            eventBus.PipelineId = pipelineId;
 
             _activeEventBus[pipelineId] = eventBus;
         }
@@ -51,10 +56,7 @@ namespace Gaucho
             if (!_activeEventBus.ContainsKey(pipelineId))
             {
                 var factory = _pipelineRegistrations[pipelineId];
-                var eventBus = new EventBus(factory)
-                {
-                    PipelineId = pipelineId
-                };
+                var eventBus = new EventBus(factory, pipelineId);
 
                 _activeEventBus[pipelineId] = eventBus;
             }

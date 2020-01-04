@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Gaucho.Dashboard.Monitoring;
 using Gaucho.Server.Monitoring;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;

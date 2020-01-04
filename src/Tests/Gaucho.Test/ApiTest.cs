@@ -26,7 +26,7 @@ namespace Gaucho.Test
                 pipeline.AddHandler(new ConsoleOutputHandler());
 
                 return pipeline;
-            });
+            }, pipelineId);
 
             var @event = new Event(pipelineId, new SingleNode("Testdata"));
 
@@ -67,7 +67,7 @@ namespace Gaucho.Test
 
                 return pipeline;
             });
-            factory.Register(pipelineId, new EventBus());
+            factory.Register(pipelineId, new EventBus(pipelineId));
 
             var server = new ProcessingServer(factory);
             server.Register(pipelineId, new LogInputHandler());
@@ -109,7 +109,7 @@ namespace Gaucho.Test
 
                 return pipeline;
             });
-            server.Register(pipelineId, new EventBus());
+            server.Register(pipelineId, new EventBus(pipelineId));
             server.Register(pipelineId, new LogInputHandler());
 
 

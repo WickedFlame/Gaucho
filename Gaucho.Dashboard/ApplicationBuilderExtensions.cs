@@ -1,4 +1,5 @@
 ﻿using System;
+using Gaucho.Dashboard.Monitoring;
 using Gaucho.Server.Monitoring;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

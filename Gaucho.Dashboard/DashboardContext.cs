@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Gaucho.Dashboard.Monitoring;
 using Gaucho.Server.Monitoring;
 using Microsoft.AspNetCore.Http;
 

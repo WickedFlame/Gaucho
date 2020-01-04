@@ -38,7 +38,7 @@ namespace Gaucho.Diagnostics
             }
         }
 
-        public static void Write(this ILogger logger, string message, EventMetric metric)
+        public static void Write(this ILogger logger, string message, StatisticType metric)
         {
             logger.Write(new StatisticEvent(message, metric), Category.EventStatistic);
         }

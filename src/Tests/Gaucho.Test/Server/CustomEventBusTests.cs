@@ -27,7 +27,7 @@ namespace Gaucho.Test.Server
                     return pipeline;
                 });
 
-                s.Register(new CustomEventBus());
+                s.Register(new CustomEventBus(pipelineId));
                 s.Register(new CustomInputHandler());
             });
 
@@ -46,8 +46,9 @@ namespace Gaucho.Test.Server
             private IPipelineSetup _pipelineFactory;
             private IEventPipeline _pipeline;
 
-            public CustomEventBus()
+            public CustomEventBus(string pipelineId)
             {
+                PipelineId = pipelineId;
                 _queue = new EventQueue();
 
                 _logger = LoggerConfiguration.Setup();

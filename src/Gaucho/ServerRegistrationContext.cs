@@ -20,6 +20,11 @@ namespace Gaucho
 
         public void Register(IEventBus eventBus)
         {
+            if (_pipelineId != eventBus.PipelineId)
+            {
+                throw new Exception($"The EventBus with PipelineId {eventBus.PipelineId} cannot be registered to the pipeline {_pipelineId}");
+            }
+
             _server.Register(_pipelineId, eventBus);
         }
 

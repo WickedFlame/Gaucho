@@ -29,13 +29,13 @@ namespace Gaucho.Diagnostics
 
     public class StatisticEvent : ILogEvent
     {
-        public StatisticEvent(string message, EventMetric metric)
+        public StatisticEvent(string message, StatisticType metric)
         {
             Message = message;
             Metric = metric;
         }
 
-        public EventMetric Metric { get; set; }
+        public StatisticType Metric { get; set; }
 
         public string Message { get; set; }
         

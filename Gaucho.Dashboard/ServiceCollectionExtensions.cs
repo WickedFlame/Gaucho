@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Gaucho.Dashboard.Monitoring;
+using Gaucho.Server.Monitoring;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -19,7 +21,7 @@ namespace Gaucho.Dashboard
 
             //services.TryAddSingletonChecked(_ => JobStorage.Current);
             //services.TryAddSingletonChecked(_ => JobActivator.Current);
-            services.TryAddSingletonChecked(_ => server.GetServerMornitor());
+            services.TryAddSingletonChecked<IServerMonitor>(_ => new ServerMonitor(server));
             services.TryAddSingletonChecked(_ => DashboardRoutes.Routes);
             //services.TryAddSingletonChecked<IJobFilterProvider>(_ => JobFilterProviders.Providers);
 

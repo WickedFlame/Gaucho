@@ -1,7 +1,7 @@
 ﻿
 namespace Gaucho.Diagnostics
 {
-    public enum EventMetric
+    public enum StatisticType
     {
         ProcessedEvent
     }

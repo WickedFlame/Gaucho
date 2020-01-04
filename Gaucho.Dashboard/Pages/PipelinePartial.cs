@@ -7,11 +7,11 @@ namespace Gaucho.Dashboard.Pages
 {
     public partial class PipelinePartial
     {
-        public PipelinePartial(PipelineMonitor pipeline)
+        public PipelinePartial(PipelineMetric pipeline)
         {
             Pipeline = pipeline;
         }
 
-        public PipelineMonitor Pipeline { get; set; }
+        public PipelineMetric Pipeline { get; set; }
     }
 }

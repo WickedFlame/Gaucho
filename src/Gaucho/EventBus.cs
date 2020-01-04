@@ -4,16 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gaucho.Diagnostics;
+using Gaucho.Server.Monitoring;
 
 namespace Gaucho
 {
     public interface IEventBus : IDisposable
     {
-        string PipelineId { get; set; }
-
-        int ThreadCount { get; }
-
-        int QueueSize { get; }
+        string PipelineId { get; }
 
         void SetPipeline(IPipelineSetup factory);
 
@@ -36,33 +33,35 @@ namespace Gaucho
 
         private readonly List<WorkerThread> _threads = new List<WorkerThread>();
 
-        public EventBus(Func<IEventPipeline> factory)
-            : this(new PipelineSetup(factory))
+        public EventBus(Func<IEventPipeline> factory, string pipelineId)
+            : this(new PipelineSetup(factory), pipelineId)
         {
         }
 
-        public EventBus(IPipelineSetup pipelineFactory)
-            : this()
+        public EventBus(IPipelineSetup pipelineFactory, string pipelineId)
+            : this(pipelineId)
         {
             _pipelineFactory = pipelineFactory;
         }
 
-        public EventBus()
+        public EventBus(string pipelineId)
         {
+            PipelineId = pipelineId;
+
+            var statistic = new StatisticsApi(pipelineId);
+            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Count of active Threads in the EventBus", () => _threads.Count));
+            statistic.AddMetricsCounter(new Metric(MetricType.QueueSize, "Count of Events in the Queue", () => _queue.Count));
+
             _queue = new EventQueue();
             _logger = LoggerConfiguration.Setup
             (
-                s => s.AddWriter(new EventStatisticWriter())
+                s => s.AddWriter(new EventStatisticWriter(statistic))
             );
             SetupWorkers(1);
         }
 
-        public string PipelineId { get; set; }
+        public string PipelineId { get; }
 
-        public int ThreadCount => _threads.Count;
-
-        public int QueueSize => _queue.Count;
-        
         public void WaitAll()
         {
             var tasks = _threads.Select(t => t.Task)
@@ -107,7 +106,7 @@ namespace Gaucho
             while (_queue.TryDequeue(out var @event))
             {
                 pipeline.Run(@event);
-                _logger.Write(@event.Id, EventMetric.ProcessedEvent);
+                _logger.Write(@event.Id, StatisticType.ProcessedEvent);
             }
 
             RemoveEndedWorkers();
