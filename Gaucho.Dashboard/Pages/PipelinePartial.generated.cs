@@ -67,27 +67,18 @@ WriteLiteral("</h3>\r\n        </div>\r\n        <div class=\"pipeline-item-cont
              foreach (var m in Pipeline.Metrics)
             {
                 var id = Pipeline.PipelineId + "-" + m.Key;
+                var labelId = id + "-label";
 
 
             
             #line default
             #line hidden
-WriteLiteral("                <div>\r\n                    <div class=\"label\">");
-
-
-            
-            #line 18 "..\..\Pages\PipelinePartial.cshtml"
-                                  Write(m.Title);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("</div>\r\n                    <div id=\"");
+WriteLiteral("                <div>\r\n                    <div class=\"label\" id=\"");
 
 
             
             #line 19 "..\..\Pages\PipelinePartial.cshtml"
-                        Write(id);
+                                      Write(labelId);
 
             
             #line default
@@ -97,6 +88,26 @@ WriteLiteral("\">");
 
             
             #line 19 "..\..\Pages\PipelinePartial.cshtml"
+                                                Write(m.Title);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</div>\r\n                    <div id=\"");
+
+
+            
+            #line 20 "..\..\Pages\PipelinePartial.cshtml"
+                        Write(id);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\">");
+
+
+            
+            #line 20 "..\..\Pages\PipelinePartial.cshtml"
                              Write(m.Value);
 
             
@@ -106,7 +117,7 @@ WriteLiteral("</div>\r\n                </div>\r\n");
 
 
             
-            #line 21 "..\..\Pages\PipelinePartial.cshtml"
+            #line 22 "..\..\Pages\PipelinePartial.cshtml"
             }
 
             

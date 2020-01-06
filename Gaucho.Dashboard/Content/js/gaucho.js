@@ -31,7 +31,7 @@
                     };
                     return new Promise(fn);
                 },
-                /*1000*/config.pollInterval).then(function () {
+                config.pollInterval).then(function () {
                 // Polling done, now do something else!
             }).catch(function () {
                 // Polling timed out, handle the error!
@@ -39,7 +39,7 @@
         };
 
         function poll(fn, interval) {
-            interval = interval || 100;
+            interval = interval || 1000;
 
             let checkCondition = function (resolve, reject) {
                 fn().then(function (result) {
@@ -55,6 +55,13 @@
                 let elem = document.getElementById(`${pipelineId}-${metric.key}`);
                 if (!elem) {
                     return;
+                }
+
+                if (elem.innerText === "") {
+                    let label = document.getElementById(`${pipelineId}-${metric.key}-label`);
+                    if (label) {
+                        label.innerText = metric.title;
+                    }
                 }
 
                 elem.innerText = metric.value;

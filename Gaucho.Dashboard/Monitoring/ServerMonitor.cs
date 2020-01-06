@@ -35,17 +35,24 @@ namespace Gaucho.Dashboard.Monitoring
 
         public PipelineMetric Monitor(string pipelineId)
         {
+            var defaultkeys = new List<MetricType> {MetricType.ThreadCount, MetricType.QueueSize, MetricType.ProcessedEvents};
+
             var statistics = new StatisticsApi(pipelineId);
-            
-            var metrics = new PipelineMetric(pipelineId)
+            var metrics = new PipelineMetric(pipelineId);
+
+            foreach (var key in defaultkeys)
             {
-                //ProcessedCount = (int)(statistics.GetMetricValue(MetricType.ProcessedEvents) ?? 0),
-                //Threads = (int)(statistics.GetMetricValue(MetricType.ThreadCount) ?? 0),
-                //QueueSize = (int)(statistics.GetMetricValue(MetricType.QueueSize) ?? 0)
-            };
+                var metric = statistics.FirstOrDefault(s => s.Key == key);
+                metrics.Add(key.ToString(), metric?.Title, metric?.Factory.Invoke());
+            }
 
             foreach (var metric in statistics)
             {
+                if (defaultkeys.Contains(metric.Key))
+                {
+                    continue;
+                }
+
                 metrics.Add(metric.Key.ToString(), metric.Title, metric.Factory.Invoke() ?? 0);
             }
 
