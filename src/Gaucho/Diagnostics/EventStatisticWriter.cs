@@ -11,7 +11,7 @@ namespace Gaucho.Diagnostics
 
         public EventStatisticWriter(StatisticsApi statistic)
         {
-            statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events count", () => _metrics[StatisticType.ProcessedEvent].Count));
+            statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events", () => _metrics[StatisticType.ProcessedEvent].Count));
         }
 
         public Category Category => Category.EventStatistic;

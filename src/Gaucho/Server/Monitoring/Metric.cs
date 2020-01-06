@@ -4,15 +4,15 @@ namespace Gaucho.Server.Monitoring
 {
     public class Metric : IMetric
     {
-        public Metric(MetricType type, string title, Func<object> func)
+        public Metric(MetricType key, string title, Func<object> func)
         {
-            Type = type;
+            Key = key;
             Title = title;
 
             Factory = func;
         }
 
-        public MetricType Type { get; }
+        public MetricType Key { get; }
 
         public string Title { get; }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using Gaucho.Diagnostics;
 
 namespace Gaucho.Server.Monitoring
 {
-    public class StatisticsApi
+    public class StatisticsApi : IEnumerable<IMetric>
     {
         private static readonly StatisticsCollection _statistics = new StatisticsCollection();
 
@@ -39,6 +40,16 @@ namespace Gaucho.Server.Monitoring
 
             return metric.Factory.Invoke();
         }
+
+        public IEnumerator<IMetric> GetEnumerator()
+        {
+            return _metrics.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 
     internal class StatisticsCollection
@@ -55,7 +66,7 @@ namespace Gaucho.Server.Monitoring
         public MetricCollection Get(string pipelineId) => _metrics[pipelineId];
     }
 
-    internal class MetricCollection
+    internal class MetricCollection : IEnumerable<IMetric>
     {
         private readonly List<IMetric> _metrics = new List<IMetric>();
 
@@ -66,7 +77,17 @@ namespace Gaucho.Server.Monitoring
 
         public IMetric Get(MetricType type)
         {
-            return _metrics.FirstOrDefault(m => m.Type == type);
+            return _metrics.FirstOrDefault(m => m.Key == type);
+        }
+
+        public IEnumerator<IMetric> GetEnumerator()
+        {
+            return _metrics.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

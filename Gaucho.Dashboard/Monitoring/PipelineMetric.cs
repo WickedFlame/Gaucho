@@ -1,21 +1,24 @@
 ﻿
-namespace Gaucho.Server.Monitoring
+using System.Collections.Generic;
+
+namespace Gaucho.Dashboard.Monitoring
 {
     public class PipelineMetric
     {
-        public PipelineMetric(string name)
+        private readonly List<DashboardMetric> _metrics = new List<DashboardMetric>();
+
+        public PipelineMetric(string pipelineId)
         {
-            Name = name;
+            PipelineId = pipelineId;
         }
 
-        public string Name { get; }
+        public string PipelineId { get; }
 
-        public int HandlerCount { get; set; }
+        public IEnumerable<DashboardMetric> Metrics => _metrics;
 
-        public int Threads { get; set; }
-
-        public int QueueSize { get; set; }
-
-        public int ProcessedCount { get; set; }
+        internal void Add(string key, string title, object value)
+        {
+            _metrics.Add(new DashboardMetric {Key = key,  Title = title, Value = value});
+        }
     }
 }

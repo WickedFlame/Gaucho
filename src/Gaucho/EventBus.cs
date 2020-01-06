@@ -49,8 +49,8 @@ namespace Gaucho
             PipelineId = pipelineId;
 
             var statistic = new StatisticsApi(pipelineId);
-            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Count of active Threads in the EventBus", () => _threads.Count));
-            statistic.AddMetricsCounter(new Metric(MetricType.QueueSize, "Count of Events in the Queue", () => _queue.Count));
+            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Threads", () => _threads.Count));
+            statistic.AddMetricsCounter(new Metric(MetricType.QueueSize, "Events in Queue", () => _queue.Count));
 
             _queue = new EventQueue();
             _logger = LoggerConfiguration.Setup

@@ -1,16 +1,8 @@
 ﻿(function (gaucho) {
-    //gaucho.config = {
-    //    //pollInterval: $("#hangfireConfig").data("pollinterval"),
-    //    //pollUrl: $("#hangfireConfig").data("pollurl"),
-    //    //baseUrl: window.location.pathname.substr(0, window.location.pathname.lastIndexOf('/')),
-    //    pollUrl: gauchoConfig.pollUrl,
-    //    locale: document.documentElement.lang
-    //};
-
     gaucho.Poller = (function(config) {
         function Poller(config) {
             poll(function () {
-                    var fn = function (resolve, reject) {
+                    let fn = function (resolve, reject) {
                         var url = config.pollUrl;
 
                         fetch(url,
@@ -26,7 +18,9 @@
                         }).then(function (response) {
 
                             // update elements here
-
+                            response.forEach(function(pipeline) {
+                                updateMetrics(pipeline.pipelineId, pipeline.metrics);
+                            });
                             console.log(`Poll job ${response} with state ${response.state}`);
 
                             resolve(false);
@@ -47,13 +41,24 @@
         function poll(fn, interval) {
             interval = interval || 100;
 
-            var checkCondition = function (resolve, reject) {
+            let checkCondition = function (resolve, reject) {
                 fn().then(function (result) {
                     setTimeout(checkCondition, interval, resolve, reject);
                 });
             };
 
             return new Promise(checkCondition);
+        }
+
+        function updateMetrics(pipelineId, metrics) {
+            metrics.forEach(function(metric) {
+                let elem = document.getElementById(`${pipelineId}-${metric.key}`);
+                if (!elem) {
+                    return;
+                }
+
+                elem.innerText = metric.value;
+            });
         }
         
         return Poller(config);

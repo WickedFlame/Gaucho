@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Gaucho.Server.Monitoring;
+﻿using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -16,20 +14,13 @@ namespace Gaucho.Dashboard.Dispatchers
 
             var monitor = context.ServerMonitor;
             var pipelines = monitor.GetPipelineMetrics();
-
-            var result = new Dictionary<string, PipelineMetric>();
-
-            foreach (var pipeline in pipelines)
-            {
-                result.Add(pipeline.Name, pipeline);
-            }
-
+            
             var settings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 Converters = new JsonConverter[] {new StringEnumConverter {CamelCaseText = true}}
             };
-            var serialized = JsonConvert.SerializeObject(result, settings);
+            var serialized = JsonConvert.SerializeObject(pipelines, settings);
 
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(serialized);

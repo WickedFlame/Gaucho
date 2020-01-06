@@ -7,25 +7,34 @@
 <div class="pipeline-item">
     <div class="pipeline-item-container">
         <div class="pipeline-item-header">
-            <h3>@Pipeline.Name</h3>
+            <h3>@Pipeline.PipelineId</h3>
         </div>
         <div class="pipeline-item-content">
-            <div>
-                <div class="label">Threads</div>
-                <div>@Pipeline.Threads</div>
-            </div>
-            <div>
-                <div class="label">Events in Queue</div>
-                <div>@Pipeline.QueueSize</div>
-            </div>
-            <div>
-                <div class="label">Processed Events</div>
-                <div>@Pipeline.ProcessedCount</div>
-            </div>
-            <div>
-                <div class="label">Handlers</div>
-                <div>@Pipeline.HandlerCount</div>
-            </div>
+            @foreach (var m in Pipeline.Metrics)
+            {
+                var id = Pipeline.PipelineId + "-" + m.Key;
+
+                <div>
+                    <div class="label">@m.Title</div>
+                    <div id="@id">@m.Value</div>
+                </div>
+            }
+            @*<div>
+            <div class="label">Threads</div>
+            <div>@Pipeline.Threads</div>
+        </div>
+        <div>
+            <div class="label">Events in Queue</div>
+            <div>@Pipeline.QueueSize</div>
+        </div>
+        <div>
+            <div class="label">Processed Events</div>
+            <div>@Pipeline.ProcessedCount</div>
+        </div>
+        <div>
+            <div class="label">Handlers</div>
+            <div>@Pipeline.HandlerCount</div>
+        </div>*@
         </div>
     </div>
 </div> 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Gaucho.Dashboard.Monitoring;
 using Gaucho.Server.Monitoring;
 
 namespace Gaucho.Dashboard.Pages

@@ -79,35 +79,46 @@ WriteLiteral("    <link rel=\"stylesheet\" href=\"");
             
             #line default
             #line hidden
-WriteLiteral("\">\r\n</head>\r\n<body>\r\n    <div class=\"header\">\r\n        <div></div>\r\n        <div " +
-"class=\"container\">\r\n            <h1>");
+WriteLiteral(@""">
+</head>
+<body>
+    <div class=""header"">
+        <div></div>
+        <div class=""container"">
+            <h1>Gaucho Dashboard</h1>
+        </div>
+        <div></div>
+    </div>
 
-
-            
-            #line 24 "..\..\Pages\LayoutPage.cshtml"
-           Write(Title);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("</h1>\r\n        </div>\r\n        <div></div>\r\n    </div>\r\n\r\n<div class=\"main-wrappe" +
-"r\">\r\n    <div></div>\r\n    <div class=\"container\" style=\"margin-bottom: 20px;\">\r\n" +
-"        ");
+<div class=""main-wrapper"">
+    <div></div>
+    <div class=""container"" style=""margin-bottom: 20px;"">
+        <h2>");
 
 
             
             #line 32 "..\..\Pages\LayoutPage.cshtml"
-   Write(RenderBody());
+       Write(Title);
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n    </div>\r\n    <div></div>\r\n</div>\r\n<script>\r\n    var gauchoConfig = {\r\n      " +
-"  pollUrl: \"");
+WriteLiteral("</h2>\r\n        <div>\r\n            ");
 
 
             
-            #line 38 "..\..\Pages\LayoutPage.cshtml"
+            #line 34 "..\..\Pages\LayoutPage.cshtml"
+       Write(RenderBody());
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n        </div>\r\n    </div>\r\n    <div></div>\r\n</div>\r\n<script>\r\n    var gauchoCo" +
+"nfig = {\r\n        pollUrl: \"");
+
+
+            
+            #line 41 "..\..\Pages\LayoutPage.cshtml"
               Write(Url.To("/metrics"));
 
             
@@ -117,7 +128,7 @@ WriteLiteral("\",\r\n        pollInterval: 2000\r\n    }\r\n</script>\r\n<script
 
 
             
-            #line 42 "..\..\Pages\LayoutPage.cshtml"
+            #line 45 "..\..\Pages\LayoutPage.cshtml"
         Write(Url.To($"/js{version.Major}{version.Minor}{version.Build}"));
 
             

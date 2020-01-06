@@ -54,56 +54,69 @@ WriteLiteral("\r\n<div class=\"pipeline-item\">\r\n    <div class=\"pipeline-ite
 
             
             #line 10 "..\..\Pages\PipelinePartial.cshtml"
-           Write(Pipeline.Name);
+           Write(Pipeline.PipelineId);
 
             
             #line default
             #line hidden
-WriteLiteral("</h3>\r\n        </div>\r\n        <div class=\"pipeline-item-content\">\r\n            <" +
-"div>\r\n                <div class=\"label\">Threads</div>\r\n                <div>");
+WriteLiteral("</h3>\r\n        </div>\r\n        <div class=\"pipeline-item-content\">\r\n");
 
 
             
-            #line 15 "..\..\Pages\PipelinePartial.cshtml"
-                Write(Pipeline.Threads);
+            #line 13 "..\..\Pages\PipelinePartial.cshtml"
+             foreach (var m in Pipeline.Metrics)
+            {
+                var id = Pipeline.PipelineId + "-" + m.Key;
+
 
             
             #line default
             #line hidden
-WriteLiteral("</div>\r\n            </div>\r\n            <div>\r\n                <div class=\"label\"" +
-">Events in Queue</div>\r\n                <div>");
+WriteLiteral("                <div>\r\n                    <div class=\"label\">");
+
+
+            
+            #line 18 "..\..\Pages\PipelinePartial.cshtml"
+                                  Write(m.Title);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</div>\r\n                    <div id=\"");
 
 
             
             #line 19 "..\..\Pages\PipelinePartial.cshtml"
-                Write(Pipeline.QueueSize);
+                        Write(id);
 
             
             #line default
             #line hidden
-WriteLiteral("</div>\r\n            </div>\r\n            <div>\r\n                <div class=\"label\"" +
-">Processed Events</div>\r\n                <div>");
+WriteLiteral("\">");
 
 
             
-            #line 23 "..\..\Pages\PipelinePartial.cshtml"
-                Write(Pipeline.ProcessedCount);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("</div>\r\n            </div>\r\n            <div>\r\n                <div class=\"label\"" +
-">Handlers</div>\r\n                <div>");
-
-
-            
-            #line 27 "..\..\Pages\PipelinePartial.cshtml"
-                Write(Pipeline.HandlerCount);
+            #line 19 "..\..\Pages\PipelinePartial.cshtml"
+                             Write(m.Value);
 
             
             #line default
             #line hidden
-WriteLiteral("</div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div> \r\n ");
+WriteLiteral("</div>\r\n                </div>\r\n");
+
+
+            
+            #line 21 "..\..\Pages\PipelinePartial.cshtml"
+            }
+
+            
+            #line default
+            #line hidden
+WriteLiteral("            ");
+
+
+
+WriteLiteral("\r\n        </div>\r\n    </div>\r\n</div> \r\n ");
 
 
         }

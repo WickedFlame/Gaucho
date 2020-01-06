@@ -4,7 +4,7 @@ namespace Gaucho.Server.Monitoring
 {
     public interface IMetric
     {
-        MetricType Type { get; }
+        MetricType Key { get; }
 
         string Title { get; }
 

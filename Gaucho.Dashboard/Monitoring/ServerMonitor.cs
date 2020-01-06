@@ -37,12 +37,19 @@ namespace Gaucho.Dashboard.Monitoring
         {
             var statistics = new StatisticsApi(pipelineId);
             
-            return new PipelineMetric(pipelineId)
+            var metrics = new PipelineMetric(pipelineId)
             {
-                ProcessedCount = (int)(statistics.GetMetricValue(MetricType.ProcessedEvents) ?? 0),
-                Threads = (int)(statistics.GetMetricValue(MetricType.ThreadCount) ?? 0),
-                QueueSize = (int)(statistics.GetMetricValue(MetricType.QueueSize) ?? 0)
+                //ProcessedCount = (int)(statistics.GetMetricValue(MetricType.ProcessedEvents) ?? 0),
+                //Threads = (int)(statistics.GetMetricValue(MetricType.ThreadCount) ?? 0),
+                //QueueSize = (int)(statistics.GetMetricValue(MetricType.QueueSize) ?? 0)
             };
+
+            foreach (var metric in statistics)
+            {
+                metrics.Add(metric.Key.ToString(), metric.Title, metric.Factory.Invoke() ?? 0);
+            }
+
+            return metrics;
         }
     }
 }
