@@ -18,6 +18,7 @@ namespace Gaucho.Dashboard
             //"d3.min.js",
             //"d3.layout.min.js",
             //"rickshaw.min.js",
+            "fetch.min.js",
             "gaucho.js"
         };
 
@@ -31,7 +32,8 @@ namespace Gaucho.Dashboard
         static DashboardRoutes()
         {
             Routes = new RouteCollection();
-            Routes.AddRazorPage("/", x => new HomePage());
+            Routes.AddRazorPage("/", x => new DashboardPage());
+            Routes.Add("/metrics", new MetricsDispatcher());
 
             Routes.Add("/js[0-9]+", new CombinedResourceDispatcher(
                 "application/javascript",

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Gaucho.Server.Monitoring;
 
@@ -6,7 +7,9 @@ namespace Gaucho.Dashboard.Monitoring
 {
     public interface IServerMonitor
     {
-        IEnumerable<PipelineMetric> GetPipelines();
+        IEnumerable<PipelineMetric> GetPipelineMetrics();
+        
+        IEnumerable<string> GetPipelines();
     }
 
     public class ServerMonitor : IServerMonitor
@@ -18,7 +21,12 @@ namespace Gaucho.Dashboard.Monitoring
             _server = server;
         }
 
-        public IEnumerable<PipelineMetric> GetPipelines()
+        public IEnumerable<string> GetPipelines()
+        {
+            return _server.EventBusFactory.Pipelines;
+        }
+
+        public IEnumerable<PipelineMetric> GetPipelineMetrics()
         {
             var pipelines = _server.EventBusFactory.Pipelines;
 

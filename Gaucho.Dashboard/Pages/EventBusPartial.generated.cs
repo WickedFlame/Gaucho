@@ -53,7 +53,7 @@ WriteLiteral("\r\n<div>\r\n");
 
             
             #line 8 "..\..\Pages\EventBusPartial.cshtml"
-     foreach (var pipeline in ServerMonitor.GetPipelines())
+     foreach (var pipeline in ServerMonitor.GetPipelineMetrics())
     {
         
             

@@ -1,1 +1,66 @@
-﻿
+﻿(function (gaucho) {
+    //gaucho.config = {
+    //    //pollInterval: $("#hangfireConfig").data("pollinterval"),
+    //    //pollUrl: $("#hangfireConfig").data("pollurl"),
+    //    //baseUrl: window.location.pathname.substr(0, window.location.pathname.lastIndexOf('/')),
+    //    pollUrl: gauchoConfig.pollUrl,
+    //    locale: document.documentElement.lang
+    //};
+
+    gaucho.Poller = (function(config) {
+        function Poller(config) {
+            poll(function () {
+                    var fn = function (resolve, reject) {
+                        var url = config.pollUrl;
+
+                        fetch(url,
+                            {
+                                method: "GET",
+                                headers: { 'content-type': 'application/json;  charset=utf-8' }
+                            }
+                        ).then(function (response) {
+                            if (!response.ok) {
+                                throw Error(response.statusText);
+                            }
+                            return response.json();
+                        }).then(function (response) {
+
+                            // update elements here
+
+                            console.log(`Poll job ${response} with state ${response.state}`);
+
+                            resolve(false);
+                        }).catch(function (error) {
+                            console.log(error);
+                            reject(error);
+                        });
+                    };
+                    return new Promise(fn);
+                },
+                /*1000*/config.pollInterval).then(function () {
+                // Polling done, now do something else!
+            }).catch(function () {
+                // Polling timed out, handle the error!
+            });
+        };
+
+        function poll(fn, interval) {
+            interval = interval || 100;
+
+            var checkCondition = function (resolve, reject) {
+                fn().then(function (result) {
+                    setTimeout(checkCondition, interval, resolve, reject);
+                });
+            };
+
+            return new Promise(checkCondition);
+        }
+        
+        return Poller(config);
+    });
+
+})(window.Gaucho = window.Gaucho || {});
+
+(function () {
+    Gaucho.page = new Gaucho.Poller(gauchoConfig);
+})();

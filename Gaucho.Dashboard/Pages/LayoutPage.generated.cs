@@ -102,11 +102,22 @@ WriteLiteral("</h1>\r\n        </div>\r\n        <div></div>\r\n    </div>\r\n\r
             
             #line default
             #line hidden
-WriteLiteral("\r\n    </div>\r\n    <div></div>\r\n</div>\r\n\r\n<script src=\"");
+WriteLiteral("\r\n    </div>\r\n    <div></div>\r\n</div>\r\n<script>\r\n    var gauchoConfig = {\r\n      " +
+"  pollUrl: \"");
 
 
             
-            #line 37 "..\..\Pages\LayoutPage.cshtml"
+            #line 38 "..\..\Pages\LayoutPage.cshtml"
+              Write(Url.To("/metrics"));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\",\r\n        pollInterval: 2000\r\n    }\r\n</script>\r\n<script src=\"");
+
+
+            
+            #line 42 "..\..\Pages\LayoutPage.cshtml"
         Write(Url.To($"/js{version.Major}{version.Minor}{version.Build}"));
 
             

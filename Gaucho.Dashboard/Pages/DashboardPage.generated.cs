@@ -13,7 +13,7 @@ namespace Gaucho.Dashboard.Pages
 {
     using System;
     
-    #line 3 "..\..\Pages\HomePage.cshtml"
+    #line 3 "..\..\Pages\DashboardPage.cshtml"
     using System.Collections.Generic;
     
     #line default
@@ -21,20 +21,20 @@ namespace Gaucho.Dashboard.Pages
     using System.Linq;
     using System.Text;
     
-    #line 2 "..\..\Pages\HomePage.cshtml"
+    #line 2 "..\..\Pages\DashboardPage.cshtml"
     using Gaucho.Dashboard;
     
     #line default
     #line hidden
     
-    #line 4 "..\..\Pages\HomePage.cshtml"
+    #line 4 "..\..\Pages\DashboardPage.cshtml"
     using Gaucho.Dashboard.Pages;
     
     #line default
     #line hidden
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
-    internal partial class HomePage : RazorPage
+    internal partial class DashboardPage : RazorPage
     {
 #line hidden
 
@@ -50,7 +50,7 @@ WriteLiteral("\r\n");
 
 
             
-            #line 6 "..\..\Pages\HomePage.cshtml"
+            #line 6 "..\..\Pages\DashboardPage.cshtml"
   
     Layout = new LayoutPage("Dashboard");
 
@@ -66,7 +66,7 @@ WriteLiteral("\r\n<div>\r\n    ");
 
 
             
-            #line 12 "..\..\Pages\HomePage.cshtml"
+            #line 12 "..\..\Pages\DashboardPage.cshtml"
 Write(Html.RenderPartial(new EventBusPartial()));
 
             

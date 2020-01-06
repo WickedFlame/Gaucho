@@ -33,7 +33,12 @@
     </div>
     <div></div>
 </div>
-
+<script>
+    var gauchoConfig = {
+        pollUrl: "@(Url.To("/metrics"))",
+        pollInterval: 2000
+    }
+</script>
 <script src="@Url.To($"/js{version.Major}{version.Minor}{version.Build}")"></script>
 </body>
 </html>
