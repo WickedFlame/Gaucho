@@ -85,7 +85,7 @@ WriteLiteral(@""">
     <div class=""header"">
         <div></div>
         <div class=""container"">
-            <h1>Gaucho Dashboard</h1>
+            <h1>Gaucho</h1>
         </div>
         <div></div>
     </div>

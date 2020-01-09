@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Server.Test", "src\Tests\Gaucho.Server.Test\Gaucho.Server.Test.csproj", "{ECE36AC8-C1D7-4154-BCFA-B06DD7F656C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaucho.Dashboard", "Gaucho.Dashboard\Gaucho.Dashboard.csproj", "{AD5D0494-70CE-43A6-B33B-3F8AB9657AB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaucho.Dashboard", "src\Gaucho.Dashboard\Gaucho.Dashboard.csproj", "{AD5D0494-70CE-43A6-B33B-3F8AB9657AB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
