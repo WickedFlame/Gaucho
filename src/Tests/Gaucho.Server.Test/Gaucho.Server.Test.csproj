@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Gaucho.Dashboard\Gaucho.Dashboard.csproj" />
+    <ProjectReference Include="..\..\Gaucho.Dashboard\Gaucho.Dashboard.csproj" />
     <ProjectReference Include="..\..\Gaucho\Gaucho.csproj" />
   </ItemGroup>
 

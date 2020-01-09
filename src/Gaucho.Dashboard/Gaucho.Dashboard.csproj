@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Gaucho\Gaucho.csproj" />
+    <ProjectReference Include="..\Gaucho\Gaucho.csproj" />
   </ItemGroup>
 
   <ItemGroup>
