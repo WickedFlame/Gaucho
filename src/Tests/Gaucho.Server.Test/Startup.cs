@@ -35,11 +35,11 @@ namespace Gaucho.Server.Test
             services.AddMvc();
 
             // register the default processingserver
-            services.AddGaucho(ProcessingServer.Server);
+            services.AddGauchoDashboard(ProcessingServer.Server);
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gaucho Test API", Version = "v1" });
             });
         }
 
@@ -83,7 +83,7 @@ namespace Gaucho.Server.Test
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gaucho Test API V1");
             });
 
             var loggerFactory = LoggerFactory.Create(builder =>

@@ -14,6 +14,7 @@
     <FileVersion>1.0.0.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Gaucho</Title>
+    <PackageProjectUrl>https://wickedflame.github.io/Gaucho/</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -10,7 +10,7 @@ namespace Gaucho.Dashboard
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddGaucho(this IServiceCollection services, IProcessingServer server)
+        public static IServiceCollection AddGauchoDashboard(this IServiceCollection services, IProcessingServer server)
         {
             if (services == null)
             {
