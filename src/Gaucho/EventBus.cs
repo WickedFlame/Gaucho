@@ -109,7 +109,7 @@ namespace Gaucho
                 _logger.Write(@event.Id, StatisticType.ProcessedEvent);
             }
 
-            RemoveEndedWorkers();
+            CleanupWorkers();
         }
 
         private void SetupWorkers(int threadCount)
@@ -152,7 +152,7 @@ namespace Gaucho
             }
         }
 
-        public void RemoveEndedWorkers()
+        public void CleanupWorkers()
         {
             lock (_syncRoot)
             {
@@ -228,6 +228,10 @@ namespace Gaucho
 
             public void Dispose()
             {
+                lock (_syncRoot)
+                {
+                    _isWorking = false;
+                }
             }
 
             public void Start()
