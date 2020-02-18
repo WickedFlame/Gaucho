@@ -1,5 +1,9 @@
-Gaucho
-===================
+---
+title: Gaucho
+layout: "default"
+nav_order: 1
+---
+# Gaucho
 
 A .NET Message Broker Middleware for handling, converting and delegating log messages
 
