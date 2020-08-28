@@ -20,7 +20,7 @@ namespace Gaucho.Test
 
         public void Handle(Event @event)
         {
-            var data = Converter.Convert(@event.Data as EventData);
+            var data = Converter.Convert(@event.Data);
             System.Diagnostics.Trace.WriteLine(data);
         }
     }

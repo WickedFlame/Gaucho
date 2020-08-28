@@ -76,7 +76,10 @@ namespace Gaucho.Dashboard
         protected void WriteLiteral(string textToAppend)
         {
             if (string.IsNullOrEmpty(textToAppend))
+            {
                 return;
+            }
+
             _content.Append(textToAppend);
         }
 
@@ -84,7 +87,10 @@ namespace Gaucho.Dashboard
         protected virtual void Write(object value)
         {
             if (value == null)
+            {
                 return;
+            }
+
             var html = value as NonEscapedString;
             WriteLiteral(html?.ToString() ?? Encode(value.ToString()));
         }

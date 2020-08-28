@@ -21,7 +21,9 @@ namespace Gaucho.Filters
             _destination = destination;
         }
 
-        public Property Filter(EventData data)
+        public FilterType FilterType => FilterType.Property;
+
+		public Property Filter(EventData data)
         {
             var value = data[_source];
             return new Property(_destination, value);

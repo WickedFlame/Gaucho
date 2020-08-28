@@ -14,7 +14,7 @@ namespace Gaucho.Server.Test.Handlers
 
         public void Handle(Event @event)
         {
-            var data = Converter.Convert(@event.Data as EventData);
+            var data = Converter.Convert(@event.Data);
             System.Console.WriteLine(data);
         }
     }

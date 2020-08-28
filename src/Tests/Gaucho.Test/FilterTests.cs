@@ -35,7 +35,96 @@ namespace Gaucho.Test
 
             Assert.That(handler.Log.First() == "[dst_lvl -> Info] [Message -> The message] ");
         }
-    }
+
+        [Test]
+        public void Gaucho_Filter_FromFilterFactory()
+        {
+	        var converter = new EventDataConverter();
+	        var filters = new List<string>
+	        {
+		        "Level -> dst_lvl",
+		        "Message"
+	        };
+
+	        foreach (var filter in filters)
+	        {
+		        converter.Add(FilterFactory.BuildFilter(filter));
+	        }
+
+	        var input = new LogMessage
+	        {
+		        Level = "Info",
+		        Message = "The message",
+		        Title = "title"
+	        };
+	        var factory = new EventDataFactory();
+	        var data = factory.BuildFrom(input);
+
+	        data = converter.Convert(data);
+
+	        Assert.AreEqual(data.ToString(), "{\r\n   dst_lvl => Info\r\n   Message => The message\r\n}");
+        }
+
+		[Test]
+        public void Gaucho_Filter_JsonFormatter()
+        {
+	        var converter = new EventDataConverter
+	        {
+		        new PropertyFilter("Level", "dst_lvl"),
+		        new PropertyFilter("Message"),
+				new JsonFilter(new List<PropertyFilter>
+				{
+					new PropertyFilter("dst_lvl"),
+					new PropertyFilter("Message", "msg")
+				})
+	        };
+
+	        var input = new LogMessage
+	        {
+		        Level = "Info",
+		        Message = "The message",
+		        Title = "title"
+	        };
+	        var factory = new EventDataFactory();
+	        var data = factory.BuildFrom(input);
+
+			data = converter.Convert(data);
+			var formatted = converter.Format(data);
+
+			Assert.AreEqual(formatted, "{\"dst_lvl\":\"Info\",\"msg\":\"The message\"}");
+		}
+
+        [Test]
+        public void Gaucho_Filter_JsonFormatter_FromFilterFactory()
+        {
+	        var converter = new EventDataConverter();
+	        var filters = new List<string>
+	        {
+		        "Level -> dst_lvl",
+		        "Message",
+		        "json <- [dst_lvl,Message -> msg]"
+	        };
+
+	        foreach (var filter in filters)
+	        {
+		        converter.Add(FilterFactory.BuildFilter(filter));
+	        }
+
+			var input = new LogMessage
+	        {
+		        Level = "Info",
+		        Message = "The message",
+		        Title = "title"
+	        };
+	        var factory = new EventDataFactory();
+	        var data = factory.BuildFrom(input);
+
+	        data = converter.Convert(data);
+	        var formatted = converter.Format(data);
+
+	        Assert.AreEqual(formatted, "{\"dst_lvl\":\"Info\",\"msg\":\"The message\"}");
+        }
+	}
 
     public class FilterOutputHandler : IOutputHandler
     {
@@ -53,7 +142,7 @@ namespace Gaucho.Test
         public void Handle(Event @event)
         {
             var sb = new StringBuilder();
-            var data = Converter.Convert(@event.Data as EventData);
+            var data = Converter.Convert(@event.Data);
             foreach (var item in data.Properties)
             {
                 sb.Append($"[{item.Key} -> {item.Value}] ");

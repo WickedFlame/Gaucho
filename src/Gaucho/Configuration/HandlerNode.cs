@@ -41,7 +41,7 @@ namespace Gaucho.Configuration
 
             foreach (var filterString in node.Filters)
             {
-                var filter = FilterFactory.CreateFilter(filterString);
+                var filter = FilterFactory.BuildFilter(filterString);
                 if (filter == null)
                 {
                     var logger = LoggerConfiguration.Setup();
