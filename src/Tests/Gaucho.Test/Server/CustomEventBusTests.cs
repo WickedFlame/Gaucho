@@ -43,7 +43,7 @@ namespace Gaucho.Test.Server
         {
             private readonly EventQueue _queue;
             private readonly ILogger _logger;
-            private IPipelineSetup _pipelineFactory;
+            private IPipelineFactory _pipelineFactory;
             private IEventPipeline _pipeline;
 
             public CustomEventBus(string pipelineId)
@@ -60,7 +60,7 @@ namespace Gaucho.Test.Server
 
             public int QueueSize => _queue.Count;
 
-            public void SetPipeline(IPipelineSetup factory)
+            public void SetPipeline(IPipelineFactory factory)
             {
                 _pipelineFactory = factory;
             }

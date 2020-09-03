@@ -2,16 +2,16 @@
 
 namespace Gaucho
 {
-    public interface IPipelineSetup
+    public interface IPipelineFactory
     {
         IEventPipeline Setup();
     }
 
-    public class PipelineSetup : IPipelineSetup
+    public class PipelineFactory : IPipelineFactory
     {
         private readonly Func<IEventPipeline> _factory;
 
-        public PipelineSetup(Func<IEventPipeline> factory)
+        public PipelineFactory(Func<IEventPipeline> factory)
         {
             _factory = factory;
         }

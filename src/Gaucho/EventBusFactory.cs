@@ -17,12 +17,12 @@ namespace Gaucho
 
     public class EventBusFactory : IEventBusFactory
     {
-        private readonly Dictionary<string, IPipelineSetup> _pipelineRegistrations;
+        private readonly Dictionary<string, IPipelineFactory> _pipelineRegistrations;
         private readonly Dictionary<string, IEventBus> _activeEventBus;
 
         public EventBusFactory()
         {
-            _pipelineRegistrations = new Dictionary<string, IPipelineSetup>();
+            _pipelineRegistrations = new Dictionary<string, IPipelineFactory>();
             _activeEventBus = new Dictionary<string, IEventBus>();
         }
 
@@ -30,7 +30,7 @@ namespace Gaucho
 
         public void Register(string pipelineId, Func<IEventPipeline> factory)
         {
-            _pipelineRegistrations[pipelineId] = new PipelineSetup(factory);
+            _pipelineRegistrations[pipelineId] = new PipelineFactory(factory);
         }
 
         public void Register(string pipelineId, IEventBus eventBus)

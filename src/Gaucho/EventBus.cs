@@ -12,7 +12,7 @@ namespace Gaucho
     {
         string PipelineId { get; }
 
-        void SetPipeline(IPipelineSetup factory);
+        void SetPipeline(IPipelineFactory factory);
 
         void Publish(Event @event);
     }
@@ -27,18 +27,18 @@ namespace Gaucho
         private readonly object _syncRoot = new object();
 
         private readonly EventQueue _queue;
-        private IPipelineSetup _pipelineFactory;
+        private IPipelineFactory _pipelineFactory;
         private readonly ILogger _logger;
         private bool _isDisposed;
 
         private readonly List<WorkerThread> _threads = new List<WorkerThread>();
 
         public EventBus(Func<IEventPipeline> factory, string pipelineId)
-            : this(new PipelineSetup(factory), pipelineId)
+            : this(new PipelineFactory(factory), pipelineId)
         {
         }
 
-        public EventBus(IPipelineSetup pipelineFactory, string pipelineId)
+        public EventBus(IPipelineFactory pipelineFactory, string pipelineId)
             : this(pipelineId)
         {
             _pipelineFactory = pipelineFactory;
@@ -74,7 +74,7 @@ namespace Gaucho
             }
         }
 
-        public void SetPipeline(IPipelineSetup factory)
+        public void SetPipeline(IPipelineFactory factory)
         {
             _pipelineFactory = factory;
         }
