@@ -31,7 +31,7 @@ namespace Gaucho.Configuration
 
     public static class HandlerNodeExtensions
     {
-        public static IEventDataConverter BuildEventData(this HandlerNode node)
+        public static IEventDataConverter BuildEventDataConverter(this HandlerNode node)
         {
             var converter = new EventDataConverter();
             if (node.Filters == null)
@@ -55,9 +55,9 @@ namespace Gaucho.Configuration
             return converter;
         }
 
-        public static ConfiguredArgumentsCollection BuildArguments(this HandlerNode node)
+        public static ConfiguredArguments BuildArguments(this HandlerNode node)
         {
-            var collection = new ConfiguredArgumentsCollection();
+            var collection = new ConfiguredArguments();
             if (node.Arguments == null)
             {
                 return collection;

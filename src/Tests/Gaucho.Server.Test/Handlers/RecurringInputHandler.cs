@@ -7,9 +7,9 @@ namespace Gaucho.Server.Test.Handlers
     {
         private IProcessingServer _server;
         private Broadcaster _broadcaster;
-        private ConfiguredArgumentsCollection _arguments;
+        private ConfiguredArguments _arguments;
 
-        public RecurringInputHandler(ConfiguredArgumentsCollection arguments)
+        public RecurringInputHandler(ConfiguredArguments arguments)
         {
             _arguments = arguments;
         }

@@ -40,8 +40,8 @@ namespace Gaucho.Server
 
         public T BuildHandler<T>(IActivationContext nodeCtx, HandlerNode node)
         {
-            nodeCtx.Register<IEventDataConverter>(() => node.BuildEventData());
-            nodeCtx.Register<ConfiguredArgumentsCollection>(() => node.BuildArguments());
+            nodeCtx.Register<IEventDataConverter>(() => node.BuildEventDataConverter());
+            nodeCtx.Register<ConfiguredArguments>(() => node.BuildArguments());
 
             var plugin = _pluginMgr.GetPlugin(typeof(T), node);
             var handler = nodeCtx.Resolve<T>(plugin.Type);

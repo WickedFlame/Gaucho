@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Gaucho
 {
-    public class ConfiguredArgumentsCollection
+    public class ConfiguredArguments
     {
         private readonly Dictionary<string, string> _parameters;
 
-        public ConfiguredArgumentsCollection()
+        public ConfiguredArguments()
         {
             _parameters = new Dictionary<string, string>();
         }
