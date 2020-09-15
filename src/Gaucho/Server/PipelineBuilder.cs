@@ -24,7 +24,7 @@ namespace Gaucho.Server
         {
             var rootCtx = _config.Resolve<IActivationContext>() ?? new ActivationContext();
 
-			_logger.Write(config, Category.Log, LogLevel.Debug, "PipelineBuilder");
+			_logger.Write($"Setup Pipeline:{config}", Category.Log, LogLevel.Debug, "PipelineBuilder");
 
 			server.SetupPipeline(config.Id, s =>
             {
