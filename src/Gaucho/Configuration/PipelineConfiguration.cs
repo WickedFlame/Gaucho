@@ -26,7 +26,10 @@ namespace Gaucho.Configuration
 			else
 			{
 				sb.AppendLine($"   name: {InputHandler.Name}");
-				sb.AppendLine($"   type: {InputHandler.Type.FullName}");
+				if (InputHandler.Type != null)
+				{
+					sb.AppendLine($"   type: {InputHandler.Type.FullName}");
+				}
 			}
 			if (InputHandler.Arguments != null)
 			{
@@ -48,7 +51,10 @@ namespace Gaucho.Configuration
 				else
 				{
 					sb.AppendLine($"   - name: {handler.Name}");
-					sb.AppendLine($"     type: {handler.Type.FullName}");
+					if (handler.Type != null)
+					{
+						sb.AppendLine($"     type: {handler.Type.FullName}");
+					}
 				}
 				if (handler.Arguments != null)
 				{
