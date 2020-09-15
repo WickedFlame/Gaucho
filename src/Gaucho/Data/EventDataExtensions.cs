@@ -39,5 +39,12 @@ namespace Gaucho
 
 			return null;
 		}
+
+		public static EventData Add(this EventData eventData, string key, object value)
+		{
+			eventData.Add(new Property(key, value));
+
+			return eventData;
+		}
 	}
 }

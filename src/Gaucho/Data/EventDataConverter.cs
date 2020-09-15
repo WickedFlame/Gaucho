@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Gaucho.Diagnostics;
 using Gaucho.Filters;
 
 namespace Gaucho
@@ -19,10 +20,12 @@ namespace Gaucho
     public class EventDataConverter : System.Collections.IEnumerable, IEventDataConverter
     {
         private readonly List<IFilter> _filters;
+        private readonly ILogger _logger;
 
         public EventDataConverter()
         {
-            _filters = new List<IFilter>();
+			_logger = LoggerConfiguration.Setup();
+			_filters = new List<IFilter>();
         }
 
         public IEnumerable<IFilter> Filters => _filters;
@@ -42,11 +45,13 @@ namespace Gaucho
 
             var result = new EventData();
 
-            foreach (var filter in filers)
+            foreach (var filter in filers.Where(f => f.FilterType == FilterType.Property))
             {
-                var property = filter.Filter(data);
-                result.Add(property.Key, property.Value);
+	            var property = filter.Filter(data);
+	            result.Add(property);
             }
+
+            _logger.Write(result.ToString(), Category.Log, LogLevel.Debug, "EventDataConverter");
 
             return result;
         }

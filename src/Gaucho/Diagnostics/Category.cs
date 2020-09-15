@@ -6,7 +6,14 @@ namespace Gaucho.Diagnostics
 {
     public enum Category
     {
-        Log,
+		/// <summary>
+		/// Log messages
+		/// </summary>
+		Log,
+
+		/// <summary>
+		/// Dashboard messages
+		/// </summary>
         EventStatistic
     }
 }

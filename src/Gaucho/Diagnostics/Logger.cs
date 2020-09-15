@@ -38,6 +38,12 @@ namespace Gaucho.Diagnostics
             }
         }
 
+		/// <summary>
+		/// Writes a message that can be collected by the dashboard
+		/// </summary>
+		/// <param name="logger"></param>
+		/// <param name="message"></param>
+		/// <param name="metric"></param>
         public static void Write(this ILogger logger, string message, StatisticType metric)
         {
             logger.Write(new StatisticEvent(message, metric), Category.EventStatistic);

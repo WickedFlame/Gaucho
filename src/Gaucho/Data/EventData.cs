@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Gaucho.Diagnostics;
 
 namespace Gaucho
 {
 	public class EventData : IEventData, IEnumerable
 	{
 		private readonly List<Property> _properties;
+		private ILogger _logger;
 
 		public EventData()
 		{
@@ -16,9 +18,9 @@ namespace Gaucho
 
 		public IEnumerable<Property> Properties => _properties;
 
-		public EventData Add(string key, object value)
+		public EventData Add(Property property)
 		{
-			_properties.Add(new Property(key, value));
+			_properties.Add(property);
 
 			return this;
 		}
@@ -49,6 +51,26 @@ namespace Gaucho
 				var property = _properties.FirstOrDefault(p => p.Key == source);
 				if (property == null)
 				{
+					if(_logger== null)
+					{
+						_logger = LoggerConfiguration.Setup();
+					}
+
+					var msg = new StringBuilder()
+						.AppendLine($"Could not find property '{source}'");
+
+					var candidates = _properties.Where(p => p.Key.ToLower() == source.ToLower());
+					if (candidates.Any())
+					{
+						msg.AppendLine($"   Possible candidates are:");
+						foreach (var candidate in candidates)
+						{
+							msg.AppendLine($"   - {candidate.Value}");
+						}
+					}
+
+					_logger.Write(msg.ToString(), Category.Log, LogLevel.Debug, "EventData");
+
 					return null;
 				}
 

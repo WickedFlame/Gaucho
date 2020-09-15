@@ -8,9 +8,11 @@ InputHandler:
 OutputHandlers:
   - Type: Gaucho.Server.Test.Handlers.ConsoleOutputHandler, Gaucho.Server.Test
     Filters:
-      - Message -> msg
+      - Message -> message
       - Level -> lvl
-      - [format] [${lvl}] ${msg}
+      - messAge -> error
+#      - 'format <- [${lvl}] ${msg}'
+#      - 'json <- [lvl,msg -> message]'
 
 #  - Type: Gaucho.Test.LogQueueHandler, Gaucho.Test
 #    Filters:
