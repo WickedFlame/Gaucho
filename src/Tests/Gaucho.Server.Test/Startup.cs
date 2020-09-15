@@ -69,9 +69,9 @@ namespace Gaucho.Server.Test
                 var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
                 p.BuildPipeline(config);
 
-                //config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
-                //p.BuildPipeline(config);
-            });
+				config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
+				p.BuildPipeline(config);
+			});
 
             app.UseGauchoDashboard();
 

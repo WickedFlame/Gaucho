@@ -65,7 +65,7 @@ namespace Gaucho
 						msg.AppendLine($"   Possible candidates are:");
 						foreach (var candidate in candidates)
 						{
-							msg.AppendLine($"   - {candidate.Value}");
+							msg.AppendLine($"   - {candidate.Key}");
 						}
 					}
 

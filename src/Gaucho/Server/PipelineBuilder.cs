@@ -1,4 +1,7 @@
 ﻿using Gaucho.Configuration;
+using Gaucho.Diagnostics;
+using System.Linq;
+using System.Text;
 
 namespace Gaucho.Server
 {
@@ -6,6 +9,7 @@ namespace Gaucho.Server
     {
         private readonly PluginManager _pluginMgr;
         private readonly IGlobalConfiguration _config;
+        private readonly ILogger _logger;
 
         public PipelineBuilder() : this(GlobalConfiguration.Configuration) { }
 
@@ -13,13 +17,16 @@ namespace Gaucho.Server
         {
             _config = config;
             _pluginMgr = new PluginManager();
-        }
+			_logger = LoggerConfiguration.Setup();
+		}
 
         public void BuildPipeline(IProcessingServer server, PipelineConfiguration config)
         {
             var rootCtx = _config.Resolve<IActivationContext>() ?? new ActivationContext();
-            
-            server.SetupPipeline(config.Id, s =>
+
+			_logger.Write(config, Category.Log, LogLevel.Debug, "PipelineBuilder");
+
+			server.SetupPipeline(config.Id, s =>
             {
                 s.Register(() =>
                 {
