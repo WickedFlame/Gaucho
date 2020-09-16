@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Gaucho.Filters
 {
     public class PropertyFilter : IFilter
@@ -20,6 +17,8 @@ namespace Gaucho.Filters
             _source = source;
             _destination = destination;
         }
+
+        public string Key => _source;
 
         public FilterType FilterType => FilterType.Property;
 

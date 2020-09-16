@@ -25,9 +25,8 @@ namespace Gaucho.Filters
 	        if (formatterIndex > 0)
 	        {
 		        var name = input.Substring(0, formatterIndex)
-			        .ToLower()
 			        .Trim();
-		        switch (name)
+		        switch (name.ToLower())
 		        {
 					case "json":
 						input = input.Substring(formatterIndex + 2)
@@ -45,7 +44,10 @@ namespace Gaucho.Filters
 						return new JsonFilter(filters);
 
 					default:
-						return null;
+						input = input.Substring(formatterIndex + 2)
+							.Trim();
+
+						return new FormatFilter(name, input);
 		        }
 				
 	        }

@@ -69,7 +69,7 @@ namespace Gaucho
 						}
 					}
 
-					_logger.Write(msg.ToString(), Category.Log, LogLevel.Debug, "EventData");
+					_logger.Write(msg.ToString(), Category.Log, LogLevel.Error, "EventData");
 
 					return null;
 				}

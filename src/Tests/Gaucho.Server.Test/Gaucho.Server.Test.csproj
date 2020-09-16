@@ -6,10 +6,14 @@
 
   <ItemGroup>
     <None Remove="Config\APILogMessage.yml" />
+    <None Remove="Config\DefaultConfiguration.yml" />
     <None Remove="Config\RecurringJob.yml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Config\DefaultConfiguration.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\RecurringJob.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

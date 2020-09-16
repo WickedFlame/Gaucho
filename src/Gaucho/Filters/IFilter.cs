@@ -13,6 +13,8 @@ namespace Gaucho.Filters
          *
          */
 
+		string Key { get; }
+
 		FilterType FilterType { get; }
 			
 		Property Filter(EventData data);

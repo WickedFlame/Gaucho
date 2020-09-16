@@ -28,6 +28,8 @@ namespace Gaucho
 			_filters = new List<IFilter>();
         }
 
+		internal ILogger Logger => _logger;
+
         public IEnumerable<IFilter> Filters => _filters;
 
         public void Add(IFilter filter)
@@ -75,12 +77,27 @@ namespace Gaucho
 		    return converter.Convert(eventData);
 	    }
 
-		public static string Format(this EventDataConverter converter, EventData data)
+		public static string Format(this EventDataConverter converter, string key, EventData data)
 	    {
-		    var formatter = converter.Filters.FirstOrDefault(f => f.FilterType == FilterType.Formatter);
+		    var formatter = converter.Filters.FirstOrDefault(f => f.FilterType == FilterType.Formatter && f.Key == key);
 		    if (formatter == null)
 		    {
-			    return data.ToString();
+			    var msg = new StringBuilder()
+				    .AppendLine($"Could not find the formatter '{key}'");
+
+			    var candidates = converter.Filters.Where(p => p.Key.ToLower() == key.ToLower());
+			    if (candidates.Any())
+			    {
+				    msg.AppendLine($"   Possible candidates are:");
+				    foreach (var candidate in candidates)
+				    {
+					    msg.AppendLine($"   - {candidate.Key}");
+				    }
+			    }
+
+			    converter.Logger.Write(msg.ToString(), Category.Log, LogLevel.Error, "EventData");
+
+				return data.ToString();
 		    }
 
 		    return formatter.Filter(data).Value as string;

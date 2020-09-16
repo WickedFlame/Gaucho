@@ -18,6 +18,8 @@ namespace Gaucho.Filters
 			}
 		}
 
+		public string Key => "json";
+
 		public FilterType FilterType => FilterType.Formatter;
 
 		public Property Filter(EventData data)
