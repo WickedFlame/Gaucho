@@ -80,6 +80,17 @@ namespace Gaucho
 	    public static string Format(this EventDataConverter converter, string key, EventData data)
 		    => Format(converter as IEventDataConverter, key, data);
 
+	    public static string Format(this IEventDataConverter converter, string key, IEventData data)
+	    {
+		    var eventData = data as EventData;
+		    if (eventData == null)
+		    {
+			    return null;
+		    }
+
+		    return converter.Format(key, eventData);
+		}
+
 		public static string Format(this IEventDataConverter converter, string key, EventData data)
 	    {
 		    var formatter = converter.Filters.FirstOrDefault(f => f.FilterType == FilterType.Formatter && f.Key == key);
