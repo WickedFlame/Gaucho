@@ -77,11 +77,15 @@ namespace Gaucho
 		    return converter.Convert(eventData);
 	    }
 
-		public static string Format(this EventDataConverter converter, string key, EventData data)
+	    public static string Format(this EventDataConverter converter, string key, EventData data)
+		    => Format(converter as IEventDataConverter, key, data);
+
+		public static string Format(this IEventDataConverter converter, string key, EventData data)
 	    {
 		    var formatter = converter.Filters.FirstOrDefault(f => f.FilterType == FilterType.Formatter && f.Key == key);
 		    if (formatter == null)
 		    {
+			    var logger = converter is EventDataConverter conv ? conv.Logger : LoggerConfiguration.Setup();
 			    var msg = new StringBuilder()
 				    .AppendLine($"Could not find the formatter '{key}'");
 
@@ -95,7 +99,7 @@ namespace Gaucho
 				    }
 			    }
 
-			    converter.Logger.Write(msg.ToString(), Category.Log, LogLevel.Error, "EventData");
+			    logger.Write(msg.ToString(), Category.Log, LogLevel.Error, "EventData");
 
 				return data.ToString();
 		    }
