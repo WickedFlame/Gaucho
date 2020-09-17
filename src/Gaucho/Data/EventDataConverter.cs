@@ -42,7 +42,9 @@ namespace Gaucho
 	        var filers = _filters.Where(f => f.FilterType == FilterType.Property).ToList();
             if (!filers.Any())
             {
-                return data;
+	            _logger.Write(data.ToString(), Category.Log, LogLevel.Debug, "EventDataConverter");
+
+				return data;
             }
 
             var result = new EventData();
