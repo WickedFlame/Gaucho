@@ -62,7 +62,7 @@ namespace Gaucho.Test
 
 	        data = converter.Convert(data);
 
-	        Assert.AreEqual(data.ToString(), "{\r\n   dst_lvl => Info\r\n   Message => The message\r\n}");
+	        Assert.AreEqual(data.ToString(), "{\r\n   dst_lvl -> Info\r\n   Message -> The message\r\n}");
         }
 
 		

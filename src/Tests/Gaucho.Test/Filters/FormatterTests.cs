@@ -92,7 +92,7 @@ namespace Gaucho.Test.Filters
 			data = converter.Convert(data);
 			var formatted = converter.Format("PROP", data);
 
-			Assert.That(formatted.Contains("lvl => Info") && formatted.Contains("Message => The message"));
+			Assert.That(formatted.Contains("lvl -> Info") && formatted.Contains("Message -> The message"));
 		}
 	}
 }
