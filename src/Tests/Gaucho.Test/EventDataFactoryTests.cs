@@ -64,6 +64,21 @@ namespace Gaucho.Test
 			Assert.That(eventData["three"].Equals("3"));
 		}
 
+		[Test]
+		public void EventDataFactory_Dictionary()
+		{
+			var data = new Dictionary<string, object>
+			{
+				["Id"] = 1,
+				["Message"]= "this is a test"
+			};
+			var factory = new EventDataFactory();
+			var eventData = factory.BuildFrom(data);
+
+			Assert.That(eventData["Id"].Equals(1));
+			Assert.That(eventData["Message"].Equals("this is a test"));
+		}
+
 		public class MessageData
 		{
 			public string Message { get; set; }
