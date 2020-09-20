@@ -15,6 +15,8 @@ namespace Gaucho
         void SetPipeline(IPipelineFactory factory);
 
         void Publish(Event @event);
+
+        void Close();
     }
 
     public interface IAsyncEventBus : IEventBus
@@ -32,6 +34,7 @@ namespace Gaucho
         private bool _isDisposed;
 
         private readonly List<WorkerThread> _threads = new List<WorkerThread>();
+        private int _minThreads = 1;
 
         public EventBus(Func<IEventPipeline> factory, string pipelineId)
             : this(new PipelineFactory(factory), pipelineId)
@@ -72,6 +75,11 @@ namespace Gaucho
             {
                 Task.WaitAll(tasks.ToArray());
             }
+        }
+
+        public void Close()
+        {
+	        _minThreads = 0;
         }
 
         public void SetPipeline(IPipelineFactory factory)
@@ -163,7 +171,7 @@ namespace Gaucho
                         continue;
                     }
 
-                    if (_threads.Count == 1)
+                    if (_threads.Count == _minThreads)
                     {
                         return;
                     }

@@ -31,6 +31,15 @@ namespace Gaucho
         public void Register(string pipelineId, Func<IEventPipeline> factory)
         {
             _pipelineRegistrations[pipelineId] = new PipelineFactory(factory);
+
+            if (_activeEventBus.ContainsKey(pipelineId))
+            {
+				// close active pipeline
+				// the next Push event will get the new pipeline
+	            var activeEventBus = _activeEventBus[pipelineId];
+	            _activeEventBus.Remove(pipelineId);
+	            activeEventBus.Close();
+            }
         }
 
         public void Register(string pipelineId, IEventBus eventBus)

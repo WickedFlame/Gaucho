@@ -71,6 +71,8 @@ namespace Gaucho.Test.Server
                 Process();
             }
 
+			public void Close() { }
+
             public void Process()
             {
                 var pipeline = GetPipeline();
