@@ -12,6 +12,7 @@ branches:
   # whitelist
   only:
     - master
+    - dev
 #    - somebranch
 
 # Do not build on tags (GitHub only)
