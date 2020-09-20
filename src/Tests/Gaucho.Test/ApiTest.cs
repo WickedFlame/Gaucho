@@ -28,7 +28,7 @@ namespace Gaucho.Test
                 return pipeline;
             }, pipelineId);
 
-            var @event = new Event(pipelineId, new SingleNode("Testdata"));
+            var @event = new Event(pipelineId, "Testdata");
 
             eventBus.Publish(@event);
         }

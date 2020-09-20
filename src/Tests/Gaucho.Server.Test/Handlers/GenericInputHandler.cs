@@ -8,10 +8,7 @@ namespace Gaucho.Server.Test.Handlers
 
         public Event ProcessInput(T input)
         {
-            var factory = new EventDataFactory();
-            var data = factory.BuildFrom(input);
-
-            return new Event(PipelineId, data);
+	        return new Event(PipelineId, f => f.BuildFrom(input));
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Gaucho.Handlers
 {
 	/// <summary>
@@ -12,12 +9,21 @@ namespace Gaucho.Handlers
 		private readonly IEventDataConverter _converter;
 		private readonly IOutputHandler _decorate;
 
+		/// <summary>
+		/// creates a new instance of the outputhandler
+		/// </summary>
+		/// <param name="converter"></param>
+		/// <param name="decorate"></param>
 		public DataConversionDecorator(IEventDataConverter converter, IOutputHandler decorate)
 		{
 			_converter = converter;
 			_decorate = decorate;
 		}
 		
+		/// <summary>
+		/// handle the event
+		/// </summary>
+		/// <param name="event"></param>
 		public void Handle(Event @event)
 		{
 			var data = _converter.Convert(@event.Data);
