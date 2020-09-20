@@ -2,6 +2,7 @@
 using Gaucho.Diagnostics;
 using System.Linq;
 using System.Text;
+using Gaucho.Handlers;
 
 namespace Gaucho.Server
 {
@@ -33,8 +34,16 @@ namespace Gaucho.Server
                     var pipeline = new EventPipeline();
                     foreach (var node in config.OutputHandlers)
                     {
-                        var outputHandler = BuildHandler<IOutputHandler>(rootCtx.ChildContext(), node);
-                        pipeline.AddHandler(outputHandler);
+	                    var ctx = rootCtx.ChildContext();
+	                    var outputHandler = BuildHandler<IOutputHandler>(ctx, node);
+						
+	                    var converter = ctx.Resolve<IEventDataConverter>();
+	                    if (converter.Filters.Any(f => f.FilterType == Filters.FilterType.Property))
+	                    {
+		                    outputHandler = new DataConversionDecorator(converter, outputHandler);
+	                    }
+
+	                    pipeline.AddHandler(outputHandler);
                     }
 
                     return pipeline;
