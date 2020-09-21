@@ -2,7 +2,7 @@
 
 
 # version format
-version: 0.1.3.{build}
+version: 0.1.3
 
 # you can use {branch} name in version format too
 # version: 1.0.{build}-{branch}
@@ -30,11 +30,11 @@ install:
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
-  version: '{version}'
-  package_version: '{version}'
-  assembly_version: 0.1.3
-  file_version: '{version}'
-  informational_version: '{version}'
+  version: '{version}'.{build}
+  package_version: '{version}'.{build}
+  assembly_version: '{version}'
+  file_version: '{version}'.{build}
+  informational_version: '{version}'.{build}
 
 # to add several platforms to build matrix:
 #platform:
