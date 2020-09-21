@@ -30,11 +30,11 @@ install:
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
-  version: '{version}'.{build}
-  package_version: '{version}'.{build}
+  version: '{version}.{build}'
+  package_version: '{version}.{build}'
   assembly_version: '{version}'
-  file_version: '{version}'.{build}
-  informational_version: '{version}'.{build}
+  file_version: '{version}.{build}'
+  informational_version: '{version}.{build}'
 
 # to add several platforms to build matrix:
 #platform:
