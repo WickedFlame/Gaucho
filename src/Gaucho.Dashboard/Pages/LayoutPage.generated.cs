@@ -79,21 +79,20 @@ WriteLiteral("    <link rel=\"stylesheet\" href=\"");
             
             #line default
             #line hidden
-WriteLiteral(@""">
-</head>
-<body>
-    <div class=""header"">
-        <div></div>
-        <div class=""container"">
-            <h1>Gaucho</h1>
-        </div>
-        <div></div>
-    </div>
+WriteLiteral("\">\r\n</head>\r\n<body>\r\n    <div class=\"header\">\r\n        <div></div>\r\n        <div " +
+"class=\"container\">\r\n            <h1>");
 
-<div class=""main-wrapper"">
-    <div></div>
-    <div class=""container"" style=""margin-bottom: 20px;"">
-        <h2>");
+
+            
+            #line 24 "..\..\Pages\LayoutPage.cshtml"
+           Write(DashboardOptions.Title);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</h1>\r\n        </div>\r\n        <div></div>\r\n    </div>\r\n\r\n<div class=\"main-wrappe" +
+"r\">\r\n    <div></div>\r\n    <div class=\"container\" style=\"margin-bottom: 20px;\">\r\n" +
+"        <h2>");
 
 
             

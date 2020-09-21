@@ -73,7 +73,10 @@ namespace Gaucho.Server.Test
 				p.BuildPipeline(config);
 			});
 
-            app.UseGauchoDashboard();
+            app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions
+            {
+				//Title = "Gaucho Testapp"
+            });
 
 
 

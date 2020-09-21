@@ -7,7 +7,7 @@ namespace Gaucho
 
 		public Event ProcessInput(EventData input)
 		{
-			return new Event(PipelineId, input);
+			return new Event(PipelineId, (IEventData)input);
 		}
 	}
 }

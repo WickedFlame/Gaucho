@@ -6,5 +6,6 @@ namespace Gaucho.Dashboard
 {
     public class DashboardOptions
     {
+	    public string Title { get; set; } = "Gaucho";
     }
 }
