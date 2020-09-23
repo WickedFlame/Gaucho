@@ -43,12 +43,22 @@ WriteLiteral("\r\n");
 
 
 WriteLiteral("\r\n<!DOCTYPE html>\r\n\r\n<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head" +
-">\r\n    <title>Gaucho - ");
+">\r\n    <title>");
 
 
             
             #line 10 "..\..\Pages\LayoutPage.cshtml"
-               Write(Title);
+      Write(DashboardOptions.Title);
+
+            
+            #line default
+            #line hidden
+WriteLiteral(" - ");
+
+
+            
+            #line 10 "..\..\Pages\LayoutPage.cshtml"
+                                Write(Title);
 
             
             #line default
