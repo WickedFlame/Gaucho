@@ -21,7 +21,6 @@
                             response.forEach(function(pipeline) {
                                 updateMetrics(pipeline.pipelineId, pipeline.metrics);
                             });
-                            console.log(`Poll job ${response} with state ${response.state}`);
 
                             resolve(false);
                         }).catch(function (error) {
