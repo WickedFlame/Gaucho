@@ -21,6 +21,11 @@ namespace Gaucho.Filters
 				return null;
 	        }
 
+	        if (input.StartsWith("'") && input.EndsWith("'"))
+	        {
+		        input = input.Substring(1, input.Length - 2);
+	        }
+
 	        var formatterIndex = input?.IndexOf("<-") ?? -1;
 	        if (formatterIndex > 0)
 	        {

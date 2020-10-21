@@ -37,6 +37,7 @@ namespace Gaucho.Server.Test.Handlers
             _count += 1;
             var input = new
             {
+				Date = DateTime.Now,
                 Message = $"RecurrinHandler count: {_count}"
             };
 

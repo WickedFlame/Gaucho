@@ -15,6 +15,7 @@ OutputHandlers:
       - Level -> lvl
       - messAge -> error
       - 'key <- ${lvl}_error_${lvl -> level}'
+      - 'stringformat <- ${Date:yyyy/MM/dd HH:mm:ss Z}'
       - 'format <- [${lvl}] ${message}'
       - 'json <- [lvl,message -> msg]'
 

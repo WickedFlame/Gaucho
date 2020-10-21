@@ -119,5 +119,23 @@ namespace Gaucho
 
 		    return formatter.Filter(data).Value as string;
 	    }
+
+		public static IEventDataConverter AppendFormated(this IEventDataConverter converter, IEventData data)
+			=> AppendFormated(converter, data as EventData);
+
+		public static IEventDataConverter AppendFormated(this IEventDataConverter converter, EventData data)
+		{
+			if (data == null)
+			{
+				return converter;
+			}
+
+			foreach (var filter in converter.Filters.Where(f => f.FilterType == Filters.FilterType.Formatter))
+			{
+				data.Add(filter.Key, converter.Format(filter.Key, data));
+			}
+
+			return converter;
+		}
     }
 }
