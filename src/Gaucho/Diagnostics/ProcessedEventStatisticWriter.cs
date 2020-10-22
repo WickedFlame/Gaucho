@@ -1,15 +1,14 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Gaucho.Server.Monitoring;
 
 namespace Gaucho.Diagnostics
 {
-    public class EventStatisticWriter : ILogWriter<StatisticEvent>
+    public class ProcessedEventStatisticWriter : ILogWriter<StatisticEvent>
     {
         private readonly Dictionary<StatisticType, List<StatisticEvent>> _metrics = new Dictionary<StatisticType, List<StatisticEvent>>();
 
-        public EventStatisticWriter(StatisticsApi statistic)
+        public ProcessedEventStatisticWriter(StatisticsApi statistic)
         {
             statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events", () => _metrics[StatisticType.ProcessedEvent].Count));
         }

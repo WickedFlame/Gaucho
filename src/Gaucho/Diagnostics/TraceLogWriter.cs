@@ -15,7 +15,7 @@ namespace Gaucho.Diagnostics
 
         public void Write(LogEvent @event)
         {
-            System.Diagnostics.Trace.WriteLine($"[{@event.Source}] [{@event.Level}] {@event.Message}");
+            System.Diagnostics.Trace.WriteLine($"[{@event.Timestamp}] [{@event.Source}] [{@event.Level}] {@event.Message}");
         }
     }
 }

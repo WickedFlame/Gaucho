@@ -58,7 +58,11 @@ namespace Gaucho
             _queue = new EventQueue();
             _logger = LoggerConfiguration.Setup
             (
-                s => s.AddWriter(new EventStatisticWriter(statistic))
+	            s =>
+	            {
+		            s.AddWriter(new ProcessedEventStatisticWriter(statistic));
+		            s.AddWriter(new LogEventStatisticWriter(statistic));
+	            }
             );
             SetupWorkers(1);
         }

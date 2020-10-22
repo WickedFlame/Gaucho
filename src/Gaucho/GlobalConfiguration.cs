@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Gaucho.Configuration;
+using System.Collections.Generic;
 
 namespace Gaucho
 {
@@ -8,7 +9,8 @@ namespace Gaucho
         {
         }
 
-        public static IGlobalConfiguration Configuration { get; } = new GlobalConfiguration();
+        public static IGlobalConfiguration Configuration { get; } = new GlobalConfiguration()
+	        .Register(new Options());
 
         public Dictionary<string, object> Context { get; } = new Dictionary<string, object>();
     }

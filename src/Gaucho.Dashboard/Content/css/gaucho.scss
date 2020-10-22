@@ -81,6 +81,50 @@ body {
                         padding-bottom: 4px;
                     }
                 }
+
+                .pipeline-item-log-container {
+                    .label {
+                        text-transform: uppercase;
+                        color: #ccc;
+                        padding-bottom: 4px;
+                    }
+
+                    .pipeline-item-log-list {
+                        background-color: $background-color-main;
+                        padding: 10px;
+
+                        .pipeline-item-log-item {
+                            display: grid;
+                            grid-template-columns: auto auto auto 1fr;
+                            font-size: 12px;
+
+                            .pipeline-item-log-element {
+                                padding-left: 3px;
+                                padding-right: 3px;
+                            }
+
+                            .pipeline-log-debug {
+                                color: gray;
+                            }
+
+                            .pipeline-log-info {
+                                color: green;
+                            }
+
+                            .pipeline-log-warning {
+                                color: orange;
+                            }
+
+                            .pipeline-log-error {
+                                color: red;
+                            }
+
+                            .pipeline-log-critical {
+                                color: purple;
+                            }
+                        }
+                    }
+                }
             }
         }
     }

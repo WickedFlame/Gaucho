@@ -20,6 +20,7 @@
                             // update elements here
                             response.forEach(function(pipeline) {
                                 updateMetrics(pipeline.pipelineId, pipeline.metrics);
+                                updateElements(pipeline.pipelineId, pipeline.elements);
                             });
 
                             resolve(false);
@@ -37,19 +38,19 @@
             });
         };
 
-        function poll(fn, interval) {
+        var poll = (fn, interval) => {
             interval = interval || 1000;
 
-            let checkCondition = function (resolve, reject) {
-                fn().then(function (result) {
+            let checkCondition = function(resolve, reject) {
+                fn().then(function(result) {
                     setTimeout(checkCondition, interval, resolve, reject);
                 });
             };
 
             return new Promise(checkCondition);
-        }
+        };
 
-        function updateMetrics(pipelineId, metrics) {
+        var updateMetrics = (pipelineId, metrics) => {
             metrics.forEach(function(metric) {
                 let elem = document.getElementById(`${pipelineId}-${metric.key}`);
                 if (!elem) {
@@ -65,7 +66,29 @@
 
                 elem.innerText = metric.value;
             });
-        }
+        };
+
+        var updateElements = (pipelineId, elements) => {
+            for (var prop in elements) {
+                if (prop.toLowerCase() === "eventlog") {
+                    var element = elements[prop];
+                    let elem = document.getElementById(`${pipelineId}-${element.key.toLowerCase()}`);
+                    elem.innerHTML = '';
+
+                    element.elements.forEach(e => {
+                        var cls = `pipeline-log-${e.level.toLowerCase()}`;
+                        var div = document.createElement('div');
+                        div.innerHTML = `<div class="pipeline-item-log-item">
+                                <span class="pipeline-item-log-element ${cls}">${e.timestamp}</span><span class="pipeline-item-log-element">[${e.source}]</span><span class="pipeline-item-log-element">[${e.level}]</span><span class="pipeline-item-log-element">${e.message}</span>
+                            </div>`.trim();
+
+                        // Change this to div.childNodes to support multiple top-level nodes
+                        elem.appendChild(div.firstChild);
+                    });
+
+                }
+            }
+        };
         
         return Poller(config);
     });

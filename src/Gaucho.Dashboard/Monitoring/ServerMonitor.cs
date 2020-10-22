@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Gaucho.Diagnostics;
 using Gaucho.Server.Monitoring;
 
 namespace Gaucho.Dashboard.Monitoring
@@ -43,7 +44,7 @@ namespace Gaucho.Dashboard.Monitoring
             foreach (var key in defaultkeys)
             {
                 var metric = statistics.FirstOrDefault(s => s.Key == key);
-                metrics.Add(key.ToString(), metric?.Title, metric?.Factory.Invoke());
+                metrics.AddMetric(key.ToString(), metric?.Title, metric?.Factory.Invoke());
             }
 
             foreach (var metric in statistics)
@@ -53,7 +54,28 @@ namespace Gaucho.Dashboard.Monitoring
                     continue;
                 }
 
-                metrics.Add(metric.Key.ToString(), metric.Title, metric.Factory.Invoke() ?? 0);
+                switch (metric.Key)
+                {
+					case MetricType.EventLog:
+						if(metric.Factory.Invoke() is List<ILogMessage> logs)
+						{
+							foreach(var log in logs.OrderByDescending(l => l.Timestamp).Take(20).OrderBy(l => l.Timestamp))
+							{
+								metrics.AddElement(metric.Key.ToString(), metric.Title, new DashboardLog
+								{
+									Timestamp = log.Timestamp,
+									Source = log.Source,
+									Level = log.Level.ToString(),
+									Message = log.Message
+								});
+							}
+						}
+						break;
+
+					default:
+						metrics.AddMetric(metric.Key.ToString(), metric.Title, metric.Factory.Invoke() ?? 0);
+						break;
+                }
             }
 
             return metrics;

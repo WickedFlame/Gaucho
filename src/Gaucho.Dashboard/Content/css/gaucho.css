@@ -52,3 +52,27 @@ body {
             text-transform: uppercase;
             color: #ccc;
             padding-bottom: 4px; }
+        .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .label {
+          text-transform: uppercase;
+          color: #ccc;
+          padding-bottom: 4px; }
+        .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list {
+          background-color: #232832;
+          padding: 10px; }
+          .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list .pipeline-item-log-item {
+            display: grid;
+            grid-template-columns: auto auto auto 1fr;
+            font-size: 12px; }
+            .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list .pipeline-item-log-item .pipeline-item-log-element {
+              padding-left: 3px;
+              padding-right: 3px; }
+            .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list .pipeline-item-log-item .pipeline-log-debug {
+              color: gray; }
+            .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list .pipeline-item-log-item .pipeline-log-info {
+              color: green; }
+            .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list .pipeline-item-log-item .pipeline-log-warning {
+              color: orange; }
+            .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list .pipeline-item-log-item .pipeline-log-error {
+              color: red; }
+            .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list .pipeline-item-log-item .pipeline-log-critical {
+              color: purple; }
