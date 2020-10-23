@@ -26,7 +26,8 @@
                             resolve(false);
                         }).catch(function (error) {
                             console.log(error);
-                            reject(error);
+                            //reject(error);
+                            resolve(false);
                         });
                     };
                     return new Promise(fn);

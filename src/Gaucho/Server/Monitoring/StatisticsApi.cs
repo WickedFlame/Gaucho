@@ -16,13 +16,17 @@ namespace Gaucho.Server.Monitoring
 
         public StatisticsApi(string pipelineId)
         {
-            _pipelineId = pipelineId;
+			lock(_statistics)
+			{
+				_pipelineId = pipelineId;
 
-            if (!_statistics.Contains(pipelineId))
-            {
-                _statistics.Add(pipelineId, new MetricCollection());
-            }
-            _metrics = _statistics.Get(pipelineId);
+				if (!_statistics.Contains(pipelineId))
+				{
+					_statistics.Add(pipelineId, new MetricCollection());
+				}
+
+				_metrics = _statistics.Get(pipelineId);
+			}
         }
 
         public void AddMetricsCounter(IMetric metric)

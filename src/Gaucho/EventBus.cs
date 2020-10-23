@@ -52,7 +52,7 @@ namespace Gaucho
             PipelineId = pipelineId;
 
             var statistic = new StatisticsApi(pipelineId);
-            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Threads", () => _threads.Count));
+            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Workers", () => _threads.Count));
             statistic.AddMetricsCounter(new Metric(MetricType.QueueSize, "Events in Queue", () => _queue.Count));
 
             _queue = new EventQueue();

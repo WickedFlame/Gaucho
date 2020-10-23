@@ -65,27 +65,36 @@ namespace Gaucho
 
         public void Register(string pipelineId, Func<EventPipeline> factory)
         {
-            _eventBusFactory.Register(pipelineId, factory);
+			lock(_server)
+			{
+				_eventBusFactory.Register(pipelineId, factory);
+			}
         }
 
         public void Register(string pipelineId, IEventBus eventBus)
         {
-            if (pipelineId != eventBus.PipelineId)
-            {
-                throw new Exception($"The EventBus with PipelineId {eventBus.PipelineId} cannot be registered to the pipeline {pipelineId}");
-            }
+			lock(_server)
+			{
+				if (pipelineId != eventBus.PipelineId)
+				{
+					throw new Exception($"The EventBus with PipelineId {eventBus.PipelineId} cannot be registered to the pipeline {pipelineId}");
+				}
 
-            _eventBusFactory.Register(pipelineId, eventBus);
+				_eventBusFactory.Register(pipelineId, eventBus);
+			}
         }
 
         public void Register(string pipelineId, IInputHandler plugin)
         {
-            if (plugin is IServerInitialize init)
-            {
-                init.Initialize(this);
-            }
+			lock(_server)
+			{
+				if (plugin is IServerInitialize init)
+				{
+					init.Initialize(this);
+				}
 
-            _inputHandlers.Register(pipelineId, plugin);
+				_inputHandlers.Register(pipelineId, plugin);
+			}
         }
 
         public IInputHandler<T> GetHandler<T>(string pipelineId)
