@@ -12,12 +12,12 @@ namespace Gaucho.Test
     [TestFixture]
     public class PluginManagerTests
     {
-        private PluginManager _pluginMgr;
+        private HandlerPluginManager _pluginMgr;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _pluginMgr = new PluginManager();
+            _pluginMgr = new HandlerPluginManager();
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace Gaucho.Test
         [Test]
         public void PluginManagerTests_InvalidPlugin()
         {
-            var mgr = new PluginManager();
+            var mgr = new HandlerPluginManager();
             var plugin = mgr.GetPlugin(typeof(IInputHandler), new HandlerNode());
 
             Assert.IsNull(plugin);

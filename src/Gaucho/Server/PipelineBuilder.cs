@@ -8,7 +8,7 @@ namespace Gaucho.Server
 {
     public class PipelineBuilder
     {
-        private readonly PluginManager _pluginMgr;
+        private readonly HandlerPluginManager _pluginManager;
         private readonly IGlobalConfiguration _config;
         private readonly ILogger _logger;
 
@@ -17,7 +17,7 @@ namespace Gaucho.Server
         public PipelineBuilder(IGlobalConfiguration config)
         {
             _config = config;
-            _pluginMgr = new PluginManager();
+            _pluginManager = new HandlerPluginManager();
 			_logger = LoggerConfiguration.Setup();
 		}
 
@@ -59,7 +59,7 @@ namespace Gaucho.Server
             nodeCtx.Register<IEventDataConverter>(node.BuildEventDataConverter);
             nodeCtx.Register<ConfiguredArguments>(node.BuildArguments);
 
-            var plugin = _pluginMgr.GetPlugin(typeof(T), node);
+            var plugin = _pluginManager.GetPlugin(typeof(T), node);
             var handler = nodeCtx.Resolve<T>(plugin.Type);
 
             return handler;

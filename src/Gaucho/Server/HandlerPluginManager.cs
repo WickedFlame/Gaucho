@@ -9,54 +9,18 @@ using Gaucho.Diagnostics;
 
 namespace Gaucho.Server
 {
-    public class Plugin
+    public class HandlerPluginManager
     {
-        public string Name { get; set; }
+        internal static IEnumerable<HandlerPlugin> _plugins;
 
-        public Type Type { get; set; }
-    }
-
-    public abstract class HandlerRegistration
-    {
-        public abstract void RegisterHandlers(HandlerRegistrationContext context);
-
-        internal IEnumerable<Plugin> GetPlugins()
-        {
-            var ctx = new HandlerRegistrationContext();
-            this.RegisterHandlers(ctx);
-
-            return ctx.Plugins;
-        }
-    }
-
-    public class HandlerRegistrationContext
-    {
-        private readonly List<Plugin> _plugins = new List<Plugin>();
-
-        internal IEnumerable<Plugin> Plugins => _plugins;
-
-        public void Register<T>(string name) //where T : IInputHandler
-        {
-            _plugins.Add(new Plugin
-            {
-                Name = name,
-                Type = typeof(T)
-            });
-        }
-    }
-
-    public class PluginManager
-    {
-        internal static IEnumerable<Plugin> _plugins;
-
-        internal static IEnumerable<Plugin> GetPlugins(IEnumerable<Assembly> assemblies)
+        internal static IEnumerable<HandlerPlugin> GetPlugins(IEnumerable<Assembly> assemblies)
         {
             if (_plugins != null)
             {
                 return _plugins;
             }
 
-            var plugins = new List<Plugin>();
+            var plugins = new List<HandlerPlugin>();
 
             foreach (var assembly in assemblies)
             {
@@ -85,7 +49,7 @@ namespace Gaucho.Server
             var logger = LoggerConfiguration.Setup();
             foreach (var plugin in _plugins)
             {
-                logger.Write($"Loaded Plugin: {plugin.Name}", Category.Log, LogLevel.Info, "PluginManager");
+                logger.Write($"Loaded HandlerPlugin: {plugin.Name}", Category.Log, LogLevel.Info, "HandlerPluginManager");
             }
 
             return _plugins;
@@ -124,38 +88,42 @@ namespace Gaucho.Server
             return _assemblies;
         }
 
-        public IEnumerable<Plugin> GetPlugins(Type type)
+        public IEnumerable<HandlerPlugin> GetPlugins(Type type)
         {
             var plugins = GetPlugins(GetAssemblies()).Where(p => p.Type.Name == type.Name || p.Type.GetInterfaces().Any(y => y.Name == type.Name) && !p.Type.IsInterface).ToList();
 
             return plugins;
         }
 
-        public Plugin GetPlugin(Type type, string name)
+        public HandlerPlugin GetPlugin(Type type, string name)
         {
             var plugin = GetPlugins(type).FirstOrDefault(p => p.Name == name);
             if (plugin == null)
             {
-                System.Diagnostics.Trace.WriteLine($"Plugin {name} does not exist");
+                System.Diagnostics.Trace.WriteLine($"HandlerPlugin with name {name} does not exist");
             }
 
             return plugin;
         }
 
-        public Plugin GetPlugin(Type type, HandlerNode node)
+        public HandlerPlugin GetPlugin(Type type, HandlerNode node)
         {
             var plugin = GetPlugins(type).FirstOrDefault(p => p.Name == node.Name || (string.IsNullOrEmpty(node.Name) && p.Type == node.Type));
             if (plugin == null)
             {
-                System.Diagnostics.Trace.WriteLine($"Plugin {node.Name}, {node.Type} does not exist");
                 if (node.Type != null)
                 {
-                    return new Plugin
-                    {
-                        Type = node.Type
-                    };
+	                if (type.IsAssignableFrom(node.Type))
+	                {
+		                return new HandlerPlugin
+		                {
+			                Type = node.Type
+		                };
+	                }
                 }
-            }
+
+                System.Diagnostics.Trace.WriteLine($"HandlerPlugin {node.Name}, {node.Type} does not exist");
+			}
 
             return plugin;
         }
