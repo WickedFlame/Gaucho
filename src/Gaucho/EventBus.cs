@@ -72,12 +72,12 @@ namespace Gaucho
         public void WaitAll()
         {
             var tasks = _threads.Select(t => t.Task)
-                .Where(t => t != null/* && t.Status == TaskStatus.Running*/)
-                .ToList();
+                .Where(t => t != null)
+                .ToArray();
 
             if(tasks.Any())
             {
-                Task.WaitAll(tasks.ToArray());
+                Task.WaitAll(tasks, -1, CancellationToken.None);
             }
         }
 
@@ -106,9 +106,10 @@ namespace Gaucho
             }
         }
 
-        public void Process()
+        public void Process(IEventPipeline pipeline)
         {
-            var pipeline = _pipelineFactory.Setup();
+	        _logger.Write("Begin processing events", Category.Log, LogLevel.Debug, "EventBus");
+			//var pipeline = _pipelineFactory.Setup();
             if (pipeline == null)
             {
                 _logger.Write($"Pipeline with the Id {PipelineId} does not exist. Event could not be sent to any Pipeline.", Category.Log, LogLevel.Error, "EventBus");
@@ -135,7 +136,7 @@ namespace Gaucho
             {
                 for (var i = _threads.Count; i < threadCount; i++)
                 {
-                    var thread = new WorkerThread(() => Process(), _logger);
+                    var thread = new WorkerThread(() => _pipelineFactory.Setup(), p => Process(p), _logger);
 
                     _threads.Add(thread);
                     _logger.Write($"Add Worker to EventBus. Workers: {i}", Category.Log, source: "EventBus");
@@ -213,16 +214,21 @@ namespace Gaucho
 
         public class WorkerThread : IDisposable
         {
+	        private readonly string _id = Guid.NewGuid().ToString();
             private readonly object _syncRoot = new object();
-            private readonly Action _action;
+            private readonly Action<IEventPipeline> _action;
             private readonly ILogger _logger;
 
             private bool _isWorking;
+            private Lazy<IEventPipeline> _pipeline;
 
-            public WorkerThread(Action action, ILogger logger)
+            public WorkerThread(Func<IEventPipeline> factory, Action<IEventPipeline> action, ILogger logger)
             {
+	            logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
+
                 _action = action;
                 _logger = logger;
+                _pipeline = new Lazy<IEventPipeline>(factory);
             }
 
             public Task Task { get; private set; }
@@ -243,7 +249,8 @@ namespace Gaucho
                 lock (_syncRoot)
                 {
                     _isWorking = false;
-                }
+                    _logger.Write($"Disposed WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
+				}
             }
 
             public void Start()
@@ -258,11 +265,11 @@ namespace Gaucho
                     _isWorking = true;
                 }
 
-                _logger.Write("Start working on Thread", Category.Log, LogLevel.Debug, "EventBus");
+                _logger.Write($"Start working on Thread {_id}", Category.Log, LogLevel.Debug, "EventBus");
 
                 Task = Task.Factory.StartNew(() =>
                 {
-                    _action();
+                    _action(_pipeline.Value);
 
                     lock (_syncRoot)
                     {
