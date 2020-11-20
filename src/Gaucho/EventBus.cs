@@ -47,7 +47,7 @@ namespace Gaucho
             _pipelineFactory = pipelineFactory;
         }
 
-        public EventBus(string pipelineId)
+        private EventBus(string pipelineId)
         {
             PipelineId = pipelineId;
 

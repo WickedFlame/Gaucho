@@ -12,7 +12,7 @@ namespace Gaucho.Test
         [Test]
         public void ProcessingServer_RegisterEventBus_UnequalPipelineId()
         {
-            var bus = new EventBus("one");
+	        var bus = new EventBus(() => null, "one");
             var server = new ProcessingServer();
 
             Assert.Throws<Exception>(() => server.Register("two", bus));
