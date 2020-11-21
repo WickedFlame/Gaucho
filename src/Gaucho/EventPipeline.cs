@@ -5,8 +5,6 @@ namespace Gaucho
 {
     public interface IEventPipeline
     {
-        string Id { get; set; }
-
         IEnumerable<IOutputHandler> Handlers { get; }
 
         void AddHandler(IOutputHandler outputHandler);
@@ -22,8 +20,6 @@ namespace Gaucho
         {
             _handlers = new List<IOutputHandler>();
         }
-
-        public string Id { get; set; }
 
         public IEnumerable<IOutputHandler> Handlers => _handlers;
 
