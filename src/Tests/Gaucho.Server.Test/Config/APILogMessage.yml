@@ -1,7 +1,8 @@
 ﻿Id: LogMessage
 
 InputHandler:
-  Type: Gaucho.Server.Test.Handlers.GenericInputHandler`1[[Gaucho.Server.Test.Controllers.LogMessage, Gaucho.Server.Test]], Gaucho.Server.Test
+  Type: "Gaucho.Server.Test.Handlers.GenericInputHandler`1[[Gaucho.Server.Test.Controllers.LogMessage, Gaucho.Server.Test]], Gaucho.Server.Test"
+#  Name: LogMessage
 #  Filters:
 #    - Message -> msg
 
