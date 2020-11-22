@@ -1,6 +1,8 @@
-﻿using Gaucho.Configuration;
+﻿using System;
+using Gaucho.Configuration;
 using Gaucho.Server.Monitoring;
 using System.Collections.Generic;
+using Gaucho.Storage;
 
 namespace Gaucho.Diagnostics
 {
@@ -11,11 +13,16 @@ namespace Gaucho.Diagnostics
 	{
 		private readonly List<ILogMessage> _logQueue = new List<ILogMessage>();
 		private readonly LogLevel _minLogLevel;
+		private Lazy<IStorage> _storage;
+		private readonly string _pipelineId;
 
 		public LogEventStatisticWriter(StatisticsApi statistic)
 		{
 			statistic.AddMetricsCounter(new Metric(MetricType.EventLog, "Logs", () => _logQueue));
+			_pipelineId = statistic.PipelineId;
+
 			_minLogLevel = GlobalConfiguration.Configuration.Resolve<Options>().LogLevel;
+			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.Resolve<IStorage>());
 		}
 
 		public Category Category => Category.Log;
@@ -33,6 +40,7 @@ namespace Gaucho.Diagnostics
 			if (@event.Level >= _minLogLevel)
 			{
 				_logQueue.Add(@event);
+				_storage.Value.Add(_pipelineId, "logs", @event);
 
 				if (_logQueue.Count > 1000)
 				{
