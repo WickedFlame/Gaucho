@@ -4,15 +4,12 @@ using Gaucho.Server.Monitoring;
 
 namespace Gaucho.Diagnostics
 {
-    public class ProcessedEventStatisticWriter : ILogWriter<StatisticEvent>
+    public class ProcessedEventMetricCounter : ILogWriter<StatisticEvent>
     {
-        //private readonly Dictionary<StatisticType, List<StatisticEvent>> _metrics = new Dictionary<StatisticType, List<StatisticEvent>>();
-        //private readonly List<StatisticEvent> _metrics = new List<StatisticEvent>();
         private int _count = 0;
 
-		public ProcessedEventStatisticWriter(StatisticsApi statistic)
+		public ProcessedEventMetricCounter(StatisticsApi statistic)
         {
-			//statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events", () => _metrics[StatisticType.ProcessedEvent].Count));
 			statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events", () => _count));
 		}
 
@@ -34,13 +31,6 @@ namespace Gaucho.Diagnostics
 	        }
 
 	        _count += 1;
-
-	        //if (!_metrics.ContainsKey(@event.Metric))
-	        //{
-	        //    _metrics.Add(@event.Metric, new List<StatisticEvent>());
-	        //}
-
-	        //_metrics[@event.Metric].Add(@event);
         }
     }
 }

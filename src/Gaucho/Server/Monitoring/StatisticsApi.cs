@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Gaucho.Diagnostics;
 
 namespace Gaucho.Server.Monitoring
 {
-    public class StatisticsApi : IEnumerable<IMetric>
+	public class StatisticsApi : IEnumerable<IMetric>
     {
         private static readonly StatisticsCollection _statistics = new StatisticsCollection();
 
@@ -34,6 +30,11 @@ namespace Gaucho.Server.Monitoring
             _metrics.Add(metric);
         }
 
+        public IMetric GetMetric(MetricType type)
+        {
+	        return _metrics.Get(type);
+        }
+
         public object GetMetricValue(MetricType type)
         {
             var metric = _metrics.Get(type);
@@ -43,45 +44,6 @@ namespace Gaucho.Server.Monitoring
             }
 
             return metric.Factory.Invoke();
-        }
-
-        public IEnumerator<IMetric> GetEnumerator()
-        {
-            return _metrics.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-    }
-
-    internal class StatisticsCollection
-    {
-        private readonly Dictionary<string, MetricCollection> _metrics = new Dictionary<string, MetricCollection>();
-
-        public void Add(string pipelineId, MetricCollection metrics)
-        {
-            _metrics.Add(pipelineId, metrics);
-        }
-
-        public bool Contains(string pipelineId) => _metrics.ContainsKey(pipelineId);
-
-        public MetricCollection Get(string pipelineId) => _metrics[pipelineId];
-    }
-
-    internal class MetricCollection : IEnumerable<IMetric>
-    {
-        private readonly List<IMetric> _metrics = new List<IMetric>();
-
-        public void Add(IMetric metric)
-        {
-            _metrics.Add(metric);
-        }
-
-        public IMetric Get(MetricType type)
-        {
-            return _metrics.FirstOrDefault(m => m.Key == type);
         }
 
         public IEnumerator<IMetric> GetEnumerator()

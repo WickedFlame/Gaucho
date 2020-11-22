@@ -19,9 +19,16 @@ namespace Gaucho.Diagnostics
         {
             foreach(var writer in _writers.Where(w => w.Category == category))
             {
-                //var w = (ILogWriter<T>)Convert.ChangeType(writer, typeof(ILogWriter<T>), null);
-                //w.Write(@event);
-                writer.Write(@event);
+				//var w = (ILogWriter<T>)Convert.ChangeType(writer, typeof(ILogWriter<T>), null);
+				//w.Write(@event);
+				try
+				{
+					writer.Write(@event);
+				}
+				catch (Exception)
+				{
+					// do nothing...
+				}
             }
         }
     }

@@ -60,7 +60,7 @@ namespace Gaucho
             (
 	            s =>
 	            {
-		            s.AddWriter(new ProcessedEventStatisticWriter(statistic));
+		            s.AddWriter(new ProcessedEventMetricCounter(statistic));
 		            s.AddWriter(new LogEventStatisticWriter(statistic));
 	            }
             );

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Gaucho.Configuration;
+﻿using Gaucho.Configuration;
 using Gaucho.Server.Monitoring;
+using System.Collections.Generic;
 
 namespace Gaucho.Diagnostics
 {
@@ -35,7 +33,17 @@ namespace Gaucho.Diagnostics
 			if (@event.Level >= _minLogLevel)
 			{
 				_logQueue.Add(@event);
+
+				if (_logQueue.Count > 1000)
+				{
+					ShrinkLog();
+				}
 			}
+		}
+
+		private void ShrinkLog()
+		{
+			_logQueue.RemoveRange(0, 500);
 		}
 	}
 }
