@@ -8,10 +8,10 @@ using NUnit.Framework;
 
 namespace Gaucho.Test.LoadTests
 {
-    [TestFixture]
     [Explicit]
-    [Ignore("Loadtesting")]
-    public class EventBusLoadTests
+	//[Ignore("")]
+	[Category("Loadtesting")]
+	public class EventBusLoadTests
     {
         [Test]
         public void LoadTesting()
