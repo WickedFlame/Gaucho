@@ -38,7 +38,7 @@ namespace Gaucho
         public static IGlobalConfiguration Register<T>(this IGlobalConfiguration config, T item)
         {
             var key = typeof(T).Name;
-            config.Context.Add(key, item);
+            config.Context[key] = item;
 
 			return config;
         }

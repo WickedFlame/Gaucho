@@ -7,14 +7,13 @@ namespace Gaucho.Server.Monitoring
     {
         private static readonly StatisticsCollection _statistics = new StatisticsCollection();
 
-        private readonly string _pipelineId;
         private readonly MetricCollection _metrics;
 
         public StatisticsApi(string pipelineId)
         {
 			lock(_statistics)
 			{
-				_pipelineId = pipelineId;
+				PipelineId = pipelineId;
 
 				if (!_statistics.Contains(pipelineId))
 				{
@@ -24,6 +23,8 @@ namespace Gaucho.Server.Monitoring
 				_metrics = _statistics.Get(pipelineId);
 			}
         }
+
+        public string PipelineId { get; }
 
         public void AddMetricsCounter(IMetric metric)
         {
