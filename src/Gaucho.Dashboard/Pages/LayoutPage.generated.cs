@@ -122,28 +122,28 @@ WriteLiteral("</h2>\r\n        <div>\r\n            ");
             
             #line default
             #line hidden
-WriteLiteral("\r\n        </div>\r\n    </div>\r\n    <div></div>\r\n</div>\r\n<script>\r\n    var gauchoCo" +
-"nfig = {\r\n        pollUrl: \"");
+WriteLiteral("\r\n        </div>\r\n    </div>\r\n    <div></div>\r\n</div>\r\n<script>\r\n\tvar gauchoConfi" +
+"g = {\r\n\t\tpollUrl: \"");
 
 
             
             #line 41 "..\..\Pages\LayoutPage.cshtml"
-              Write(Url.To("/metrics"));
+        Write(Url.To("/metrics"));
 
             
             #line default
             #line hidden
-WriteLiteral("\",\r\n        pollInterval: 2000\r\n    }\r\n</script>\r\n<script src=\"");
+WriteLiteral("\",\r\n\t\tpollInterval: 2000\r\n\t}\r\n\r\n</script>\r\n<script src=\"");
 
 
             
-            #line 45 "..\..\Pages\LayoutPage.cshtml"
+            #line 46 "..\..\Pages\LayoutPage.cshtml"
         Write(Url.To($"/js{version.Major}{version.Minor}{version.Build}"));
 
             
             #line default
             #line hidden
-WriteLiteral("\"></script>\r\n</body>\r\n</html>");
+WriteLiteral("\" type=\"module\"></script>\r\n</body>\r\n</html>");
 
 
         }

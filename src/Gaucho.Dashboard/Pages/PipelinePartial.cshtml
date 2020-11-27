@@ -5,7 +5,7 @@
 @using Gaucho.Dashboard.Pages
 @inherits RazorPage
 
-<div class="pipeline-item">
+<div class="pipeline-item" id="@Pipeline.PipelineId">
     <div class="pipeline-item-container">
         <div class="pipeline-item-header">
             <h3>@Pipeline.PipelineId</h3>
@@ -23,29 +23,27 @@
             }
 
         </div>
-        <div class="pipeline-item-log-container">
-            <div>
-                @if (Pipeline.Elements.ContainsKey("EventLog"))
-                {
-                    var element = Pipeline.Elements["EventLog"];
-                    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
-	                <div class="toggler-section">
-		                <span class="toggler-button"></span>
-		                <div class="label" id="logs-label">Logs</div>
-	                </div>
+	    <div class="pipeline-item-log-container">
+		    @if (Pipeline.Elements.ContainsKey("EventLog"))
+		    {
+			    var element = Pipeline.Elements["EventLog"];
+			    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
+			    <div class="toggler-section">
+				    <span class="toggler-button"></span>
+				    <div class="label" id="logs-label">Logs</div>
+			    </div>
                     
-	                <div id="@id" class="pipeline-item-log-list toggle-wrapper">
-		                @foreach (DashboardLog e in element.Elements)
-		                {
-			                var levelClass = $"pipeline-log-{e.Level.ToLower()}";
-			                <div class="pipeline-item-log-item">
-				                <span class="pipeline-item-log-element @levelClass">@e.Timestamp.ToString("o")</span><span class="pipeline-item-log-element">[@e.Source]</span><span class="pipeline-item-log-element">[@e.Level]</span><span class="pipeline-item-log-element">@e.Message</span>
-			                </div>
-		                }
-	                </div>
-                }
-            </div>
-        </div>
+			    <div id="@id" class="pipeline-item-log-list toggle-wrapper">
+				    @foreach (DashboardLog e in element.Elements)
+				    {
+					    var levelClass = $"pipeline-log-{e.Level.ToLower()}";
+					    <div class="pipeline-item-log-item">
+						    <span class="pipeline-item-log-element @levelClass">@e.Timestamp.ToString("o")</span><span class="pipeline-item-log-element">[@e.Source]</span><span class="pipeline-item-log-element">[@e.Level]</span><span class="pipeline-item-log-element">@e.Message</span>
+					    </div>
+				    }
+			    </div>
+		    }
+	    </div>
     </div>
 </div> 
  
