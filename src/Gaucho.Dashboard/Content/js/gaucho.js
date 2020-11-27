@@ -1,6 +1,16 @@
 ﻿(function (gaucho) {
     gaucho.Poller = (function(config) {
-        function Poller(config) {
+		function Poller(config) {
+			this.bindTogglers = () => {
+				Array.from(document.querySelectorAll('.toggler-button')).forEach(elem => {
+					elem.addEventListener('click',
+						e => {
+							var elem = e.target.closest('.toggler-section');
+							elem.classList.toggle('is-open');
+						});
+				});
+			};
+
             poll(function () {
                     let fn = function (resolve, reject) {
                         var url = config.pollUrl;
@@ -36,8 +46,10 @@
                 // Polling done, now do something else!
             }).catch(function () {
                 // Polling timed out, handle the error!
-            });
-        };
+			});
+
+            this.bindTogglers();
+		};
 
         var poll = (fn, interval) => {
             interval = interval || 1000;
