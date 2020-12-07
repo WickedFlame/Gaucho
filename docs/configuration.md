@@ -52,6 +52,19 @@ DataFilters create a new EventData container and convert the properties to the d
 #### Formatters: 
 Formatters can be used to format the EventData to a string output in the given format.
 
+The syntax for formatting uses the following format:
+- ${PROP}
+- ${PROP:STRINGFORMAT}
+
+The Formatter ${Date:yyyy-MM-ddTHH:mm:ss.sssZ} takes in a DateTime from the Date property and formats it to a ISO 8601 date string format
+
+| Pointer | Syntax | Description |
+|----|----|----|
+| <- | property <- ${propertyA}_${propertyB} | Creates a string value formatted with the value of propertyA and propertyB with a _ between |
+
+##### Predefined Formatters
+There are some predefined Formatters that take a configuration and produce a string in a certain format.
+
 | Key | Pointer | Syntax | Description |
 |----|----|----|----|
 | json | <- | json <- [property, property2 -> destination2] | Creates a json containing property and destination2 |
