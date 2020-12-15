@@ -119,9 +119,15 @@ namespace Gaucho
 
             while (_queue.TryDequeue(out var @event))
             {
-                pipeline.Run(@event);
-
-                _logger.Write(@event.Id, StatisticType.ProcessedEvent);
+	            try
+	            {
+		            _logger.Write(@event.Id, StatisticType.ProcessedEvent);
+					pipeline.Run(@event);
+	            }
+	            catch (Exception e)
+	            {
+		            _logger.Write($"Error processing eveng{Environment.NewLine}EventId: {@event.Id}{Environment.NewLine}Pipeline: {PipelineId}{Environment.NewLine}{e.Message}", Category.Log, LogLevel.Error, "EventBus");
+	            }
             }
 
             CleanupProcessors();
@@ -141,7 +147,7 @@ namespace Gaucho
                     var thread = new EventProcessor(() => _pipelineFactory.Setup(), p => Process(p), _logger);
 
                     _processors.Add(thread);
-                    _logger.Write($"Add Worker to EventBus. Workers: {i}", Category.Log, source: "EventBus");
+                    _logger.Write($"Add Worker to EventBus. Active Workers: {i}", Category.Log, source: "EventBus");
                 }
 
                 var toRemove = _processors.Count - threadCount;

@@ -41,13 +41,16 @@ namespace Gaucho.Diagnostics
     {
         public StatisticEvent(string message, StatisticType metric)
         {
-            Message = message;
+	        Timestamp = DateTime.Now;
+			Message = message;
             Metric = metric;
         }
 
         public StatisticType Metric { get; set; }
 
-        public string Message { get; set; }
+        public DateTime Timestamp { get; }
+
+		public string Message { get; set; }
         
         public string Source { get; set; }
     }

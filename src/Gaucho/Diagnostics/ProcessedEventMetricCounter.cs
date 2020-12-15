@@ -24,24 +24,30 @@ namespace Gaucho.Diagnostics
             if (@event is StatisticEvent e)
             {
                 Write(e);
-            }
+			}
         }
 
         public void Write(StatisticEvent @event)
         {
-	        if (_storage == null)
-	        {
-		        _storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-		        _count = _storage.Get<int>(_pipelineId, "ProcessedEventsMetric");
-	        }
+			lock(_pipelineId)
+			{
+				if (_storage == null)
+				{
+					_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
+					_count = _storage.Get<int>(_pipelineId, "ProcessedEventsMetric");
+				}
+			}
 
 	        if (@event.Metric != StatisticType.ProcessedEvent)
 	        {
 		        return;
 	        }
 
-	        _count += 1;
-	        _storage.Set(_pipelineId, "ProcessedEventsMetric", _count);
+	        lock (_pipelineId)
+	        {
+		        _count += 1;
+		        _storage.Set(_pipelineId, "ProcessedEventsMetric", _count);
+	        }
 
         }
     }
