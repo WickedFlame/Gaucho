@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Gaucho.Handlers;
 using NUnit.Framework;
 
 namespace Gaucho.Test
@@ -25,7 +26,7 @@ namespace Gaucho.Test
 				return pipeline;
 			});
 
-			Assert.AreSame(handler, server.EventBusFactory.GetEventBus(pipelineId).PipelineFactory.Setup().Handlers.Single());
+			Assert.AreSame(handler, GetOutputHandlers(server, pipelineId).Single());
 		}
 
 		[Test]
@@ -61,30 +62,106 @@ namespace Gaucho.Test
 				});
 			});
 
-			Assert.AreSame(handler, server.EventBusFactory.GetEventBus(pipelineId).PipelineFactory.Setup().Handlers.Single());
+			Assert.AreSame(handler, GetOutputHandlers(server, pipelineId).Single());
 		}
 
-		//[Test]
-		//public void Setup_Register_Factory_SetupPipeline_AddFilters()
-		//{
-		//	var pipelineId = Guid.NewGuid().ToString();
+		[Test]
+		public void Setup_Register_Factory_SetupPipeline_FilterDecorator()
+		{
+			var pipelineId = Guid.NewGuid().ToString();
 
-		//	var handler = new SetupOutputHandler();
+			var handler = new SetupOutputHandler();
 
-		//	var server = new ProcessingServer();
-		//	server.SetupPipeline(pipelineId, c =>
-		//	{
-		//		c.Register(() =>
-		//		{
-		//			var pipeline = new EventPipeline();
-		//			pipeline.AddHandler(handler);
+			var server = new ProcessingServer();
+			server.SetupPipeline(pipelineId, c =>
+			{
+				c.Register(() =>
+				{
+					var pipeline = new EventPipeline();
+					pipeline.AddHandler(handler, new[] { "Level -> dst_lvl", "Message" });
 
-		//			return pipeline;
-		//		});
-		//	});
+					return pipeline;
+				});
+			});
 
-		//	Assert.AreSame(handler, server.EventBusFactory.GetEventBus(pipelineId).PipelineFactory.Setup().Handlers.Single());
-		//}
+			Assert.IsAssignableFrom<DataFilterDecorator>(GetOutputHandlers(server, pipelineId).Single());
+		}
+
+		[Test]
+		public void Setup_Register_Factory_SetupPipeline_AddFilters()
+		{
+			var pipelineId = Guid.NewGuid().ToString();
+
+			var handler = new SetupOutputHandler();
+
+			var server = new ProcessingServer();
+			server.SetupPipeline(pipelineId, c =>
+			{
+				c.Register(() =>
+				{
+					var pipeline = new EventPipeline();
+					pipeline.AddHandler(handler, new[] {"Level -> dst_lvl", "Message"});
+
+					return pipeline;
+				});
+			});
+
+			Assert.That(((DataFilterDecorator)GetOutputHandlers(server, pipelineId).Single()).Converter.Filters.Count() == 2);
+		}
+
+		[Test]
+		public void Setup_Register_Factory_SetupPipeline_AddFilters_Convert()
+		{
+			var pipelineId = Guid.NewGuid().ToString();
+
+			var handler = new SetupOutputHandler();
+
+			var server = new ProcessingServer();
+			server.SetupPipeline(pipelineId, c =>
+			{
+				c.Register(() =>
+				{
+					var pipeline = new EventPipeline();
+					pipeline.AddHandler(handler, new[] { "Level -> dst_lvl", "Message" });
+
+					return pipeline;
+				});
+			});
+
+			Assert.That(((DataFilterDecorator)GetOutputHandlers(server, pipelineId).Single()).Converter.Filters.Count() == 2);
+		}
+
+
+		[Test]
+		public void Setup_Register_Factory_SetupPipeline_AddFilters_VerifyHandlers()
+		{
+			var pipelineId = Guid.NewGuid().ToString();
+
+			var handler = new SetupOutputHandler();
+
+			var server = new ProcessingServer();
+			server.SetupPipeline(pipelineId, c =>
+			{
+				c.Register(() =>
+				{
+					var pipeline = new EventPipeline();
+					pipeline.AddHandler(handler, new[] { "Level -> dst_lvl", "Message" });
+
+					return pipeline;
+				});
+			});
+
+			Assert.AreNotSame(handler, GetOutputHandlers(server, pipelineId).Single());
+			Assert.AreSame(handler, ((DataFilterDecorator) GetOutputHandlers(server, pipelineId).Single()).InnerHandler);
+		}
+
+
+
+
+		private IEnumerable<IOutputHandler> GetOutputHandlers(IProcessingServer server, string pipelineId)
+		{
+			return server.EventBusFactory.GetEventBus(pipelineId).PipelineFactory.Setup().Handlers;
+		}
 
 		public class SetupOutputHandler : IOutputHandler
 		{
@@ -94,9 +171,23 @@ namespace Gaucho.Test
 			}
 		}
 
-		public class SetupInputHandler : IInputHandler
+		public class SetupInputHandler : IInputHandler //<SetupMessage>
 		{
+			//public Event ProcessInput(SetupMessage input)
+			//{
+			//	throw new NotImplementedException();
+			//}
+
 			public string PipelineId { get; set; }
 		}
+
+		//public class SetupMessage
+		//{
+		//	public string Level { get; set; }
+
+		//	public string Message { get; set; }
+
+		//	public string Title { get; set; }
+		//}
 	}
 }

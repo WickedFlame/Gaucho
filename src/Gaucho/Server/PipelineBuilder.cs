@@ -37,10 +37,10 @@ namespace Gaucho.Server
 	                    var ctx = rootCtx.ChildContext();
 	                    var outputHandler = BuildHandler<IOutputHandler>(ctx, node);
 						
-	                    var converter = ctx.Resolve<IEventDataConverter>();
+	                    var converter = node.BuildDataFilter();
 	                    if (converter.Filters.Any(f => f.FilterType == Filters.FilterType.Property))
 	                    {
-		                    outputHandler = new DataConversionDecorator(converter, outputHandler);
+		                    outputHandler = new DataFilterDecorator(converter, outputHandler);
 	                    }
 
 	                    pipeline.AddHandler(outputHandler);
@@ -56,7 +56,7 @@ namespace Gaucho.Server
 
         public T BuildHandler<T>(IActivationContext nodeCtx, HandlerNode node)
         {
-            nodeCtx.Register<IEventDataConverter>(node.BuildEventDataConverter);
+            nodeCtx.Register<IEventDataConverter>(node.BuildDataFilter);
             nodeCtx.Register<ConfiguredArguments>(node.BuildArguments);
 
             var plugin = _pluginManager.GetPlugin(typeof(T), node);
