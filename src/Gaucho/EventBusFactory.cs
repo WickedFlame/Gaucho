@@ -6,12 +6,20 @@ namespace Gaucho
 {
     public interface IEventBusFactory
     {
+		/// <summary>
+		/// Gets a list of all registered pipelines in the factory
+		/// </summary>
         IEnumerable<string> Pipelines { get; }
 
         void Register(string pipelineId, Func<IEventPipeline> factory);
 
         void Register(string pipelineId, IEventBus eventBus);
 
+		/// <summary>
+		/// get the eventbus associated with the pipeline
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		/// <returns></returns>
         IEventBus GetEventBus(string pipelineId);
     }
 
@@ -28,7 +36,10 @@ namespace Gaucho
             _activeEventBus = new Dictionary<string, IEventBus>();
         }
 
-        public IEnumerable<string> Pipelines => _pipelineRegistrations.Keys;
+		/// <summary>
+		/// Gets a list of all registered pipelines in the factory
+		/// </summary>
+		public IEnumerable<string> Pipelines => _pipelineRegistrations.Keys;
 
         public void Register(string pipelineId, Func<IEventPipeline> factory)
         {
@@ -68,7 +79,12 @@ namespace Gaucho
 			}
         }
 
-        public IEventBus GetEventBus(string pipelineId)
+        /// <summary>
+        /// get the eventbus associated with the pipeline
+        /// </summary>
+        /// <param name="pipelineId"></param>
+        /// <returns></returns>
+		public IEventBus GetEventBus(string pipelineId)
         {
 			lock(_lock)
 			{

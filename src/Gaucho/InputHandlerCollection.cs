@@ -24,7 +24,7 @@ namespace Gaucho
             return _plugins[pipelineId] as IInputHandler<T>;
         }
 
-        public IEnumerator<IInputHandler> GetEnumerator()
+		public IEnumerator<IInputHandler> GetEnumerator()
         {
             return _plugins.Values.GetEnumerator();
         }

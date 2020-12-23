@@ -55,6 +55,7 @@ namespace Gaucho.Test.Server
             }
 
             public string PipelineId { get; set; }
+            public IPipelineFactory PipelineFactory => _pipelineFactory;
 
             public int ThreadCount { get; } = 0;
 

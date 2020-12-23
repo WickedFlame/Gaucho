@@ -12,6 +12,11 @@ namespace Gaucho
     {
         string PipelineId { get; }
 
+        /// <summary>
+        /// gets the pipelinefactory that creates the pipeline for this eventbus
+        /// </summary>
+		IPipelineFactory PipelineFactory { get; }
+
         void SetPipeline(IPipelineFactory factory);
 
         void Publish(Event @event);
@@ -69,7 +74,13 @@ namespace Gaucho
 
         public string PipelineId { get; }
 
-        public void WaitAll()
+		/// <summary>
+		/// gets the pipelinefactory that creates the pipeline for this eventbus
+		/// </summary>
+        public IPipelineFactory PipelineFactory => _pipelineFactory;
+
+
+		public void WaitAll()
         {
             var tasks = _processors.Select(t => t.Task)
                 .Where(t => t != null)

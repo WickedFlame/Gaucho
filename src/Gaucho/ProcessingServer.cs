@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Gaucho.Diagnostics;
 using Gaucho.Server.Monitoring;
 
@@ -7,6 +8,11 @@ namespace Gaucho
     public interface IProcessingServer
     {
         IEventBusFactory EventBusFactory { get; }
+
+        /// <summary>
+        /// gets all registered inputhandlers
+        /// </summary>
+		IEnumerable<IInputHandler> InputHandlers { get; }
 
         void Register(string pipelineId, Func<EventPipeline> factory);
 
@@ -58,7 +64,13 @@ namespace Gaucho
 
         public IEventBusFactory EventBusFactory => _eventBusFactory;
 
-        public void Register(string pipelineId, Func<EventPipeline> factory)
+		/// <summary>
+		/// gets all registered inputhandlers
+		/// </summary>
+        public IEnumerable<IInputHandler> InputHandlers => _inputHandlers;
+
+
+		public void Register(string pipelineId, Func<EventPipeline> factory)
         {
 	        _eventBusFactory.Register(pipelineId, factory);
         }
@@ -88,7 +100,7 @@ namespace Gaucho
             return _inputHandlers.GetHandler<T>(pipelineId);
         }
 
-        public void Publish(Event @event)
+		public void Publish(Event @event)
         {
             var pipeline = _eventBusFactory.GetEventBus(@event.PipelineId);
             if (pipeline == null)
