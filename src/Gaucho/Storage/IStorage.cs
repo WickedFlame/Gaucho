@@ -1,4 +1,6 @@
-﻿namespace Gaucho.Storage
+﻿using System.Collections.Generic;
+
+namespace Gaucho.Storage
 {
 	public interface IStorage
 	{
@@ -7,5 +9,7 @@
 		void Set<T>(string pipelineId, string key, T value);
 
 		T Get<T>(string pipelineId, string key);
+
+		IEnumerable<T> GetList<T>(string pipelineId, string key);
 	}
 }

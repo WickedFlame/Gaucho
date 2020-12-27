@@ -13,7 +13,7 @@ namespace Gaucho.Diagnostics
 	{
 		private readonly List<ILogMessage> _logQueue = new List<ILogMessage>();
 		private readonly LogLevel _minLogLevel;
-		private Lazy<IStorage> _storage;
+		private readonly Lazy<IStorage> _storage;
 		private readonly string _pipelineId;
 
 		public LogEventStatisticWriter(StatisticsApi statistic)

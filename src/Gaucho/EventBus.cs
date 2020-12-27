@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gaucho.Diagnostics;
+using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
 
 namespace Gaucho
@@ -57,7 +58,7 @@ namespace Gaucho
             PipelineId = pipelineId;
 
             var statistic = new StatisticsApi(pipelineId);
-            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Workers", () => _processors.Count));
+            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Active Workers", () => _processors.Count));
             statistic.AddMetricsCounter(new Metric(MetricType.QueueSize, "Events in Queue", () => _queue.Count));
 
             _queue = new EventQueue();
@@ -66,6 +67,7 @@ namespace Gaucho
 	            s =>
 	            {
 		            s.AddWriter(new ProcessedEventMetricCounter(statistic));
+		            s.AddWriter(new WorkersLogMetricCounter(statistic));
 		            s.AddWriter(new LogEventStatisticWriter(statistic));
 	            }
             );
@@ -132,7 +134,7 @@ namespace Gaucho
             {
 	            try
 	            {
-		            _logger.Write(@event.Id, StatisticType.ProcessedEvent);
+		            _logger.WriteMetric(@event.Id, StatisticType.ProcessedEvent);
 					pipeline.Run(@event);
 	            }
 	            catch (Exception e)
@@ -158,7 +160,8 @@ namespace Gaucho
                     var thread = new EventProcessor(() => _pipelineFactory.Setup(), p => Process(p), _logger);
 
                     _processors.Add(thread);
-                    _logger.Write($"Add Worker to EventBus. Active Workers: {i}", Category.Log, source: "EventBus");
+                    _logger.Write($"Add Worker to EventBus. Active Workers: {i + 1}", Category.Log, source: "EventBus");
+                    _logger.WriteMetric(i + 1, StatisticType.WorkersLog);
                 }
 
                 var toRemove = _processors.Count - threadCount;
@@ -177,8 +180,11 @@ namespace Gaucho
                         var processor = _processors[_processors.Count - 1];
 
                         _processors.Remove(processor);
+                        
+						toRemove--;
 
-                        toRemove--;
+						_logger.Write($"Removed Worker from EventBus. Active Workers: {toRemove}", Category.Log, source: "EventBus");
+						_logger.WriteMetric(toRemove, StatisticType.WorkersLog);
                     }
                 }
             }
@@ -204,7 +210,8 @@ namespace Gaucho
                     processor.Dispose();
 
                     _logger.Write($"Remove Worker from EventBus. Workers: {_processors.Count}", Category.Log, source: "EventBus");
-                }
+                    _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
+				}
             }
         }
 

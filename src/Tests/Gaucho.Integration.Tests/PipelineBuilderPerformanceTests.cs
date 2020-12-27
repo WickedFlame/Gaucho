@@ -6,7 +6,7 @@ using Gaucho.Server;
 using MeasureMap;
 using NUnit.Framework;
 
-namespace Gaucho.Test.LoadTests
+namespace Gaucho.Integration.Tests
 {
 	[Explicit]
 	[Category("Performancetesting")]

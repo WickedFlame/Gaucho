@@ -37,12 +37,13 @@ namespace Gaucho.Diagnostics
         public string Source { get; set; }
     }
 
-    public class StatisticEvent : ILogEvent
+    public class StatisticEvent<T> : ILogEvent
     {
-        public StatisticEvent(string message, StatisticType metric)
+        public StatisticEvent(T value, StatisticType metric)
         {
 	        Timestamp = DateTime.Now;
-			Message = message;
+			Message = value.ToString();
+			Value = value;
             Metric = metric;
         }
 
@@ -52,6 +53,8 @@ namespace Gaucho.Diagnostics
 
 		public string Message { get; set; }
         
+		public T Value { get; }
+
         public string Source { get; set; }
     }
 }

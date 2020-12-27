@@ -15,19 +15,6 @@ namespace Gaucho.Test
 		}
 
 		[Test]
-		public void EventBus_Register_StatisticsApi()
-		{
-			var stats = new StatisticsApi("EventBus_1");
-			Assert.IsNull(stats.GetMetricValue(MetricType.ThreadCount));
-			Assert.IsNull(stats.GetMetricValue(MetricType.QueueSize));
-
-			var eventBus = new EventBus(() => null, "EventBus_1");
-
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.ThreadCount));
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.QueueSize));
-		}
-
-		[Test]
 		public void EventBus_Process()
 		{
 			var eventBus = new EventBus(() => new EventPipeline(), "EventBus_2");
@@ -67,7 +54,7 @@ namespace Gaucho.Test
 		{
 			var eventBus = new EventBus(() => null, "EventBus_5");
 			eventBus.Close();
-
+			
 			var stats = new StatisticsApi("EventBus_5");
 			Assert.IsTrue((int)stats.GetMetricValue(MetricType.QueueSize) == 0);
 		}

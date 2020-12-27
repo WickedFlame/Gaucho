@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Gaucho.Server.Monitoring;
+﻿using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
 
-namespace Gaucho.Diagnostics
+namespace Gaucho.Diagnostics.MetricCounters
 {
-    public class ProcessedEventMetricCounter : ILogWriter<StatisticEvent>
+	public class ProcessedEventMetricCounter : ILogWriter<StatisticEvent<string>>
     {
         private int _count = -1;
         private readonly string _pipelineId;
@@ -21,15 +19,20 @@ namespace Gaucho.Diagnostics
 
         public void Write(ILogEvent @event)
         {
-            if (@event is StatisticEvent e)
+			if (@event is StatisticEvent<string> e)
             {
                 Write(e);
 			}
         }
 
-        public void Write(StatisticEvent @event)
+        public void Write(StatisticEvent<string> @event)
         {
-			lock(_pipelineId)
+	        if (@event.Metric != StatisticType.ProcessedEvent)
+	        {
+		        return;
+	        }
+
+			lock (_pipelineId)
 			{
 				if (_storage == null)
 				{
@@ -37,11 +40,6 @@ namespace Gaucho.Diagnostics
 					_count = _storage.Get<int>(_pipelineId, "ProcessedEventsMetric");
 				}
 			}
-
-	        if (@event.Metric != StatisticType.ProcessedEvent)
-	        {
-		        return;
-	        }
 
 	        lock (_pipelineId)
 	        {
