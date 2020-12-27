@@ -6,6 +6,11 @@ export class Gaucho {
 		setTimeout(() => {
 			this.startPolling(config, (data) => this.updateStatus(data, this));
 		}, 3000);
+
+
+
+		this.valores = [150, 50, 62, 34, 45, 190, 230, 220, 170, 150, 73, 54, 240, 214, 210, 240, 214, 210, 92];
+		this.draw();
 	}
 
 	bindTogglers(elem) {
@@ -133,6 +138,75 @@ export class Gaucho {
 			}
 		}
 	}
+
+	// https://codepen.io/mr_brunocastro/pen/GJRqJa
+drawGrid(width, height, colun, line) {
+	var ctx = document.getElementById('canvas').getContext('2d');
+	ctx.fillRect(0, 0, width, height);
+	ctx.save();
+	for (var c = 1; c < (width / colun); c++) {
+		ctx.beginPath();
+		ctx.moveTo(c * colun, 0);
+		ctx.lineTo(c * colun, height);
+		ctx.stroke();
+	}
+	for (var l = 1; l < (height / line); l++) {
+		ctx.beginPath();
+		ctx.moveTo(0, l * line);
+		ctx.lineTo(width, l * line);
+		ctx.stroke();
+	}
+}
+
+drawingLines(width, points, c) {
+	var ctx = document.getElementById('canvas').getContext('2d');
+	ctx.beginPath();
+	ctx.globalAlpha = c * 0.04;
+	ctx.moveTo(((c - 1) * width + 10), points[c - 1]);
+	ctx.lineTo(c * width + 10, points[c]);
+	ctx.lineTo(c * width + 10, 300);
+	ctx.lineTo(((c - 1) * width + 10), 300);
+	ctx.lineTo(((c - 1) * width + 10), points[c - 1]);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.globalAlpha = 1;
+	ctx.moveTo(((c - 1) * width + 10), points[c - 1]);
+	ctx.lineTo(c * width + 10, points[c]);
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.save();
+	ctx.fillStyle = ctx.strokeStyle;
+	ctx.arc(c * width + 10, points[c], 3, 0, Math.PI * 2);
+	ctx.fill();
+	ctx.restore();
+}
+
+draw() {
+	var ctx = document.getElementById('canvas').getContext('2d');
+
+	//////////////// setupBackground
+	ctx.fillStyle = "#1d1f20";
+	ctx.strokeStyle = "#333";
+	ctx.save();
+	this.drawGrid(500, 300, 10, 10);
+
+
+	for (var c = 0; c < this.valores.length; c++) {
+		//if (isNaN(this.pontos[c])) {
+		//	this.pontos[c] = 300;
+		//}
+		//ctx.lineWidth = 1.4;
+		var larg = 480 / (this.valores.length - 1);
+		//this.diferenca[c] = (300 - this.valores[c]) - this.pontos[c];
+		//this.pontos[c] += this.diferenca[c] / (c + 1);
+
+		////////////////// setupGraphic
+		//ctx.strokeStyle = "#0ff";
+		//ctx.fillStyle = "#0ff";
+		//this.drawingLines(larg, this.pontos, c);
+		this.drawingLines(larg, this.valores, c);
+	}
+}
 }
 
 if (gauchoConfig === undefined) {
