@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gaucho.Diagnostics;
+using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
 
 namespace Gaucho.Dashboard.Monitoring
@@ -67,6 +68,20 @@ namespace Gaucho.Dashboard.Monitoring
 									Source = log.Source,
 									Level = log.Level.ToString(),
 									Message = log.Message
+								});
+							}
+						}
+						break;
+
+					case MetricType.WorkersLog:
+						if (metric.Factory.Invoke() is IEnumerable<WorkerCountMetric> workers)
+						{
+							foreach (var worker in workers.OrderBy(w => w.Timestamp).Take(50))
+							{
+								metrics.AddElement(metric.Key.ToString(), metric.Title, new TimelineLog<int>
+								{
+									Timestamp = worker.Timestamp,
+									Value = worker.ActiveWorkers
 								});
 							}
 						}

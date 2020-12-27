@@ -24,4 +24,11 @@ namespace Gaucho.Dashboard.Monitoring
 
 		public string Source { get; set; }
 	}
+
+	public class TimelineLog<T>
+	{
+		public DateTime Timestamp { get; set; }
+
+		public T Value { get; set; }
+	}
 }
