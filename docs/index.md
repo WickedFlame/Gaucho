@@ -12,10 +12,43 @@ Installation
 
 Documentation
 ---
-- [Overview](overview)
-- [Pipelines](pipelines) - Pipelines in Gaucho
-- [Configuration](configuration) - Configure Gaucho
-- [Handlers](handlers)
-- [DependencyInjection](dependencyinjection)
-- [Dashboard](dashboard)
-- [Metrics](metrics)
+```
+var pipelineId = "DefaultPipeline";
+
+var server = new ProcessingServer();
+server.Register(pipelineId, () =>
+{
+    var pipeline = new EventPipeline();
+    pipeline.AddHandler(new ConsoleOutputHandler());
+
+    return pipeline;
+});
+server.Register(pipelineId, new LogMessageInputHandler());
+
+var client = new EventDispatcher(server);
+client.Process(pipelineId, new LogMessage { Message = "InstanceServer" });
+```
+
+Defining the Handlers
+```
+public class LogMessageInputHandler : IInputHandler<LogMessage>
+{
+    public string PipelineId { get; set; }
+
+    public Event ProcessInput(LogMessage message)
+    {
+        // transform data
+        return new Event(PipelineId, f => f.BuildFrom(data));
+    }
+}
+```
+
+```
+public class ConsoleOutputHandler : IOutputHandler
+{
+    public void Handle(Event @event)
+    {
+        System.Diagnostics.Trace.WriteLine(data);
+    }
+}
+```
