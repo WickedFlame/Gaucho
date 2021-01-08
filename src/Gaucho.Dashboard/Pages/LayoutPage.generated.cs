@@ -43,12 +43,22 @@ WriteLiteral("\r\n");
 
 
 WriteLiteral("\r\n<!DOCTYPE html>\r\n\r\n<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head" +
-">\r\n    <title>Gaucho - ");
+">\r\n    <title>");
 
 
             
             #line 10 "..\..\Pages\LayoutPage.cshtml"
-               Write(Title);
+      Write(DashboardOptions.Title);
+
+            
+            #line default
+            #line hidden
+WriteLiteral(" - ");
+
+
+            
+            #line 10 "..\..\Pages\LayoutPage.cshtml"
+                                Write(Title);
 
             
             #line default
@@ -79,21 +89,20 @@ WriteLiteral("    <link rel=\"stylesheet\" href=\"");
             
             #line default
             #line hidden
-WriteLiteral(@""">
-</head>
-<body>
-    <div class=""header"">
-        <div></div>
-        <div class=""container"">
-            <h1>Gaucho</h1>
-        </div>
-        <div></div>
-    </div>
+WriteLiteral("\">\r\n</head>\r\n<body>\r\n    <div class=\"header\">\r\n        <div></div>\r\n        <div " +
+"class=\"container\">\r\n            <h1>");
 
-<div class=""main-wrapper"">
-    <div></div>
-    <div class=""container"" style=""margin-bottom: 20px;"">
-        <h2>");
+
+            
+            #line 24 "..\..\Pages\LayoutPage.cshtml"
+           Write(DashboardOptions.Title);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</h1>\r\n        </div>\r\n        <div></div>\r\n    </div>\r\n\r\n<div class=\"main-wrappe" +
+"r\">\r\n    <div></div>\r\n    <div class=\"container\" style=\"margin-bottom: 20px;\">\r\n" +
+"        <h2>");
 
 
             
@@ -113,28 +122,28 @@ WriteLiteral("</h2>\r\n        <div>\r\n            ");
             
             #line default
             #line hidden
-WriteLiteral("\r\n        </div>\r\n    </div>\r\n    <div></div>\r\n</div>\r\n<script>\r\n    var gauchoCo" +
-"nfig = {\r\n        pollUrl: \"");
+WriteLiteral("\r\n        </div>\r\n    </div>\r\n    <div></div>\r\n</div>\r\n<script>\r\n\tvar gauchoConfi" +
+"g = {\r\n\t\tpollUrl: \"");
 
 
             
             #line 41 "..\..\Pages\LayoutPage.cshtml"
-              Write(Url.To("/metrics"));
+        Write(Url.To("/metrics"));
 
             
             #line default
             #line hidden
-WriteLiteral("\",\r\n        pollInterval: 2000\r\n    }\r\n</script>\r\n<script src=\"");
+WriteLiteral("\",\r\n\t\tpollInterval: 2000\r\n\t}\r\n\r\n</script>\r\n<script src=\"");
 
 
             
-            #line 45 "..\..\Pages\LayoutPage.cshtml"
+            #line 46 "..\..\Pages\LayoutPage.cshtml"
         Write(Url.To($"/js{version.Major}{version.Minor}{version.Build}"));
 
             
             #line default
             #line hidden
-WriteLiteral("\"></script>\r\n</body>\r\n</html>");
+WriteLiteral("\" type=\"module\"></script>\r\n</body>\r\n</html>");
 
 
         }

@@ -1,21 +1,23 @@
 ﻿
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace Gaucho.Server.Test.Handlers
 {
     public class ConsoleOutputHandler : IOutputHandler
     {
-        public ConsoleOutputHandler(IEventDataConverter converter)
-        {
-            Converter = converter;
-        }
+	    private readonly IEventDataConverter _converter;
 
-        public IEventDataConverter Converter { get; }
+	    public ConsoleOutputHandler(IEventDataConverter converter)
+	    {
+		    _converter = converter;
+	    }
 
-        public void Handle(Event @event)
-        {
-            var data = Converter.Convert(@event.Data);
-            System.Console.WriteLine(data);
+		public void Handle(Event @event)
+		{
+			_converter.AppendFormated(@event.Data);
+
+			System.Diagnostics.Debug.WriteLine(@event.Data);
         }
     }
 }

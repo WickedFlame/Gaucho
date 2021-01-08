@@ -9,9 +9,10 @@
     <Copyright>@ WickedFlame 2019</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageTags>Messagebroker Broker EventBus</PackageTags>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.0-RC01</Version>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0-RC01</FileVersion>
+    <PackageVersion>1.0.0-RC01</PackageVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Gaucho</Title>
     <PackageProjectUrl>https://wickedflame.github.io/Gaucho/</PackageProjectUrl>

@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Server.Test", "src\Tests\Gaucho.Server.Test\Gaucho.Server.Test.csproj", "{ECE36AC8-C1D7-4154-BCFA-B06DD7F656C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaucho.Dashboard", "src\Gaucho.Dashboard\Gaucho.Dashboard.csproj", "{AD5D0494-70CE-43A6-B33B-3F8AB9657AB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Dashboard", "src\Gaucho.Dashboard\Gaucho.Dashboard.csproj", "{AD5D0494-70CE-43A6-B33B-3F8AB9657AB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaucho.Integration.Tests", "src\Tests\Gaucho.Integration.Tests\Gaucho.Integration.Tests.csproj", "{94DD4233-26A8-405C-AD55-4F8710085B2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{AD5D0494-70CE-43A6-B33B-3F8AB9657AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD5D0494-70CE-43A6-B33B-3F8AB9657AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD5D0494-70CE-43A6-B33B-3F8AB9657AB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94DD4233-26A8-405C-AD55-4F8710085B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94DD4233-26A8-405C-AD55-4F8710085B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94DD4233-26A8-405C-AD55-4F8710085B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94DD4233-26A8-405C-AD55-4F8710085B2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{43FCA068-42C0-4AC8-8401-2B0B86139306} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
 		{ECE36AC8-C1D7-4154-BCFA-B06DD7F656C7} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
+		{94DD4233-26A8-405C-AD55-4F8710085B2C} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {90DDCE53-82D7-45F2-926D-909108DB6B8A}

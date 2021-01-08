@@ -11,7 +11,7 @@ namespace Gaucho.Test
         [Test]
         public void EventBusFactory_RegisterEventBus_UnequalPipelineId()
         {
-            var bus = new EventBus("one");
+	        var bus = new EventBus(() => null, "one");
             var factory = new EventBusFactory();
 
             Assert.Throws<Exception>(() => factory.Register("two", bus));

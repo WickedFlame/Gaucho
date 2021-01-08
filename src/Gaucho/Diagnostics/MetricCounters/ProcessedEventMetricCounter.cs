@@ -1,0 +1,52 @@
+﻿using Gaucho.Server.Monitoring;
+using Gaucho.Storage;
+
+namespace Gaucho.Diagnostics.MetricCounters
+{
+	public class ProcessedEventMetricCounter : ILogWriter<StatisticEvent<string>>
+    {
+        private int _count = -1;
+        private readonly string _pipelineId;
+		private IStorage _storage;
+
+        public ProcessedEventMetricCounter(StatisticsApi statistic)
+        {
+			statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events", () => _count));
+			_pipelineId = statistic.PipelineId;
+        }
+
+        public Category Category => Category.EventStatistic;
+
+        public void Write(ILogEvent @event)
+        {
+			if (@event is StatisticEvent<string> e)
+            {
+                Write(e);
+			}
+        }
+
+        public void Write(StatisticEvent<string> @event)
+        {
+	        if (@event.Metric != StatisticType.ProcessedEvent)
+	        {
+		        return;
+	        }
+
+			lock (_pipelineId)
+			{
+				if (_storage == null)
+				{
+					_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
+					_count = _storage.Get<int>(_pipelineId, "ProcessedEventsMetric");
+				}
+			}
+
+	        lock (_pipelineId)
+	        {
+		        _count += 1;
+		        _storage.Set(_pipelineId, "ProcessedEventsMetric", _count);
+	        }
+
+        }
+    }
+}

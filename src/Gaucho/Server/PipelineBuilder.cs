@@ -2,12 +2,13 @@
 using Gaucho.Diagnostics;
 using System.Linq;
 using System.Text;
+using Gaucho.Handlers;
 
 namespace Gaucho.Server
 {
     public class PipelineBuilder
     {
-        private readonly PluginManager _pluginMgr;
+        private readonly HandlerPluginManager _pluginManager;
         private readonly IGlobalConfiguration _config;
         private readonly ILogger _logger;
 
@@ -16,7 +17,7 @@ namespace Gaucho.Server
         public PipelineBuilder(IGlobalConfiguration config)
         {
             _config = config;
-            _pluginMgr = new PluginManager();
+            _pluginManager = new HandlerPluginManager();
 			_logger = LoggerConfiguration.Setup();
 		}
 
@@ -33,8 +34,16 @@ namespace Gaucho.Server
                     var pipeline = new EventPipeline();
                     foreach (var node in config.OutputHandlers)
                     {
-                        var outputHandler = BuildHandler<IOutputHandler>(rootCtx.ChildContext(), node);
-                        pipeline.AddHandler(outputHandler);
+	                    var ctx = rootCtx.ChildContext();
+	                    var outputHandler = BuildHandler<IOutputHandler>(ctx, node);
+						
+	                    var converter = node.BuildDataFilter();
+	                    if (converter.Filters.Any(f => f.FilterType == Filters.FilterType.Property))
+	                    {
+		                    outputHandler = new DataFilterDecorator(converter, outputHandler);
+	                    }
+
+	                    pipeline.AddHandler(outputHandler);
                     }
 
                     return pipeline;
@@ -47,10 +56,10 @@ namespace Gaucho.Server
 
         public T BuildHandler<T>(IActivationContext nodeCtx, HandlerNode node)
         {
-            nodeCtx.Register<IEventDataConverter>(() => node.BuildEventDataConverter());
-            nodeCtx.Register<ConfiguredArguments>(() => node.BuildArguments());
+            nodeCtx.Register<IEventDataConverter>(node.BuildDataFilter);
+            nodeCtx.Register<ConfiguredArguments>(node.BuildArguments);
 
-            var plugin = _pluginMgr.GetPlugin(typeof(T), node);
+            var plugin = _pluginManager.GetPlugin(typeof(T), node);
             var handler = nodeCtx.Resolve<T>(plugin.Type);
 
             return handler;

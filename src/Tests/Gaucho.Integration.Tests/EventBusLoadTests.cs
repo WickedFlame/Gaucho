@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using MeasureMap;
 using Gaucho.Configuration;
+using Gaucho.Integration.Tests.Handlers;
 using Gaucho.Server;
 using NUnit.Framework;
 
 namespace Gaucho.Test.LoadTests
 {
-    [TestFixture]
     [Explicit]
-    [Ignore("Loadtesting")]
-    public class EventBusLoadTests
+	//[Ignore("")]
+	[Category("Loadtesting")]
+	public class EventBusLoadTests
     {
         [Test]
         public void LoadTesting()
@@ -31,7 +33,7 @@ namespace Gaucho.Test.LoadTests
                             "Level -> lvl"
                         }
                     },
-                    new HandlerNode(typeof(ApiTests.ThreadWaitHandler))
+                    new HandlerNode(typeof(ThreadWaitHandler))
                 }
             };
 
@@ -52,5 +54,13 @@ namespace Gaucho.Test.LoadTests
 
             result.Trace("### LoadTesting");
         }
-    }
+
+        public class ThreadWaitHandler : IOutputHandler
+        {
+	        public void Handle(Event @event)
+	        {
+		        Thread.Sleep(5000);
+	        }
+        }
+	}
 }

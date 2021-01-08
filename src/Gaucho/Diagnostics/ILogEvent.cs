@@ -11,14 +11,24 @@ namespace Gaucho.Diagnostics
         string Source { get; }
     }
 
-    public class LogEvent : ILogEvent
+    public interface ILogMessage : ILogEvent
     {
+	    DateTime Timestamp { get; }
+
+		LogLevel Level { get; }
+	}
+
+    public class LogEvent : ILogMessage
+	{
         public LogEvent(string message, LogLevel level, string source)
         {
+	        Timestamp = DateTime.Now;
             Message = message;
             Level = level;
             Source = source;
         }
+
+        public DateTime Timestamp { get; }
 
         public string Message { get; set; }
 
@@ -27,18 +37,24 @@ namespace Gaucho.Diagnostics
         public string Source { get; set; }
     }
 
-    public class StatisticEvent : ILogEvent
+    public class StatisticEvent<T> : ILogEvent
     {
-        public StatisticEvent(string message, StatisticType metric)
+        public StatisticEvent(T value, StatisticType metric)
         {
-            Message = message;
+	        Timestamp = DateTime.Now;
+			Message = value.ToString();
+			Value = value;
             Metric = metric;
         }
 
         public StatisticType Metric { get; set; }
 
-        public string Message { get; set; }
+        public DateTime Timestamp { get; }
+
+		public string Message { get; set; }
         
+		public T Value { get; }
+
         public string Source { get; set; }
     }
 }

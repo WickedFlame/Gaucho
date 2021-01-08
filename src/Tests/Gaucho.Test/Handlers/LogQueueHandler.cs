@@ -18,7 +18,7 @@ namespace Gaucho.Test
                     sb.Append($"[{item.Key} -> {item.Value}] ");
                 }
             }
-            else if (@event.Data is SingleNode node)
+            else if (@event.Data is SimpleData node)
             {
                 sb.Append(node.Value);
             }

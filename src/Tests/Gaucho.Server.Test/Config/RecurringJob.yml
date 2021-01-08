@@ -11,6 +11,8 @@ OutputHandlers:
   - Type: Gaucho.Server.Test.Handlers.ConsoleOutputHandler, Gaucho.Server.Test
     Filters:
       - Message -> msg
+      - Date
+      - 'timestamp <- ${Date:yyyy/MM/dd HH:mm:ss Z}'
 
 #  - Type: Gaucho.Test.LogQueueHandler, Gaucho.Test
 #    Filters:

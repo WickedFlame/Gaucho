@@ -64,21 +64,26 @@ namespace Gaucho.Server.Test
 
 
             GlobalConfiguration.Configuration.UseProcessingServer(p =>
+	            {
+		            var reader = new WickedFlame.Yaml.YamlReader();
+		            var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
+		            p.BuildPipeline(config);
+
+		            config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
+		            p.BuildPipeline(config);
+	            })
+	            .AddLogWriter(new ConsoleLogWriter())
+	            .UseOptions(new Options
+	            {
+		            LogLevel = Diagnostics.LogLevel.Debug
+	            });
+
+            app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions
             {
-                var reader = new WickedFlame.Yaml.YamlReader();
-                var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
-                p.BuildPipeline(config);
-
-				config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
-				p.BuildPipeline(config);
-			});
-
-            app.UseGauchoDashboard();
+				//Title = "Gaucho Testapp"
+            });
 
 
-
-
-            LoggerConfiguration.AddLogWriter(new ConsoleLogWriter());
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

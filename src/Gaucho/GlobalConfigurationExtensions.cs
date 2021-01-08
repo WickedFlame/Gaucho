@@ -1,4 +1,6 @@
 ﻿using System;
+using Gaucho.Configuration;
+using Gaucho.Diagnostics;
 using Gaucho.Server;
 
 namespace Gaucho
@@ -13,10 +15,32 @@ namespace Gaucho
             return config;
         }
 
-        public static void Register<T>(this IGlobalConfiguration config, T item)
+        public static IGlobalConfiguration AddLogWriter<T>(this IGlobalConfiguration config, ILogWriter<T> writer) where T : ILogMessage
+		{
+			LoggerConfiguration.AddLogWriter(writer);
+			return config;
+        }
+
+        public static IGlobalConfiguration UseOptions(this IGlobalConfiguration config, Options options)
+        {
+	        var def = config.Resolve<Options>();
+	        if (def == null)
+	        {
+		        config.Register(options);
+		        def = options;
+	        }
+
+	        def.Merge(options);
+
+	        return config;
+        }
+
+        public static IGlobalConfiguration Register<T>(this IGlobalConfiguration config, T item)
         {
             var key = typeof(T).Name;
-            config.Context.Add(key, item);
+            config.Context[key] = item;
+
+			return config;
         }
 
         public static T Resolve<T>(this IGlobalConfiguration config)

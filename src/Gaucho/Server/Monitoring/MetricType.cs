@@ -5,6 +5,12 @@ namespace Gaucho.Server.Monitoring
     {
         ThreadCount,
         QueueSize,
-        ProcessedEvents
+        ProcessedEvents,
+        EventLog,
+
+		/// <summary>
+		/// Log timeline for active workers
+		/// </summary>
+        WorkersLog
     }
 }

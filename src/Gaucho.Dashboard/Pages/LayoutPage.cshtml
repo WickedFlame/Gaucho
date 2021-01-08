@@ -7,7 +7,7 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Gaucho - @Title</title>
+    <title>@DashboardOptions.Title - @Title</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +21,7 @@
     <div class="header">
         <div></div>
         <div class="container">
-            <h1>Gaucho</h1>
+            <h1>@DashboardOptions.Title</h1>
         </div>
         <div></div>
     </div>
@@ -37,11 +37,12 @@
     <div></div>
 </div>
 <script>
-    var gauchoConfig = {
-        pollUrl: "@(Url.To("/metrics"))",
-        pollInterval: 2000
-    }
+	var gauchoConfig = {
+		pollUrl: "@(Url.To("/metrics"))",
+		pollInterval: 2000
+	}
+
 </script>
-<script src="@Url.To($"/js{version.Major}{version.Minor}{version.Build}")"></script>
+<script src="@Url.To($"/js{version.Major}{version.Minor}{version.Build}")" type="module"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gaucho.Diagnostics;
+using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
 
 namespace Gaucho
@@ -11,6 +12,11 @@ namespace Gaucho
     public interface IEventBus : IDisposable
     {
         string PipelineId { get; }
+
+        /// <summary>
+        /// gets the pipelinefactory that creates the pipeline for this eventbus
+        /// </summary>
+		IPipelineFactory PipelineFactory { get; }
 
         void SetPipeline(IPipelineFactory factory);
 
@@ -33,7 +39,7 @@ namespace Gaucho
         private readonly ILogger _logger;
         private bool _isDisposed;
 
-        private readonly List<WorkerThread> _threads = new List<WorkerThread>();
+        private readonly List<EventProcessor> _processors = new List<EventProcessor>();
         private int _minThreads = 1;
 
         public EventBus(Func<IEventPipeline> factory, string pipelineId)
@@ -47,33 +53,44 @@ namespace Gaucho
             _pipelineFactory = pipelineFactory;
         }
 
-        public EventBus(string pipelineId)
+        private EventBus(string pipelineId)
         {
             PipelineId = pipelineId;
 
             var statistic = new StatisticsApi(pipelineId);
-            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Threads", () => _threads.Count));
+            statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Active Workers", () => _processors.Count));
             statistic.AddMetricsCounter(new Metric(MetricType.QueueSize, "Events in Queue", () => _queue.Count));
 
             _queue = new EventQueue();
             _logger = LoggerConfiguration.Setup
             (
-                s => s.AddWriter(new EventStatisticWriter(statistic))
+	            s =>
+	            {
+		            s.AddWriter(new ProcessedEventMetricCounter(statistic));
+		            s.AddWriter(new WorkersLogMetricCounter(statistic));
+		            s.AddWriter(new LogEventStatisticWriter(statistic));
+	            }
             );
-            SetupWorkers(1);
+            SetupProcessors(1);
         }
 
         public string PipelineId { get; }
 
-        public void WaitAll()
+		/// <summary>
+		/// gets the pipelinefactory that creates the pipeline for this eventbus
+		/// </summary>
+        public IPipelineFactory PipelineFactory => _pipelineFactory;
+
+
+		public void WaitAll()
         {
-            var tasks = _threads.Select(t => t.Task)
-                .Where(t => t != null/* && t.Status == TaskStatus.Running*/)
-                .ToList();
+            var tasks = _processors.Select(t => t.Task)
+                .Where(t => t != null)
+                .ToArray();
 
             if(tasks.Any())
             {
-                Task.WaitAll(tasks.ToArray());
+                Task.WaitAll(tasks, -1, CancellationToken.None);
             }
         }
 
@@ -91,36 +108,45 @@ namespace Gaucho
         {
             _queue.Enqueue(@event);
 
-            if (_queue.Count / _threads.Count > 10)
+            if (_queue.Count / _processors.Count > 10)
             {
-                SetupWorkers(_threads.Count + 1);
+                SetupProcessors(_processors.Count + 1);
             }
 
-            foreach (var thread in _threads.ToList())
+            foreach (var process in _processors.ToList())
             {
-                thread.Start();
+                process.Start();
             }
         }
 
-        public void Process()
+        public void Process(IEventPipeline pipeline)
         {
-            var pipeline = _pipelineFactory.Setup();
-            if (pipeline == null)
+	        _logger.Write("Begin processing events", Category.Log, LogLevel.Debug, "EventBus");
+
+			if (pipeline == null)
             {
                 _logger.Write($"Pipeline with the Id {PipelineId} does not exist. Event could not be sent to any Pipeline.", Category.Log, LogLevel.Error, "EventBus");
+                
                 return;
             }
 
             while (_queue.TryDequeue(out var @event))
             {
-                pipeline.Run(@event);
-                _logger.Write(@event.Id, StatisticType.ProcessedEvent);
+	            try
+	            {
+		            _logger.WriteMetric(@event.Id, StatisticType.ProcessedEvent);
+					pipeline.Run(@event);
+	            }
+	            catch (Exception e)
+	            {
+		            _logger.Write($"Error processing eveng{Environment.NewLine}EventId: {@event.Id}{Environment.NewLine}Pipeline: {PipelineId}{Environment.NewLine}{e.Message}", Category.Log, LogLevel.Error, "EventBus");
+	            }
             }
 
-            CleanupWorkers();
+            CleanupProcessors();
         }
 
-        private void SetupWorkers(int threadCount)
+        private void SetupProcessors(int threadCount)
         {
             if (threadCount < 1)
             {
@@ -129,58 +155,63 @@ namespace Gaucho
 
             lock (_syncRoot)
             {
-                for (var i = _threads.Count; i < threadCount; i++)
+                for (var i = _processors.Count; i < threadCount; i++)
                 {
-                    var thread = new WorkerThread(() => Process(), _logger);
+                    var thread = new EventProcessor(() => _pipelineFactory.Setup(), p => Process(p), _logger);
 
-                    _threads.Add(thread);
-                    _logger.Write($"Add Worker to EventBus. Workers: {i}", Category.Log, source: "EventBus");
+                    _processors.Add(thread);
+                    _logger.Write($"Add Worker to EventBus. Active Workers: {i + 1}", Category.Log, source: "EventBus");
+                    _logger.WriteMetric(i + 1, StatisticType.WorkersLog);
                 }
 
-                var toRemove = _threads.Count - threadCount;
+                var toRemove = _processors.Count - threadCount;
 
                 if (toRemove > 0)
                 {
-                    foreach (var thread in _threads.ToList())
+                    foreach (var processor in _processors.ToList())
                     {
-                        _threads.Remove(thread);
+                        _processors.Remove(processor);
 
                         toRemove--;
                     }
 
                     while (toRemove > 0)
                     {
-                        var thread = _threads[_threads.Count - 1];
+                        var processor = _processors[_processors.Count - 1];
 
-                        _threads.Remove(thread);
+                        _processors.Remove(processor);
+                        
+						toRemove--;
 
-                        toRemove--;
+						_logger.Write($"Removed Worker from EventBus. Active Workers: {toRemove}", Category.Log, source: "EventBus");
+						_logger.WriteMetric(toRemove, StatisticType.WorkersLog);
                     }
                 }
             }
         }
 
-        public void CleanupWorkers()
+        private void CleanupProcessors()
         {
             lock (_syncRoot)
             {
-                foreach (var thread in _threads.ToList())
+                foreach (var processor in _processors.ToList())
                 {
-                    if (thread.IsWorking)
+                    if (processor.IsWorking)
                     {
                         continue;
                     }
 
-                    if (_threads.Count == _minThreads)
+                    if (_processors.Count == _minThreads)
                     {
                         return;
                     }
 
-                    _threads.Remove(thread);
-                    thread.Dispose();
+                    _processors.Remove(processor);
+                    processor.Dispose();
 
-                    _logger.Write($"Remove Worker from EventBus. Workers: {_threads.Count}", Category.Log, source: "EventBus");
-                }
+                    _logger.Write($"Remove Worker from EventBus. Workers: {_processors.Count}", Category.Log, source: "EventBus");
+                    _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
+				}
             }
         }
 
@@ -198,74 +229,13 @@ namespace Gaucho
 
             if (disposing)
             {
-                foreach (var thread in _threads)
+                foreach (var processor in _processors)
                 {
-                    thread.Dispose();
+                    processor.Dispose();
                 }
             }
 
             _isDisposed = true;
-        }
-
-        public class WorkerThread : IDisposable
-        {
-            private readonly object _syncRoot = new object();
-            private readonly Action _action;
-            private readonly ILogger _logger;
-
-            private bool _isWorking;
-
-            public WorkerThread(Action action, ILogger logger)
-            {
-                _action = action;
-                _logger = logger;
-            }
-
-            public Task Task { get; private set; }
-
-            public bool IsWorking
-            {
-                get
-                {
-                    lock (_syncRoot)
-                    {
-                        return _isWorking;
-                    }
-                }
-            }
-
-            public void Dispose()
-            {
-                lock (_syncRoot)
-                {
-                    _isWorking = false;
-                }
-            }
-
-            public void Start()
-            {
-                lock (_syncRoot)
-                {
-                    if (_isWorking)
-                    {
-                        return;
-                    }
-
-                    _isWorking = true;
-                }
-
-                _logger.Write("Start working on Thread", Category.Log, LogLevel.Debug, "EventBus");
-
-                Task = Task.Factory.StartNew(() =>
-                {
-                    _action();
-
-                    lock (_syncRoot)
-                    {
-                        _isWorking = false;
-                    }
-                }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-            }
         }
     }
 }

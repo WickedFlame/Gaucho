@@ -28,47 +28,4 @@ namespace Gaucho.Configuration
 
         public Dictionary<string, string> Arguments { get; set; }
     }
-
-    public static class HandlerNodeExtensions
-    {
-        public static IEventDataConverter BuildEventDataConverter(this HandlerNode node)
-        {
-            var converter = new EventDataConverter();
-            if (node.Filters == null)
-            {
-                return converter;
-            }
-
-            foreach (var filterString in node.Filters)
-            {
-                var filter = FilterFactory.BuildFilter(filterString);
-                if (filter == null)
-                {
-                    var logger = LoggerConfiguration.Setup();
-                    logger.Write($"Could not convert '{filterString}' to a Filter", Category.Log, LogLevel.Warning, source: "FilterFactory");
-                    continue;
-                }
-
-                converter.Add(filter);
-            }
-
-            return converter;
-        }
-
-        public static ConfiguredArguments BuildArguments(this HandlerNode node)
-        {
-            var collection = new ConfiguredArguments();
-            if (node.Arguments == null)
-            {
-                return collection;
-            }
-
-            foreach (var item in node.Arguments)
-            {
-                collection.Add(item.Key, item.Value);
-            }
-
-            return collection;
-        }
-    }
 }

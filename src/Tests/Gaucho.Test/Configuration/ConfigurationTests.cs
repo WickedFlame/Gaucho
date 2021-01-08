@@ -11,12 +11,12 @@ namespace Gaucho.Test.Configuration
     [TestFixture]
     public class ConfigurationTests
     {
-        private PluginManager _pluginMgr;
+        private HandlerPluginManager _pluginMgr;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _pluginMgr = new PluginManager();
+            _pluginMgr = new HandlerPluginManager();
         }
         
         [Test]

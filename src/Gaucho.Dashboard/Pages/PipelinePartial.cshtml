@@ -1,42 +1,70 @@
 ﻿@* Generator: Template TypeVisibility: Public GeneratePrettyNames: True *@
 @using Gaucho.Dashboard
 @using System.Collections.Generic
+@using Gaucho.Dashboard.Monitoring
 @using Gaucho.Dashboard.Pages
 @inherits RazorPage
 
-<div class="pipeline-item">
+<div class="pipeline-item" id="@Pipeline.PipelineId">
     <div class="pipeline-item-container">
         <div class="pipeline-item-header">
             <h3>@Pipeline.PipelineId</h3>
         </div>
-        <div class="pipeline-item-content">
-            @foreach (var m in Pipeline.Metrics)
-            {
-                var id = Pipeline.PipelineId + "-" + m.Key;
-                var labelId = id + "-label";
+	    <div class="pipeline-item-content">
+		    @foreach (var m in Pipeline.Metrics)
+		    {
+			    var id = Pipeline.PipelineId + "-" + m.Key;
+			    var labelId = id + "-label";
 
-                <div>
-                    <div class="label" id="@labelId">@m.Title</div>
-                    <div id="@id">@m.Value</div>
-                </div>
-            }
-            @*<div>
-            <div class="label">Threads</div>
-            <div>@Pipeline.Threads</div>
-        </div>
-        <div>
-            <div class="label">Events in Queue</div>
-            <div>@Pipeline.QueueSize</div>
-        </div>
-        <div>
-            <div class="label">Processed Events</div>
-            <div>@Pipeline.ProcessedCount</div>
-        </div>
-        <div>
-            <div class="label">Handlers</div>
-            <div>@Pipeline.HandlerCount</div>
-        </div>*@
-        </div>
+			    <div>
+				    <div class="label" id="@labelId">@m.Title</div>
+				    <div id="@id">@m.Value</div>
+			    </div>
+		    }
+
+	    </div>
+	    
+	    <div class="pipeline-item-log-container">
+		    @if (Pipeline.Elements.ContainsKey("WorkersLog"))
+		    {
+			    var element = Pipeline.Elements["WorkersLog"];
+			    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
+			    <div class="toggler-section is-open">
+				    <span class="toggler-button"></span>
+				    <div class="label" id="logs-label">Workers Timeline</div>
+			    </div>
+                    
+			    <div id="@id" class="pipeline-item-log-list toggle-wrapper">
+				    @foreach (TimelineLog<int> e in element.Elements)
+				    {
+					    <div class="pipeline-item-log-item">
+						    <span class="pipeline-item-log-element">@e.Timestamp.ToString("o")</span><span class="pipeline-item-log-element">@e.Value</span>
+					    </div>
+				    }
+			    </div>
+		    }
+	    </div>
+	    <div class="pipeline-item-log-container">
+		    @if (Pipeline.Elements.ContainsKey("EventLog"))
+		    {
+			    var element = Pipeline.Elements["EventLog"];
+			    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
+			    <div class="toggler-section">
+				    <span class="toggler-button"></span>
+				    <div class="label" id="logs-label">Logs</div>
+			    </div>
+                    
+			    <div id="@id" class="pipeline-item-log-list toggle-wrapper">
+				    @foreach (DashboardLog e in element.Elements)
+				    {
+					    var levelClass = $"pipeline-log-{e.Level.ToLower()}";
+					    <div class="pipeline-item-log-item">
+						    <span class="pipeline-item-log-element @levelClass">@e.Timestamp.ToString("o")</span><span class="pipeline-item-log-element">[@e.Source]</span><span class="pipeline-item-log-element">[@e.Level]</span><span class="pipeline-item-log-element">@e.Message</span>
+					    </div>
+				    }
+			    </div>
+		    }
+	    </div>
     </div>
 </div> 
  

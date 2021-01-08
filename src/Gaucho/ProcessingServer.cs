@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Gaucho.Diagnostics;
 using Gaucho.Server.Monitoring;
 
@@ -7,6 +8,11 @@ namespace Gaucho
     public interface IProcessingServer
     {
         IEventBusFactory EventBusFactory { get; }
+
+        /// <summary>
+        /// gets all registered inputhandlers
+        /// </summary>
+		IEnumerable<IInputHandler> InputHandlers { get; }
 
         void Register(string pipelineId, Func<EventPipeline> factory);
 
@@ -28,18 +34,15 @@ namespace Gaucho
     public class ProcessingServer : IProcessingServer, IDisposable
     {
         static IProcessingServer _server;
-        public static IProcessingServer Server
-        {
-            get
-            {
-                if (_server == null)
-                {
-                    _server = new ProcessingServer(new EventBusFactory());
-                }
 
-                return _server;
-            }
-        }
+        static ProcessingServer()
+        {
+			// setup the default server
+			// this is created even if it is not used
+			_server  = new ProcessingServer(new EventBusFactory());
+		}
+
+        public static IProcessingServer Server => _server;
 
         private readonly IEventBusFactory _eventBusFactory;
         private readonly InputHandlerCollection _inputHandlers;
@@ -61,31 +64,35 @@ namespace Gaucho
 
         public IEventBusFactory EventBusFactory => _eventBusFactory;
 
-        //public InputHandlerCollection InputHandlers => _inputHandlers;
+		/// <summary>
+		/// gets all registered inputhandlers
+		/// </summary>
+        public IEnumerable<IInputHandler> InputHandlers => _inputHandlers;
 
-        public void Register(string pipelineId, Func<EventPipeline> factory)
+
+		public void Register(string pipelineId, Func<EventPipeline> factory)
         {
-            _eventBusFactory.Register(pipelineId, factory);
+	        _eventBusFactory.Register(pipelineId, factory);
         }
 
         public void Register(string pipelineId, IEventBus eventBus)
         {
-            if (pipelineId != eventBus.PipelineId)
-            {
-                throw new Exception($"The EventBus with PipelineId {eventBus.PipelineId} cannot be registered to the pipeline {pipelineId}");
-            }
+	        if (pipelineId != eventBus.PipelineId)
+	        {
+		        throw new Exception($"The EventBus with PipelineId {eventBus.PipelineId} cannot be registered to the pipeline {pipelineId}");
+	        }
 
-            _eventBusFactory.Register(pipelineId, eventBus);
+	        _eventBusFactory.Register(pipelineId, eventBus);
         }
 
         public void Register(string pipelineId, IInputHandler plugin)
         {
-            if (plugin is IServerInitialize init)
-            {
-                init.Initialize(this);
-            }
+	        if (plugin is IServerInitialize init)
+	        {
+		        init.Initialize(this);
+	        }
 
-            _inputHandlers.Register(pipelineId, plugin);
+	        _inputHandlers.Register(pipelineId, plugin);
         }
 
         public IInputHandler<T> GetHandler<T>(string pipelineId)
@@ -93,7 +100,7 @@ namespace Gaucho
             return _inputHandlers.GetHandler<T>(pipelineId);
         }
 
-        public void Publish(Event @event)
+		public void Publish(Event @event)
         {
             var pipeline = _eventBusFactory.GetEventBus(@event.PipelineId);
             if (pipeline == null)

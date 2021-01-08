@@ -6,7 +6,7 @@ namespace Gaucho
         string PipelineId { get; set; }
     }
 
-    public interface IInputHandler<T> : IInputHandler
+    public interface IInputHandler<in T> : IInputHandler
     {
         Event ProcessInput(T input);
     }

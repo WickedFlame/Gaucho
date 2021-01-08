@@ -25,7 +25,18 @@ namespace Gaucho.Filters
 			var value = _regex.Replace(_format, m =>
 			{
 				var property = m.Value.Substring(2, m.Value.Length-3);
-				var substitute = data[property]?.ToString();
+				string format = null;
+				if (property.Contains(":"))
+				{
+					// allow formating like {date:yyyy/MM/dd}
+					var index = property.IndexOf(":", System.StringComparison.InvariantCultureIgnoreCase);
+					format = property.Substring(index);
+					property = property.Substring(0, index);
+				}
+
+				var val = data[property];
+				var substitute = format != null && val != null ? string.Format($"{{{0}{format}}}", val) : val?.ToString();
+
 				return string.IsNullOrEmpty(substitute) ? m.Value : substitute;
 			});
 
