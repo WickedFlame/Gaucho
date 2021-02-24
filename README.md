@@ -5,11 +5,6 @@
 
 A .NET Message Broker Middleware for handling, converting and delegating log messages
 
+## Documentation
+Visit [https://wickedflame.github.io/Gaucho/](https://wickedflame.github.io/Gaucho/) for the full documentation.
 
-
-
-
-# Handlers
-Possible Constructor Dependencies
-- ConfiguredArgumentsCollection: A list of arguments that will be passed from the configuration
-- IEventDataConverter: Configured by providing a list of filters
