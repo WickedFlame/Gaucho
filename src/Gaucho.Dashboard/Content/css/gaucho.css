@@ -62,7 +62,7 @@ body {
             padding-bottom: 4px; }
           .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list {
             background-color: #232832;
-            padding: 10px; }
+            /*padding: 10px;*/ }
             .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list .pipeline-item-log-item {
               display: grid;
               grid-template-columns: auto auto auto 1fr;
@@ -94,6 +94,8 @@ body {
   .toggler-section.is-open + .toggle-wrapper {
     max-height: 100%;
     transform: scaleY(1); }
+  .toggler-section.is-open + .pipeline-item-log-list {
+    padding: 10px; }
 
 .toggler-button {
   z-index: 2;
