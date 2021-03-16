@@ -53,5 +53,47 @@ namespace Gaucho
 
             return default(T);
         }
-    }
+
+		/// <summary>
+		/// Adds a service to the ActivationContext. This is resolved and injected to the instantiation of the handlers
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="config"></param>
+		/// <param name="service"></param>
+		/// <returns></returns>
+        public static IGlobalConfiguration AddService<T>(this IGlobalConfiguration config, Func<T> service)
+        {
+	        var rootCtx = config.Resolve<IActivationContext>();
+	        if (rootCtx == null)
+	        {
+		        rootCtx = new ActivationContext();
+		        config.Register(rootCtx);
+	        }
+
+	        rootCtx.Register(service);
+
+			return config;
+        }
+
+		/// <summary>
+		/// Adds a service to the ActivationContext. This is resolved and injected to the instantiation of the handlers
+		/// </summary>
+		/// <typeparam name="TService"></typeparam>
+		/// <typeparam name="TImpl"></typeparam>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public static IGlobalConfiguration AddService<TService, TImpl>(this IGlobalConfiguration config) where TImpl : TService
+        {
+	        var rootCtx = config.Resolve<IActivationContext>();
+	        if (rootCtx == null)
+	        {
+		        rootCtx = new ActivationContext();
+		        config.Register(rootCtx);
+	        }
+
+	        rootCtx.Register<TService, TImpl>();
+
+	        return config;
+        }
+	}
 }

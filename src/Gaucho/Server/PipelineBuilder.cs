@@ -23,7 +23,7 @@ namespace Gaucho.Server
 
         public void BuildPipeline(IProcessingServer server, PipelineConfiguration config)
         {
-            var rootCtx = _config.Resolve<IActivationContext>() ?? new ActivationContext();
+            var rootCtx = _config.Resolve<IActivationContext>();
 
 			_logger.Write($"Setup Pipeline:{config}", Category.Log, LogLevel.Debug, "PipelineBuilder");
 
