@@ -11,6 +11,12 @@ namespace Gaucho.Test
 {
 	public class GlobalConfigurationTests
 	{
+		[TearDown]
+		public void Teardown()
+		{
+			GlobalConfiguration.Setup(s => { });
+		}
+
 		[Test]
 		public void GlobalConfiguration_Default_Storage()
 		{

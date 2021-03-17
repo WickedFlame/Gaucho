@@ -28,7 +28,7 @@ namespace Gaucho
 		/// <returns></returns>
         public static IProcessingServer SetupPipeline(this IProcessingServer server, string pipelineId, PipelineConfiguration config)
         {
-	        var builder = new PipelineBuilder(GlobalConfiguration.Configuration);
+	        var builder = new PipelineBuilder();
 	        builder.BuildPipeline(server, config);
 
 	        return server;

@@ -9,7 +9,7 @@ namespace Gaucho
     {
         public static IGlobalConfiguration UseProcessingServer(this IGlobalConfiguration config, Action<PipelineBuilder> setup)
         {
-            var builder = new PipelineBuilder(config);
+            var builder = new PipelineBuilder();
             setup.Invoke(builder);
 
             return config;

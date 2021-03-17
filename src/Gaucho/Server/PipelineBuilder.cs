@@ -9,27 +9,23 @@ namespace Gaucho.Server
     public class PipelineBuilder
     {
         private readonly HandlerPluginManager _pluginManager;
-        private readonly IGlobalConfiguration _config;
         private readonly ILogger _logger;
 
-        public PipelineBuilder() : this(GlobalConfiguration.Configuration) { }
-
-        public PipelineBuilder(IGlobalConfiguration config)
+        public PipelineBuilder()
         {
-            _config = config;
             _pluginManager = new HandlerPluginManager();
 			_logger = LoggerConfiguration.Setup();
 		}
 
         public void BuildPipeline(IProcessingServer server, PipelineConfiguration config)
         {
-            var rootCtx = _config.Resolve<IActivationContext>();
-
 			_logger.Write($"Setup Pipeline:{config}", Category.Log, LogLevel.Debug, "PipelineBuilder");
 
 			server.SetupPipeline(config.Id, s =>
             {
-                s.Register(() =>
+	            var rootCtx = GlobalConfiguration.Configuration.Resolve<IActivationContext>();
+
+				s.Register(() =>
                 {
                     var pipeline = new EventPipeline();
                     foreach (var node in config.OutputHandlers)

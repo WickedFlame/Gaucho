@@ -14,7 +14,7 @@ namespace Gaucho
 		    Setup(s => { });
 		}
 
-        internal GlobalConfiguration()
+        private GlobalConfiguration()
         {
         }
 
