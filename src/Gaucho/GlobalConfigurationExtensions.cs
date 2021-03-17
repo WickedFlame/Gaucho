@@ -63,14 +63,14 @@ namespace Gaucho
 		/// <returns></returns>
         public static IGlobalConfiguration AddService<T>(this IGlobalConfiguration config, Func<T> service)
         {
-	        var rootCtx = config.Resolve<IActivationContext>();
-	        if (rootCtx == null)
+	        var ctx = config.Resolve<IActivationContext>();
+	        if (ctx == null)
 	        {
-		        rootCtx = new ActivationContext();
-		        config.Register(rootCtx);
+		        ctx = new ActivationContext();
+		        config.Register(ctx);
 	        }
 
-	        rootCtx.Register(service);
+	        ctx.Register(service);
 
 			return config;
         }
@@ -84,14 +84,14 @@ namespace Gaucho
 		/// <returns></returns>
 		public static IGlobalConfiguration AddService<TService, TImpl>(this IGlobalConfiguration config) where TImpl : TService
         {
-	        var rootCtx = config.Resolve<IActivationContext>();
-	        if (rootCtx == null)
+	        var ctx = config.Resolve<IActivationContext>();
+	        if (ctx == null)
 	        {
-		        rootCtx = new ActivationContext();
-		        config.Register(rootCtx);
+		        ctx = new ActivationContext();
+		        config.Register(ctx);
 	        }
 
-	        rootCtx.Register<TService, TImpl>();
+	        ctx.Register<TService, TImpl>();
 
 	        return config;
         }
