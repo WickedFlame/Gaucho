@@ -2,22 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gaucho.Diagnostics;
 
 namespace Gaucho
 {
-	public class EventData : IEventData, IEnumerable
+	/// <summary>
+	/// The EventData
+	/// </summary>
+	public class EventData : IEventData, IEnumerable<Property>
 	{
 		private readonly List<Property> _properties;
-		private ILogger _logger;
-
+		
+		/// <summary>
+		/// Creates a new instance of EventData
+		/// </summary>
 		public EventData()
 		{
 			_properties = new List<Property>();
 		}
 
-		public IEnumerable<Property> Properties => _properties;
-
+		/// <summary>
+		/// Add a property node to the EventData collection
+		/// </summary>
+		/// <param name="property"></param>
+		/// <returns></returns>
 		public EventData Add(Property property)
 		{
 			_properties.Add(property);
@@ -25,16 +32,29 @@ namespace Gaucho
 			return this;
 		}
 
-		public IEnumerator GetEnumerator()
+		/// <summary>
+		/// Gets the enumerator of the collection
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerator<Property> GetEnumerator()
 		{
 			return _properties.GetEnumerator();
 		}
 
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		/// <summary>
+		/// Returns the string representation of the EventData
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("{");
-			foreach (var node in Properties)
+			foreach (var node in _properties)
 			{
 				sb.AppendLine(node.ToString());
 			}
@@ -44,6 +64,11 @@ namespace Gaucho
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Gets the value of the property node
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
 		public object this[string source]
 		{
 			get
@@ -51,26 +76,6 @@ namespace Gaucho
 				var property = _properties.FirstOrDefault(p => p.Key == source);
 				if (property == null)
 				{
-					if(_logger== null)
-					{
-						_logger = LoggerConfiguration.Setup();
-					}
-
-					var msg = new StringBuilder()
-						.AppendLine($"Could not find property '{source}'");
-
-					var candidates = _properties.Where(p => p.Key.ToLower() == source.ToLower());
-					if (candidates.Any())
-					{
-						msg.AppendLine($"   Possible candidates are:");
-						foreach (var candidate in candidates)
-						{
-							msg.AppendLine($"   - {candidate.Key}");
-						}
-					}
-
-					_logger.Write(msg.ToString(), Category.Log, LogLevel.Error, "EventData");
-
 					return null;
 				}
 

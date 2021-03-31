@@ -13,9 +13,9 @@ namespace Gaucho.Test
             var sb = new StringBuilder();
             if(@event.Data is EventData data)
             {
-                foreach (var item in data.Properties)
+                foreach (var node in data)
                 {
-                    sb.Append($"[{item.Key} -> {item.Value}] ");
+                    sb.Append($"[{node.Key} -> {node.Value}] ");
                 }
             }
             else if (@event.Data is SimpleData node)
