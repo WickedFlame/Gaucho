@@ -63,7 +63,7 @@ namespace Gaucho
 		            s.AddWriter(new LogEventStatisticWriter(statistic));
 	            }
             );
-            SetupProcessors(1);
+            SetupProcessors(_minThreads);
         }
 
 		/// <summary>
@@ -181,19 +181,13 @@ namespace Gaucho
 
                 if (toRemove > 0)
                 {
-                    foreach (var processor in _processors.ToList())
-                    {
-                        _processors.Remove(processor);
-
-                        toRemove--;
-                    }
-
-                    while (toRemove > 0)
+	                while (toRemove > 0)
                     {
                         var processor = _processors[_processors.Count - 1];
 
                         _processors.Remove(processor);
-                        
+                        processor.Dispose();
+
 						toRemove--;
 
 						_logger.Write($"Removed Worker from EventBus. Active Workers: {toRemove}", Category.Log, source: "EventBus");

@@ -50,7 +50,11 @@ namespace Gaucho.Integration.Tests
 				.SetThreads(5)
 				.Task(() =>
 				{
-					cnt += 1;
+					lock(pipelineId)
+					{
+						cnt += 1;
+					}
+
 					client.Process(pipelineId, new InputItem
 					{
 						Value = "StaticServer",
@@ -155,7 +159,11 @@ namespace Gaucho.Integration.Tests
 						Name = "test",
 						Number = 1
 					});
-					cnt += 1;
+
+					lock(pipelineId)
+					{
+						cnt += 1;
+					}
 				}).RunSession();
 
 			server.WaitAll(pipelineId);
