@@ -75,7 +75,8 @@ namespace Gaucho.Server.Test
 	            .AddLogWriter(new ConsoleLogWriter())
 	            .UseOptions(new Options
 	            {
-		            LogLevel = Diagnostics.LogLevel.Debug
+		            LogLevel = Diagnostics.LogLevel.Debug,
+					ServerName = "Testserver"
 	            });
 
             app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions

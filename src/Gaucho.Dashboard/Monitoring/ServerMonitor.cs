@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
@@ -37,10 +39,14 @@ namespace Gaucho.Dashboard.Monitoring
 
         public PipelineMetric Monitor(string pipelineId)
         {
-            var defaultkeys = new List<MetricType> {MetricType.ThreadCount, MetricType.QueueSize, MetricType.ProcessedEvents};
+	        var options = GlobalConfiguration.Configuration.Resolve<Options>();
+
+			var defaultkeys = new List<MetricType> {MetricType.ThreadCount, MetricType.QueueSize, MetricType.ProcessedEvents};
 
             var statistics = new StatisticsApi(pipelineId);
             var metrics = new PipelineMetric(pipelineId);
+
+            metrics.AddMetric("Server", "Server", options.ServerName ?? Environment.MachineName);
 
             foreach (var key in defaultkeys)
             {

@@ -35,7 +35,10 @@ namespace Gaucho
         public static void Setup(Action<IGlobalConfiguration> setup)
         {
 	        var config = new GlobalConfiguration()
-		        .Register(new Options())
+		        .Register(new Options
+		        {
+					ServerName = Environment.MachineName
+				})
 		        .Register<IStorage>(new InmemoryStorage())
 		        .Register<IActivationContext>(new ActivationContext());
 

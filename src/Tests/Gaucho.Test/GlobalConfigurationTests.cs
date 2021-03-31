@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gaucho.Configuration;
+using Gaucho.Diagnostics;
 using Gaucho.Server;
 using Gaucho.Storage;
 using NUnit.Framework;

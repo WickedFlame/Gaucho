@@ -23,6 +23,7 @@ GlobalConfiguration.Configuration
     .AddLogWriter(new ConsoleLogWriter())
     .UseOptions(new Options
     {
-        LogLevel = Diagnostics.LogLevel.Debug
+        LogLevel = Diagnostics.LogLevel.Debug,
+        ServerName = "Testserver"
     });
 ```
