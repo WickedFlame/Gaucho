@@ -8,7 +8,7 @@
     <Description>Dashboard for Gaucho.
 A .NET Message Broker Middleware for handling, converting and delegating log messages</Description>
     <Copyright>@ WickedFlame 2019</Copyright>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://wickedflame.github.io/Gaucho/</PackageProjectUrl>
     <PackageTags>Messagebroker Broker EventBus Dashboard</PackageTags>
     <Version>1.0.0</Version>
