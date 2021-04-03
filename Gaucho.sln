@@ -21,7 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Server.Test", "src\T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Dashboard", "src\Gaucho.Dashboard\Gaucho.Dashboard.csproj", "{AD5D0494-70CE-43A6-B33B-3F8AB9657AB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaucho.Integration.Tests", "src\Tests\Gaucho.Integration.Tests\Gaucho.Integration.Tests.csproj", "{94DD4233-26A8-405C-AD55-4F8710085B2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Integration.Tests", "src\Tests\Gaucho.Integration.Tests\Gaucho.Integration.Tests.csproj", "{94DD4233-26A8-405C-AD55-4F8710085B2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Redis", "src\Gaucho.Redis\Gaucho.Redis.csproj", "{129DADFD-03BD-497B-AD9F-CE4DC833BF66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaucho.Redis.Test", "src\Tests\Gaucho.Redis.Test\Gaucho.Redis.Test.csproj", "{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +53,14 @@ Global
 		{94DD4233-26A8-405C-AD55-4F8710085B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94DD4233-26A8-405C-AD55-4F8710085B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94DD4233-26A8-405C-AD55-4F8710085B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{129DADFD-03BD-497B-AD9F-CE4DC833BF66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{129DADFD-03BD-497B-AD9F-CE4DC833BF66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{129DADFD-03BD-497B-AD9F-CE4DC833BF66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{129DADFD-03BD-497B-AD9F-CE4DC833BF66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +69,7 @@ Global
 		{43FCA068-42C0-4AC8-8401-2B0B86139306} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
 		{ECE36AC8-C1D7-4154-BCFA-B06DD7F656C7} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
 		{94DD4233-26A8-405C-AD55-4F8710085B2C} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
+		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {90DDCE53-82D7-45F2-926D-909108DB6B8A}
