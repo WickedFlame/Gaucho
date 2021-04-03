@@ -3,21 +3,35 @@ using Gaucho.Storage;
 
 namespace Gaucho.Diagnostics.MetricCounters
 {
+	/// <summary>
+	/// Writes Metrics to the Statistics API
+	/// </summary>
 	public class ProcessedEventMetricCounter : ILogWriter<StatisticEvent<string>>
     {
-        private int _count = -1;
+        private long _count = -1;
         private readonly string _pipelineId;
 		private IStorage _storage;
 
-        public ProcessedEventMetricCounter(StatisticsApi statistic)
+		/// <summary>
+		/// Creates a new instance of ProcessedEventMetricCounter
+		/// </summary>
+		/// <param name="statistic"></param>
+		public ProcessedEventMetricCounter(StatisticsApi statistic)
         {
 			statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events", () => _count));
 			_pipelineId = statistic.PipelineId;
         }
 
-        public Category Category => Category.EventStatistic;
+		/// <summary>
+		/// The loggercategory
+		/// </summary>
+		public Category Category => Category.EventStatistic;
 
-        public void Write(ILogEvent @event)
+		/// <summary>
+		/// Write the ILogEvent to the Logs
+		/// </summary>
+		/// <param name="event"></param>
+		public void Write(ILogEvent @event)
         {
 			if (@event is StatisticEvent<string> e)
             {
@@ -25,7 +39,11 @@ namespace Gaucho.Diagnostics.MetricCounters
 			}
         }
 
-        public void Write(StatisticEvent<string> @event)
+		/// <summary>
+		/// Write the StatisticEvent to the Logs
+		/// </summary>
+		/// <param name="event"></param>
+		public void Write(StatisticEvent<string> @event)
         {
 	        if (@event.Metric != StatisticType.ProcessedEvent)
 	        {
@@ -37,7 +55,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 				if (_storage == null)
 				{
 					_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-					_count = _storage.Get<int>(_pipelineId, "ProcessedEventsMetric");
+					_count = _storage.Get<long>(_pipelineId, "ProcessedEventsMetric");
 				}
 			}
 
@@ -46,7 +64,6 @@ namespace Gaucho.Diagnostics.MetricCounters
 		        _count += 1;
 		        _storage.Set(_pipelineId, "ProcessedEventsMetric", _count);
 	        }
-
         }
     }
 }

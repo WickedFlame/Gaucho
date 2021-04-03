@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Gaucho.Storage.Inmemory;
 
 namespace Gaucho.Storage
 {
+	/// <summary>
+	/// The default Storage
+	/// </summary>
 	public class InmemoryStorage : IStorage
 	{
 		private readonly Dictionary<string, IStorageItem> _store = new Dictionary<string, IStorageItem>();
 
-		public void Add<T>(string pipelineId, string key, T value)
+		/// <inheritdoc/>
+		public void AddToList<T>(string pipelineId, string key, T value)
 		{
 			var internalKey = InternalKey(pipelineId, key);
 			if (!_store.ContainsKey(internalKey))
@@ -27,11 +30,39 @@ namespace Gaucho.Storage
 			lst.SetValue(value);
 		}
 
+		/// <inheritdoc/>
+		public IEnumerable<T> GetList<T>(string pipelineId, string key) where T : class, new()
+		{
+			if (_store.ContainsKey(InternalKey(pipelineId, key)))
+			{
+				if (_store[InternalKey(pipelineId, key)].GetValue() is List<object> items)
+				{
+					return items.Cast<T>();
+				}
+			}
+
+			return (IEnumerable<T>)default;
+		}
+
+		/// <inheritdoc/>
+		public void RemoveRangeFromList(string pipelineId, string key, int count)
+		{
+			if (_store.ContainsKey(InternalKey(pipelineId, key)))
+			{
+				if (_store[InternalKey(pipelineId, key)].GetValue() is List<object> items)
+				{
+					items.RemoveRange(0, count);
+				}
+			}
+		}
+
+		/// <inheritdoc/>
 		public void Set<T>(string pipelineId, string key, T value)
 		{
 			_store[InternalKey(pipelineId, key)] = new ValueItem(value);
 		}
 
+		/// <inheritdoc/>
 		public T Get<T>(string pipelineId, string key)
 		{
 			if (_store.ContainsKey(InternalKey(pipelineId, key)))
@@ -40,19 +71,6 @@ namespace Gaucho.Storage
 			}
 
 			return (T) default;
-		}
-
-		public IEnumerable<T> GetList<T>(string pipelineId, string key)
-		{
-			if (_store.ContainsKey(InternalKey(pipelineId, key)))
-			{
-				if(_store[InternalKey(pipelineId, key)].GetValue() is List<object> items)
-				{
-					return items.Cast<T>();
-				}
-			}
-
-			return (IEnumerable<T>)default;
 		}
 
 		private string InternalKey(string pipelineId, string key) => $"{pipelineId}:{key}";

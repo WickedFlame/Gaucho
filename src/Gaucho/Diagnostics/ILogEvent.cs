@@ -4,23 +4,57 @@ using System.Text;
 
 namespace Gaucho.Diagnostics
 {
+	/// <summary>
+	/// Interface for a LogEvent
+	/// </summary>
     public interface ILogEvent
     {
-        string Message { get; }
+		/// <summary>
+		/// Gets or sets the Message
+		/// </summary>
+		string Message { get; }
 
-        string Source { get; }
+		/// <summary>
+		/// Gets or sets the Source
+		/// </summary>
+		string Source { get; }
     }
 
-    public interface ILogMessage : ILogEvent
+	/// <summary>
+	/// Interface for a LogMessage
+	/// </summary>
+	public interface ILogMessage : ILogEvent
     {
-	    DateTime Timestamp { get; }
+		/// <summary>
+		/// Gets or sets the Timestamp
+		/// </summary>
+		DateTime Timestamp { get; }
 
+		/// <summary>
+		/// Gets or sets the LogLevel
+		/// </summary>
 		LogLevel Level { get; }
 	}
 
-    public class LogEvent : ILogMessage
+	/// <summary>
+	/// The LogEvent
+	/// </summary>
+	public class LogEvent : ILogMessage
 	{
-        public LogEvent(string message, LogLevel level, string source)
+		/// <summary>
+		/// Creates a new instance of the LogEvent
+		/// </summary>
+		public LogEvent()
+		{
+		}
+
+		/// <summary>
+		/// Creates a new instance of the LogEvent
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="level"></param>
+		/// <param name="source"></param>
+		public LogEvent(string message, LogLevel level, string source)
         {
 	        Timestamp = DateTime.Now;
             Message = message;
@@ -28,12 +62,24 @@ namespace Gaucho.Diagnostics
             Source = source;
         }
 
-        public DateTime Timestamp { get; }
+		/// <summary>
+		/// Gets or sets the Timestamp
+		/// </summary>
+        public DateTime Timestamp { get; set; }
 
+		/// <summary>
+		/// Gets or sets the Message
+		/// </summary>
         public string Message { get; set; }
 
+		/// <summary>
+		/// Gets or sets the LogLevel
+		/// </summary>
         public LogLevel Level { get; set; }
 
+		/// <summary>
+		/// Gets or sets the Source
+		/// </summary>
         public string Source { get; set; }
     }
 

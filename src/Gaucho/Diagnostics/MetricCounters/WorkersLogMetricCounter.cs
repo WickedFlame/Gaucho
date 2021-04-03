@@ -72,17 +72,8 @@ namespace Gaucho.Diagnostics.MetricCounters
 					ActiveWorkers = @event.Value
 				};
 				_log.Add(metric);
-				_storage.Add(_pipelineId, "WorkersLog", metric);
+				_storage.AddToList(_pipelineId, "WorkersLog", metric);
 			}
 		}
-	}
-
-	public class WorkerCountMetric
-	{
-		public string PipelineId { get; set; }
-
-		public DateTime Timestamp { get; set; }
-
-		public int ActiveWorkers { get; set; }
 	}
 }

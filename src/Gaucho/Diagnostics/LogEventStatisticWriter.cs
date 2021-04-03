@@ -11,22 +11,41 @@ namespace Gaucho.Diagnostics
 	/// </summary>
 	public class LogEventStatisticWriter : ILogWriter<ILogMessage>
 	{
-		private readonly List<ILogMessage> _logQueue = new List<ILogMessage>();
+		private List<ILogMessage> _logQueue;
 		private readonly LogLevel _minLogLevel;
 		private readonly Lazy<IStorage> _storage;
 		private readonly string _pipelineId;
 
+		/// <summary>
+		/// Creates a new instance of LogEventStatisticWriter
+		/// </summary>
+		/// <param name="statistic"></param>
 		public LogEventStatisticWriter(StatisticsApi statistic)
 		{
-			statistic.AddMetricsCounter(new Metric(MetricType.EventLog, "Logs", () => _logQueue));
+			statistic.AddMetricsCounter(new Metric(MetricType.EventLog, "Logs", () =>
+			{
+				if (_logQueue == null)
+				{
+					InitLogQueue();
+				}
+
+				return _logQueue;
+			}));
 			_pipelineId = statistic.PipelineId;
 
 			_minLogLevel = GlobalConfiguration.Configuration.Resolve<Options>().LogLevel;
 			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.Resolve<IStorage>());
 		}
 
+		/// <summary>
+		/// The loggercategory
+		/// </summary>
 		public Category Category => Category.Log;
 
+		/// <summary>
+		/// Write the ILogEvent to the Logs
+		/// </summary>
+		/// <param name="event"></param>
 		public void Write(ILogEvent @event)
 		{
 			if (@event is ILogMessage e)
@@ -35,23 +54,48 @@ namespace Gaucho.Diagnostics
 			}
 		}
 
+		/// <summary>
+		/// Write the ILogMessage to the Logs
+		/// </summary>
+		/// <param name="event"></param>
 		public void Write(ILogMessage @event)
 		{
+			if (_logQueue == null)
+			{
+				InitLogQueue();
+			}
+
 			if (@event.Level >= _minLogLevel)
 			{
 				_logQueue.Add(@event);
-				_storage.Value.Add(_pipelineId, "logs", @event);
+				_storage.Value.AddToList(_pipelineId, "logs", @event);
 
-				if (_logQueue.Count > 1000)
+				if (_logQueue.Count > 500)
 				{
 					ShrinkLog();
 				}
 			}
 		}
 
+		private void InitLogQueue()
+		{
+			if (_logQueue != null)
+			{
+				return;
+			}
+
+			_logQueue = new List<ILogMessage>();
+			var logs = _storage.Value.GetList<LogEvent>(_pipelineId, "logs");
+			if (logs != null)
+			{
+				_logQueue.AddRange(logs);
+			}
+		}
+
 		private void ShrinkLog()
 		{
 			_logQueue.RemoveRange(0, 500);
+			_storage.Value.RemoveRangeFromList(_pipelineId, "logs", 250);
 		}
 	}
 }
