@@ -67,7 +67,7 @@ namespace Gaucho.Integration.Tests
 			profiler.Trace();
 
 			var monitor = new StatisticsApi(pipelineId);
-			var processed = monitor.GetMetricValue<int>(MetricType.ProcessedEvents);
+			var processed = monitor.GetMetricValue<long>(MetricType.ProcessedEvents);
 			Assert.AreEqual(processed, cnt, "Processed events are not equal to sent events {0} to {1}", processed, cnt);
 		}
 
@@ -122,7 +122,7 @@ namespace Gaucho.Integration.Tests
 			profiler.Trace();
 
 			var monitor = new StatisticsApi(pipelineId);
-			var metrics = monitor.GetMetricValue<int>(MetricType.ProcessedEvents);
+			var metrics = monitor.GetMetricValue<long>(MetricType.ProcessedEvents);
 			Assert.AreEqual(metrics, processed, "Metric event counter is not equal to processed events {0} to {1}", metrics, processed);
 		}
 
@@ -170,7 +170,7 @@ namespace Gaucho.Integration.Tests
 			profiler.Trace();
 
 			var monitor = new StatisticsApi(pipelineId);
-			var metrics = monitor.GetMetricValue<int>(MetricType.ProcessedEvents);
+			var metrics = monitor.GetMetricValue<long>(MetricType.ProcessedEvents);
 			Assert.AreEqual(metrics, cnt, "Processed events are not equal to sent events {0} to {1}", metrics, cnt);
 		}
 	}
