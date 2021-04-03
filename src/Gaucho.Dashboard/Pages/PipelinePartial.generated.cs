@@ -241,7 +241,7 @@ WriteLiteral("\t    </div>\r\n\t    <div class=\"pipeline-item-log-container\">\
             #line default
             #line hidden
 WriteLiteral("\t\t\t    <div class=\"toggler-section\">\r\n\t\t\t\t    <span class=\"toggler-button\"></span" +
-">\r\n\t\t\t\t    <div class=\"label\" id=\"logs-label\">Logs</div>\r\n\t\t\t    </div>\r\n");
+">\r\n\t\t\t\t    <div class=\"label\" id=\"logs-label\">Events</div>\r\n\t\t\t    </div>\r\n");
 
 
             
