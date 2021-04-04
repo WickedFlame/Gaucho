@@ -56,19 +56,5 @@ namespace Gaucho.Redis.Serializer
 
 			return (T)obj;
 		}
-
-
-
-		public static string SerializeToJson<T>(this T item)
-		{
-			var serializer = new JsonSerializer();
-			return serializer.Serialize(item);
-		}
-
-		public static T DeserializeJson<T>(this RedisValue json) where T : class, new()
-		{
-			var serializer = new JsonSerializer();
-			return serializer.Deserialize<T>(json);
-		}
 	}
 }

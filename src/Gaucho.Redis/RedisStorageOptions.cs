@@ -15,5 +15,10 @@ namespace Gaucho.Redis
 		/// Gets or sets the default database number used in Redis
 		/// </summary>
 		public int Db { get; set; } = 0;
+
+		/// <summary>
+		/// Serializer used to serialize objects to strings for stoing in redis
+		/// </summary>
+		public ISerializer Serializer { get; set; }
 	}
 }

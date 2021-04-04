@@ -7,10 +7,10 @@ namespace Gaucho.Redis.Serializer
 	/// <summary>
 	/// A simple json serializer
 	/// </summary>
-	public class JsonSerializer
+	public class JsonSerializer : ISerializer
 	{
 		/// <summary>
-		/// Serialize the item to a json string
+		/// Serialize the object to a json string
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns></returns>

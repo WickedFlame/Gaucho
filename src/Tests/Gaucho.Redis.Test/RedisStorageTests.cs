@@ -36,7 +36,6 @@ namespace Gaucho.Redis.Test
 			var storage = new RedisStorage(_multiplexer.Object);
 			storage.Set("storage", "key", "value");
 
-			//_db.Verify(exp => exp.HashSetAsync(It.IsAny<RedisKey>(), It.IsAny<HashEntry[]>(), CommandFlags.None), Times.Once);
 			_db.Verify(exp => exp.HashSetAsync(It.IsAny<RedisKey>(), new[] { new HashEntry("value".GetType().Name, "value") }, CommandFlags.None), Times.Once);
 		}
 

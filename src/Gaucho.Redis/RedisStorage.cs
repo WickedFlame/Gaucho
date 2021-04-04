@@ -36,14 +36,17 @@ namespace Gaucho.Redis
 		/// <inheritdoc/>
 		public void AddToList<T>(string pipelineId, string key, T value)
 		{
-			_database.ListRightPushAsync(RedisKey(pipelineId, key), value.SerializeToJson());
+			var serializer = _options.Serializer ?? new JsonSerializer();
+			_database.ListRightPushAsync(RedisKey(pipelineId, key), serializer.Serialize(value));
 		}
 
 		/// <inheritdoc/>
 		public IEnumerable<T> GetList<T>(string pipelineId, string key) where T : class, new()
 		{
+			var serializer = _options.Serializer ?? new JsonSerializer();
+
 			var list = _database.ListRange(RedisKey(pipelineId, key));
-			var items = list.Select(l => l.DeserializeJson<T>());
+			var items = list.Select(l => serializer.Deserialize<T>(l));
 
 			return items;
 		}
