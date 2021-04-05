@@ -55,14 +55,14 @@ namespace Gaucho.Diagnostics.MetricCounters
 				if (_storage == null)
 				{
 					_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-					_count = _storage.Get<long>(_pipelineId, "ProcessedEventsMetric");
+					_count = _storage.Get<long>(new StorageKey(_pipelineId, "ProcessedEventsMetric"));
 				}
 			}
 
 	        lock (_pipelineId)
 	        {
 		        _count += 1;
-		        _storage.Set(_pipelineId, "ProcessedEventsMetric", _count);
+		        _storage.Set(new StorageKey(_pipelineId, "ProcessedEventsMetric"), _count);
 	        }
         }
     }

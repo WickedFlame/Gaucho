@@ -56,7 +56,7 @@ namespace Gaucho.Test.LoadTests
             ProcessingServer.Server.WaitAll(pipelineId);
 
 			var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-			Assert.GreaterOrEqual(100 * 10, storage.Get<long>(pipelineId, "ProcessedEventsMetric"));
+			Assert.GreaterOrEqual(100 * 10, storage.Get<long>(new StorageKey(pipelineId, "ProcessedEventsMetric")));
 
 			var stats = new StatisticsApi(pipelineId);
 			Assert.AreEqual(1, stats.GetMetricValue(MetricType.ThreadCount));

@@ -68,7 +68,7 @@ namespace Gaucho.Diagnostics
 			if (@event.Level >= _minLogLevel)
 			{
 				_logQueue.Add(@event);
-				_storage.Value.AddToList(_pipelineId, "logs", @event);
+				_storage.Value.AddToList(new StorageKey(_pipelineId, "logs"), @event);
 
 				if (_logQueue.Count > 500)
 				{
@@ -85,7 +85,7 @@ namespace Gaucho.Diagnostics
 			}
 
 			_logQueue = new List<ILogMessage>();
-			var logs = _storage.Value.GetList<LogEvent>(_pipelineId, "logs");
+			var logs = _storage.Value.GetList<LogEvent>(new StorageKey(_pipelineId, "logs"));
 			if (logs != null)
 			{
 				_logQueue.AddRange(logs);
@@ -95,7 +95,7 @@ namespace Gaucho.Diagnostics
 		private void ShrinkLog()
 		{
 			_logQueue.RemoveRange(0, 500);
-			_storage.Value.RemoveRangeFromList(_pipelineId, "logs", 250);
+			_storage.Value.RemoveRangeFromList(new StorageKey(_pipelineId, "logs"), 250);
 		}
 	}
 }

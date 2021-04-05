@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gaucho.Redis.Serializer;
+using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
 using StackExchange.Redis;
@@ -34,7 +35,7 @@ namespace Gaucho.Redis.Test
 			};
 
 			var storage = new RedisStorage(_multiplexer.Object, options);
-			storage.AddToList("storage", "key", new StorageModel { Value = "value" });
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Value = "value" });
 
 			_db.Verify(exp => exp.ListRightPushAsync(It.IsAny<RedisKey>(), new RedisValue("Testvalue"), When.Always, CommandFlags.None), Times.Once);
 		}
@@ -56,7 +57,7 @@ namespace Gaucho.Redis.Test
 			};
 
 			var storage = new RedisStorage(_multiplexer.Object, options);
-			var items = storage.GetList<StorageModel>("storage", "key");
+			var items = storage.GetList<StorageModel>(new StorageKey("storage", "key"));
 
 			Assert.AreEqual("testmodel", items.First().Value);
 		}

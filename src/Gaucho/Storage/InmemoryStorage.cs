@@ -13,9 +13,9 @@ namespace Gaucho.Storage
 		private readonly Dictionary<string, IStorageItem> _store = new Dictionary<string, IStorageItem>();
 
 		/// <inheritdoc/>
-		public void AddToList<T>(string pipelineId, string key, T value)
+		public void AddToList<T>(StorageKey key, T value)
 		{
-			var internalKey = InternalKey(pipelineId, key);
+			var internalKey = CreateKey(key);
 			if (!_store.ContainsKey(internalKey))
 			{
 				_store.Add(internalKey, new ListItem());
@@ -31,11 +31,11 @@ namespace Gaucho.Storage
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<T> GetList<T>(string pipelineId, string key) where T : class, new()
+		public IEnumerable<T> GetList<T>(StorageKey key) where T : class, new()
 		{
-			if (_store.ContainsKey(InternalKey(pipelineId, key)))
+			if (_store.ContainsKey(CreateKey(key)))
 			{
-				if (_store[InternalKey(pipelineId, key)].GetValue() is List<object> items)
+				if (_store[CreateKey(key)].GetValue() is List<object> items)
 				{
 					return items.Cast<T>();
 				}
@@ -45,11 +45,11 @@ namespace Gaucho.Storage
 		}
 
 		/// <inheritdoc/>
-		public void RemoveRangeFromList(string pipelineId, string key, int count)
+		public void RemoveRangeFromList(StorageKey key, int count)
 		{
-			if (_store.ContainsKey(InternalKey(pipelineId, key)))
+			if (_store.ContainsKey(CreateKey(key)))
 			{
-				if (_store[InternalKey(pipelineId, key)].GetValue() is List<object> items)
+				if (_store[CreateKey(key)].GetValue() is List<object> items)
 				{
 					items.RemoveRange(0, count);
 				}
@@ -57,22 +57,22 @@ namespace Gaucho.Storage
 		}
 
 		/// <inheritdoc/>
-		public void Set<T>(string pipelineId, string key, T value)
+		public void Set<T>(StorageKey key, T value)
 		{
-			_store[InternalKey(pipelineId, key)] = new ValueItem(value);
+			_store[CreateKey(key)] = new ValueItem(value);
 		}
 
 		/// <inheritdoc/>
-		public T Get<T>(string pipelineId, string key)
+		public T Get<T>(StorageKey key)
 		{
-			if (_store.ContainsKey(InternalKey(pipelineId, key)))
+			if (_store.ContainsKey(CreateKey(key)))
 			{
-				return (T)_store[InternalKey(pipelineId, key)].GetValue();
+				return (T)_store[CreateKey(key)].GetValue();
 			}
 
 			return (T) default;
 		}
 
-		private string InternalKey(string pipelineId, string key) => $"{pipelineId}:{key}";
+		private string CreateKey(StorageKey key) => $"{key.PipelineId}:{key.Key}";
 	}
 }

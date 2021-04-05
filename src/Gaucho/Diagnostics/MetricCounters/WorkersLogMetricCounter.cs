@@ -59,7 +59,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 				if (_storage == null)
 				{
 					_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-					_log = _storage.GetList<WorkerCountMetric>(_pipelineId, "WorkersLog")?.ToList() ?? new List<WorkerCountMetric>();
+					_log = _storage.GetList<WorkerCountMetric>(new StorageKey(_pipelineId, "WorkersLog"))?.ToList() ?? new List<WorkerCountMetric>();
 				}
 			}
 
@@ -72,7 +72,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 					ActiveWorkers = @event.Value
 				};
 				_log.Add(metric);
-				_storage.AddToList(_pipelineId, "WorkersLog", metric);
+				_storage.AddToList(new StorageKey(_pipelineId, "WorkersLog"), metric);
 			}
 		}
 	}

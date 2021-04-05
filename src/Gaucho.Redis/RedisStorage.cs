@@ -34,48 +34,53 @@ namespace Gaucho.Redis
 		}
 
 		/// <inheritdoc/>
-		public void AddToList<T>(string pipelineId, string key, T value)
+		public void AddToList<T>(StorageKey key, T value)
 		{
 			var serializer = _options.Serializer ?? new JsonSerializer();
-			_database.ListRightPushAsync(RedisKey(pipelineId, key), serializer.Serialize(value));
+			_database.ListRightPushAsync(CreateKey(key), serializer.Serialize(value));
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<T> GetList<T>(string pipelineId, string key) where T : class, new()
+		public IEnumerable<T> GetList<T>(StorageKey key) where T : class, new()
 		{
 			var serializer = _options.Serializer ?? new JsonSerializer();
 
-			var list = _database.ListRange(RedisKey(pipelineId, key));
+			var list = _database.ListRange(CreateKey(key));
 			var items = list.Select(l => serializer.Deserialize<T>(l));
 
 			return items;
 		}
 
 		/// <inheritdoc/>
-		public void RemoveRangeFromList(string pipelineId, string key, int count)
+		public void RemoveRangeFromList(StorageKey key, int count)
 		{
 			for (var i = 0; i < count; i++)
 			{
-				_database.ListLeftPopAsync(RedisKey(pipelineId, key));
+				_database.ListLeftPopAsync(CreateKey(key));
 			}
 		}
 
 		/// <inheritdoc/>
-		public void Set<T>(string pipelineId, string key, T value)
+		public void Set<T>(StorageKey key, T value)
 		{
-			_database.HashSetAsync(RedisKey(pipelineId, key), value.SerializeToRedis());
+			_database.HashSetAsync(CreateKey(key), value.SerializeToRedis());
 		}
 
 		/// <inheritdoc/>
-		public T Get<T>(string pipelineId, string key)
+		public T Get<T>(StorageKey key)
 		{
-			var hash = _database.HashGetAll(RedisKey(pipelineId, key));
+			var hash = _database.HashGetAll(CreateKey(key));
 
 			return hash.DeserializeRedis<T>();
 		}
 
-		private string ServerName()
+		private string ServerName(string serverName)
 		{
+			if (!string.IsNullOrEmpty(serverName))
+			{
+				return serverName;
+			}
+
 			if (string.IsNullOrEmpty(_serverName))
 			{
 				var options = GlobalConfiguration.Configuration.Resolve<Options>();
@@ -85,6 +90,6 @@ namespace Gaucho.Redis
 			return _serverName;
 		}
 
-		private string RedisKey(string pipelineId, string key) => $"{_options.Prefix}:{ServerName()}:{pipelineId}:{key}".ToLower();
+		private string CreateKey(StorageKey key) => $"{_options.Prefix}:{ServerName(key.ServerName)}:{key.PipelineId}:{key.Key}".ToLower();
 	}
 }
