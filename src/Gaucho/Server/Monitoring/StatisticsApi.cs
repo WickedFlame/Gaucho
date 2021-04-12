@@ -1,52 +1,109 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Gaucho.Configuration;
+using Gaucho.Storage;
 
 namespace Gaucho.Server.Monitoring
 {
+	/// <summary>
+	/// API for statistics
+	/// </summary>
 	public class StatisticsApi : IEnumerable<IMetric>
     {
-        private static readonly StatisticsCollection _statistics = new StatisticsCollection();
-
         private readonly MetricCollection _metrics;
+        private IStorage _storage;
 
-        public StatisticsApi(string pipelineId)
+		/// <summary>
+		/// Creates a new instance of the StatisticsApi
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		public StatisticsApi(string pipelineId) : this(GlobalConfiguration.Configuration.Resolve<Options>().ServerName, pipelineId)
         {
-			lock(_statistics)
+        }
+
+		/// <summary>
+		/// Creates a new instance of the StatisticsApi
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		/// <param name="storage"></param>
+		public StatisticsApi(string pipelineId, IStorage storage) : this(pipelineId)
+		{
+			_storage = storage;
+		}
+
+		/// <summary>
+		/// Creates a new instance of the StatisticsApi
+		/// </summary>
+		/// <param name="serverName"></param>
+		/// <param name="pipelineId"></param>
+		public StatisticsApi(string serverName, string pipelineId)
+        {
+			PipelineId = pipelineId;
+
+			_metrics = new MetricCollection();
+
+			var storage = GetStorage();
+			var keys = storage.GetKeys(new StorageKey(PipelineId, $"metric:", serverName));
+			foreach (var key in keys)
 			{
-				PipelineId = pipelineId;
-
-				if (!_statistics.Contains(pipelineId))
-				{
-					_statistics.Add(pipelineId, new MetricCollection());
-				}
-
-				_metrics = _statistics.Get(pipelineId);
+				var metric = storage.Get<Metric>(new StorageKey(key));
+				_metrics.Add(metric);
 			}
         }
 
+		/// <summary>
+		/// Gets the pipelineId of the metrics
+		/// </summary>
         public string PipelineId { get; }
-
-        public void AddMetricsCounter(IMetric metric)
+		
+		/// <summary>
+		/// Set a metric. Overwrites existing metrics
+		/// </summary>
+		/// <param name="metric"></param>
+        public void SetMetric(IMetric metric)
         {
-            _metrics.Add(metric);
+			
+				var saved = _metrics.Get(metric.Key);
+				if (saved != null)
+				{
+					_metrics.Remove(saved);
+				}
+
+				_metrics.Add(metric);
+
+			var storage = GetStorage();
+	        storage.Set(new StorageKey(PipelineId, $"metric:{metric.Key}"), metric);
         }
 
+		/// <summary>
+		/// Gets the metric associated with the MetricType
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
         public IMetric GetMetric(MetricType type)
         {
-	        return _metrics.Get(type);
+				return _metrics.Get(type);
         }
 
-        public object GetMetricValue(MetricType type)
+		/// <summary>
+		/// Gets the metric value associated with the MetricType
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public object GetMetricValue(MetricType type)
         {
-            var metric = _metrics.Get(type);
-            if(metric == null)
-            {
-                return null;
-            }
-
-            return metric.Factory.Invoke();
+			lock(_metrics)
+			{
+				var metric = _metrics.Get(type);
+				return metric?.Value;
+			}
         }
 
+		/// <summary>
+		/// Gets the enumerator of the collection
+		/// </summary>
+		/// <returns></returns>
         public IEnumerator<IMetric> GetEnumerator()
         {
             return _metrics.GetEnumerator();
@@ -56,5 +113,15 @@ namespace Gaucho.Server.Monitoring
         {
             return GetEnumerator();
         }
+
+        private IStorage GetStorage()
+        {
+	        if (_storage == null)
+	        {
+		        _storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
+	        }
+
+			return _storage;
+		}
     }
 }

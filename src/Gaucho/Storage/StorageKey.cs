@@ -1,4 +1,5 @@
 ﻿using System;
+using Gaucho.Configuration;
 
 namespace Gaucho.Storage
 {
@@ -7,6 +8,15 @@ namespace Gaucho.Storage
 	/// </summary>
 	public class StorageKey
 	{
+		/// <summary>
+		/// Creates a new instance of the StorageKey
+		/// </summary>
+		/// <param name="key"></param>
+		public StorageKey(string key)
+		{
+			Key = key;
+		}
+
 		/// <summary>
 		/// Creates a new instance of the StorageKey
 		/// </summary>
@@ -37,7 +47,7 @@ namespace Gaucho.Storage
 
 			PipelineId = pipelineId;
 			Key = key;
-			ServerName = serverName;
+			ServerName = ValidateServerName(serverName);
 		}
 
 		/// <summary>
@@ -54,5 +64,27 @@ namespace Gaucho.Storage
 		/// Gets or sets the PipelineId
 		/// </summary>
 		public string PipelineId { get; set; }
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			if (string.IsNullOrEmpty(ServerName) && string.IsNullOrEmpty(PipelineId))
+			{
+				return Key.ToLower();
+			}
+
+			return $"{ServerName}:{PipelineId}:{Key}".ToLower();
+		}
+
+		private string ValidateServerName(string serverName)
+		{
+			if (!string.IsNullOrEmpty(serverName))
+			{
+				return serverName;
+			}
+
+			var options = GlobalConfiguration.Configuration.Resolve<Options>();
+			return options.ServerName;
+		}
 	}
 }

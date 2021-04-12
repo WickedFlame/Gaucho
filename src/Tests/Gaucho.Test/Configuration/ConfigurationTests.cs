@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Gaucho.Configuration;
 using Gaucho.Server;
+using Gaucho.Storage;
 using NUnit.Framework;
 
 namespace Gaucho.Test.Configuration
@@ -18,6 +19,12 @@ namespace Gaucho.Test.Configuration
         {
             _pluginMgr = new HandlerPluginManager();
         }
+
+        [SetUp]
+        public void Setup()
+        {
+	        GlobalConfiguration.Setup(c => c.Register<IStorage>(new InmemoryStorage()));
+		}
         
         [Test]
         public void ConfigurationTests_Configuration()

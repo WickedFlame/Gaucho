@@ -21,6 +21,8 @@ namespace Gaucho.Redis.Test
 			_multiplexer = new Mock<IConnectionMultiplexer>();
 			_db = new Mock<IDatabase>();
 			_multiplexer.Setup(exp => exp.GetDatabase(It.IsAny<int>(), It.IsAny<object>())).Returns(_db.Object);
+			var server = new Mock<IServer>();
+			_multiplexer.Setup(exp => exp.GetServer(It.IsAny<System.Net.EndPoint>(), null)).Returns(server.Object);
 		}
 
 		[Test]

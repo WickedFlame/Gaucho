@@ -45,5 +45,12 @@ namespace Gaucho.Storage
 		/// <param name="key"></param>
 		/// <returns></returns>
 		T Get<T>(StorageKey key);
+
+		/// <summary>
+		/// Gets all keys that start with the given key value
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		IEnumerable<string> GetKeys(StorageKey key);
 	}
 }

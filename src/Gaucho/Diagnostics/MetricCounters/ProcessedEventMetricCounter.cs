@@ -10,7 +10,7 @@ namespace Gaucho.Diagnostics.MetricCounters
     {
         private long _count = -1;
         private readonly string _pipelineId;
-		private IStorage _storage;
+		private readonly StatisticsApi _statistic;
 
 		/// <summary>
 		/// Creates a new instance of ProcessedEventMetricCounter
@@ -18,8 +18,14 @@ namespace Gaucho.Diagnostics.MetricCounters
 		/// <param name="statistic"></param>
 		public ProcessedEventMetricCounter(StatisticsApi statistic)
         {
-			statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events", () => _count));
-			_pipelineId = statistic.PipelineId;
+	        _statistic = statistic;
+	        _pipelineId = statistic.PipelineId;
+
+			_count = statistic.GetMetricValue<long>(MetricType.ProcessedEvents);
+			if(_count == 0)
+			{
+				statistic.SetMetric(new Metric(MetricType.ProcessedEvents, "Processed Events", _count));
+			}
         }
 
 		/// <summary>
@@ -50,19 +56,10 @@ namespace Gaucho.Diagnostics.MetricCounters
 		        return;
 	        }
 
-			lock (_pipelineId)
-			{
-				if (_storage == null)
-				{
-					_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-					_count = _storage.Get<long>(new StorageKey(_pipelineId, "ProcessedEventsMetric"));
-				}
-			}
-
 	        lock (_pipelineId)
 	        {
 		        _count += 1;
-		        _storage.Set(new StorageKey(_pipelineId, "ProcessedEventsMetric"), _count);
+		        _statistic.SetMetric(new Metric(MetricType.ProcessedEvents, "Processed Events", _count));
 	        }
         }
     }

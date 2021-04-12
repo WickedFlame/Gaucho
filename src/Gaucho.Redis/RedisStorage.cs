@@ -15,7 +15,7 @@ namespace Gaucho.Redis
 	{
 		private readonly RedisStorageOptions _options;
 		private readonly IDatabase _database;
-		private string _serverName;
+		private readonly IServer _server;
 
 		/// <summary>
 		/// Creates a new instance of the RedisStorage
@@ -31,6 +31,7 @@ namespace Gaucho.Redis
 
 			_options = options ?? new RedisStorageOptions();
 			_database = connectionMultiplexer.GetDatabase(_options.Db);
+			_server = connectionMultiplexer.GetServer(connectionMultiplexer.GetEndPoints(true).FirstOrDefault());
 		}
 
 		/// <inheritdoc/>
@@ -74,22 +75,14 @@ namespace Gaucho.Redis
 			return hash.DeserializeRedis<T>();
 		}
 
-		private string ServerName(string serverName)
+		/// <inheritdoc/>
+		public IEnumerable<string> GetKeys(StorageKey key)
 		{
-			if (!string.IsNullOrEmpty(serverName))
-			{
-				return serverName;
-			}
-
-			if (string.IsNullOrEmpty(_serverName))
-			{
-				var options = GlobalConfiguration.Configuration.Resolve<Options>();
-				_serverName = options.ServerName;
-			}
-
-			return _serverName;
+			var keys = _server.Keys(_options.Db, $"{key}*");
+			return keys.Select(k => k.ToString());
 		}
 
-		private string CreateKey(StorageKey key) => $"{_options.Prefix}:{ServerName(key.ServerName)}:{key.PipelineId}:{key.Key}".ToLower();
+
+		private string CreateKey(StorageKey key) => $"{_options.Prefix}:{key}".ToLower();
 	}
 }

@@ -1,13 +1,24 @@
-﻿using System;
-
+﻿
 namespace Gaucho.Server.Monitoring
 {
-    public interface IMetric
+	/// <summary>
+	/// A metric item
+	/// </summary>
+	public interface IMetric
     {
-        MetricType Key { get; }
+	    /// <summary>
+	    /// Gets or sets the MetricType
+	    /// </summary>
+		MetricType Key { get; }
 
-        string Title { get; }
+	    /// <summary>
+	    /// Gets or sets the title
+	    /// </summary>
+		string Title { get; }
 
-        Func<object> Factory { get; }
+	    /// <summary>
+	    /// Gets or sets the value
+	    /// </summary>
+		object Value { get; }
     }
 }

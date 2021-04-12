@@ -19,7 +19,7 @@ namespace Gaucho.Test.Server.Monitoring
 		{
 			var col = new MetricCollection
 			{
-				new Metric(MetricType.EventLog, "m", () => true)
+				new Metric(MetricType.EventLog, "m", true)
 			};
 
 			Assert.IsTrue(col.Get(MetricType.EventLog).Title == "m");
@@ -29,13 +29,13 @@ namespace Gaucho.Test.Server.Monitoring
 		public void MetricCollection_Add()
 		{
 			var col = new MetricCollection();
-			col.Add(new Metric(MetricType.EventLog, "m", () => true));
+			col.Add(new Metric(MetricType.EventLog, "m", true));
 		}
 
 		[Test]
 		public void MetricCollection_Get()
 		{
-			var metric = new Metric(MetricType.EventLog, "m", () => true);
+			var metric = new Metric(MetricType.EventLog, "m", true);
 
 			var col = new MetricCollection
 			{

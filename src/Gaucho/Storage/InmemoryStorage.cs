@@ -15,7 +15,7 @@ namespace Gaucho.Storage
 		/// <inheritdoc/>
 		public void AddToList<T>(StorageKey key, T value)
 		{
-			var internalKey = CreateKey(key);
+			var internalKey = key.ToString();
 			if (!_store.ContainsKey(internalKey))
 			{
 				_store.Add(internalKey, new ListItem());
@@ -33,9 +33,9 @@ namespace Gaucho.Storage
 		/// <inheritdoc/>
 		public IEnumerable<T> GetList<T>(StorageKey key) where T : class, new()
 		{
-			if (_store.ContainsKey(CreateKey(key)))
+			if (_store.ContainsKey(key.ToString()))
 			{
-				if (_store[CreateKey(key)].GetValue() is List<object> items)
+				if (_store[key.ToString()].GetValue() is List<object> items)
 				{
 					return items.Cast<T>();
 				}
@@ -47,9 +47,9 @@ namespace Gaucho.Storage
 		/// <inheritdoc/>
 		public void RemoveRangeFromList(StorageKey key, int count)
 		{
-			if (_store.ContainsKey(CreateKey(key)))
+			if (_store.ContainsKey(key.ToString()))
 			{
-				if (_store[CreateKey(key)].GetValue() is List<object> items)
+				if (_store[key.ToString()].GetValue() is List<object> items)
 				{
 					items.RemoveRange(0, count);
 				}
@@ -59,20 +59,24 @@ namespace Gaucho.Storage
 		/// <inheritdoc/>
 		public void Set<T>(StorageKey key, T value)
 		{
-			_store[CreateKey(key)] = new ValueItem(value);
+			_store[key.ToString()] = new ValueItem(value);
 		}
 
 		/// <inheritdoc/>
 		public T Get<T>(StorageKey key)
 		{
-			if (_store.ContainsKey(CreateKey(key)))
+			if (_store.ContainsKey(key.ToString()))
 			{
-				return (T)_store[CreateKey(key)].GetValue();
+				return (T)_store[key.ToString()].GetValue();
 			}
 
 			return (T) default;
 		}
 
-		private string CreateKey(StorageKey key) => $"{key.PipelineId}:{key.Key}";
+		/// <inheritdoc/>
+		public IEnumerable<string> GetKeys(StorageKey key)
+		{
+			return _store.Keys.Where(k => k.StartsWith(key.ToString()));
+		}
 	}
 }

@@ -51,7 +51,7 @@ namespace Gaucho.Dashboard.Monitoring
             foreach (var key in defaultkeys)
             {
                 var metric = statistics.FirstOrDefault(s => s.Key == key);
-                metrics.AddMetric(key.ToString(), metric?.Title, metric?.Factory.Invoke());
+                metrics.AddMetric(key.ToString(), metric?.Title, metric?.Value);
             }
 
             foreach (var metric in statistics)
@@ -64,37 +64,39 @@ namespace Gaucho.Dashboard.Monitoring
                 switch (metric.Key)
                 {
 					case MetricType.EventLog:
-						if(metric.Factory.Invoke() is List<ILogMessage> logs)
-						{
-							foreach(var log in logs.OrderByDescending(l => l.Timestamp).Take(20).OrderBy(l => l.Timestamp))
-							{
-								metrics.AddElement(metric.Key.ToString(), metric.Title, new DashboardLog
-								{
-									Timestamp = log.Timestamp,
-									Source = log.Source,
-									Level = log.Level.ToString(),
-									Message = log.Message
-								});
-							}
-						}
+						//LogEventStatisticWriter.cs
+						//if (metric.Factory.Invoke() is List<ILogMessage> logs)
+						//{
+						//	foreach(var log in logs.OrderByDescending(l => l.Timestamp).Take(20).OrderBy(l => l.Timestamp))
+						//	{
+						//		metrics.AddElement(metric.Key.ToString(), metric.Title, new DashboardLog
+						//		{
+						//			Timestamp = log.Timestamp,
+						//			Source = log.Source,
+						//			Level = log.Level.ToString(),
+						//			Message = log.Message
+						//		});
+						//	}
+						//}
 						break;
 
 					case MetricType.WorkersLog:
-						if (metric.Factory.Invoke() is IEnumerable<WorkerCountMetric> workers)
-						{
-							foreach (var worker in workers.OrderBy(w => w.Timestamp).Take(50))
-							{
-								metrics.AddElement(metric.Key.ToString(), metric.Title, new TimelineLog<int>
-								{
-									Timestamp = worker.Timestamp,
-									Value = worker.ActiveWorkers
-								});
-							}
-						}
+						//WorkersLogMetricCounter.cs
+						//if (metric.Factory.Invoke() is IEnumerable<WorkerCountMetric> workers)
+						//{
+						//	foreach (var worker in workers.OrderBy(w => w.Timestamp).Take(50))
+						//	{
+						//		metrics.AddElement(metric.Key.ToString(), metric.Title, new TimelineLog<int>
+						//		{
+						//			Timestamp = worker.Timestamp,
+						//			Value = worker.ActiveWorkers
+						//		});
+						//	}
+						//}
 						break;
 
 					default:
-						metrics.AddMetric(metric.Key.ToString(), metric.Title, metric.Factory.Invoke() ?? 0);
+						metrics.AddMetric(metric.Key.ToString(), metric.Title, metric.Value ?? 0);
 						break;
                 }
             }

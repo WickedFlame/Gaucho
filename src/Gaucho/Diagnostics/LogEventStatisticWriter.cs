@@ -22,15 +22,15 @@ namespace Gaucho.Diagnostics
 		/// <param name="statistic"></param>
 		public LogEventStatisticWriter(StatisticsApi statistic)
 		{
-			statistic.AddMetricsCounter(new Metric(MetricType.EventLog, "Logs", () =>
-			{
-				if (_logQueue == null)
-				{
-					InitLogQueue();
-				}
+			//statistic.AddMetricsCounter(new Metric(MetricType.EventLog, "Logs", () =>
+			//{
+			//	if (_logQueue == null)
+			//	{
+			//		InitLogQueue();
+			//	}
 
-				return _logQueue;
-			}));
+			//	return _logQueue;
+			//}));
 			_pipelineId = statistic.PipelineId;
 
 			_minLogLevel = GlobalConfiguration.Configuration.Resolve<Options>().LogLevel;

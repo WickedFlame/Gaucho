@@ -22,7 +22,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 		/// <param name="statistic"></param>
 		public WorkersLogMetricCounter(StatisticsApi statistic)
 		{
-			statistic.AddMetricsCounter(new Metric(MetricType.WorkersLog, "Active Workers", () => _log));
+			//statistic.AddMetricsCounter(new Metric(MetricType.WorkersLog, "Active Workers", () => _log));
 			_pipelineId = statistic.PipelineId;
 		}
 

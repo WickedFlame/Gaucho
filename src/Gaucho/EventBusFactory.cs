@@ -4,6 +4,9 @@ using Gaucho.Server.Monitoring;
 
 namespace Gaucho
 {
+	/// <summary>
+	/// Interface fot the EventBusFactory
+	/// </summary>
     public interface IEventBusFactory
     {
 		/// <summary>
