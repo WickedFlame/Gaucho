@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Gaucho
 {
+	/// <summary>
+	/// EventProcessor
+	/// </summary>
 	public class EventProcessor : IDisposable
 	{
 		private readonly string _id = Guid.NewGuid().ToString();
@@ -15,6 +18,12 @@ namespace Gaucho
 		private bool _isWorking;
 		private readonly Lazy<IEventPipeline> _pipeline;
 
+		/// <summary>
+		/// Creates a new instance of EventProcessor
+		/// </summary>
+		/// <param name="factory"></param>
+		/// <param name="action"></param>
+		/// <param name="logger"></param>
 		public EventProcessor(Func<IEventPipeline> factory, Action<IEventPipeline> action, ILogger logger)
 		{
 			logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
@@ -24,8 +33,14 @@ namespace Gaucho
 			_pipeline = new Lazy<IEventPipeline>(factory);
 		}
 
+		/// <summary>
+		/// The Task that the processor runs in
+		/// </summary>
 		public Task Task { get; private set; }
 
+		/// <summary>
+		/// Gets if the processor is working
+		/// </summary>
 		public bool IsWorking
 		{
 			get
@@ -37,6 +52,9 @@ namespace Gaucho
 			}
 		}
 
+		/// <summary>
+		/// Dispose the processor
+		/// </summary>
 		public void Dispose()
 		{
 			lock (_syncRoot)
@@ -46,6 +64,9 @@ namespace Gaucho
 			}
 		}
 
+		/// <summary>
+		/// Start processing events
+		/// </summary>
 		public void Start()
 		{
 			lock (_syncRoot)
