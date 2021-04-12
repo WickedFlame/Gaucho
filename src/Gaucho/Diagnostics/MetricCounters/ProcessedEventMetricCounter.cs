@@ -10,21 +10,22 @@ namespace Gaucho.Diagnostics.MetricCounters
     {
         private long _count = -1;
         private readonly string _pipelineId;
-		private readonly StatisticsApi _statistic;
+		private readonly IMetricService _metrics;
 
 		/// <summary>
 		/// Creates a new instance of ProcessedEventMetricCounter
 		/// </summary>
-		/// <param name="statistic"></param>
-		public ProcessedEventMetricCounter(StatisticsApi statistic)
+		/// <param name="metrics"></param>
+		/// <param name="pipelineId"></param>
+		public ProcessedEventMetricCounter(IMetricService metrics, string pipelineId)
         {
-	        _statistic = statistic;
-	        _pipelineId = statistic.PipelineId;
+	        _metrics = metrics;
+	        _pipelineId = pipelineId;
 
-			_count = statistic.GetMetricValue<long>(MetricType.ProcessedEvents);
+			_count = metrics.GetMetricValue<long>(MetricType.ProcessedEvents);
 			if(_count == 0)
 			{
-				statistic.SetMetric(new Metric(MetricType.ProcessedEvents, "Processed Events", _count));
+				metrics.SetMetric(new Metric(MetricType.ProcessedEvents, "Processed Events", _count));
 			}
         }
 
@@ -59,7 +60,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 	        lock (_pipelineId)
 	        {
 		        _count += 1;
-		        _statistic.SetMetric(new Metric(MetricType.ProcessedEvents, "Processed Events", _count));
+		        _metrics.SetMetric(new Metric(MetricType.ProcessedEvents, "Processed Events", _count));
 	        }
         }
     }

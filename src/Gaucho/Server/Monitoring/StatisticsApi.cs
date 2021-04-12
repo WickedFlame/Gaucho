@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Gaucho.Configuration;
+using Gaucho.Diagnostics;
+using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Storage;
 
 namespace Gaucho.Server.Monitoring
@@ -18,7 +20,8 @@ namespace Gaucho.Server.Monitoring
 		/// Creates a new instance of the StatisticsApi
 		/// </summary>
 		/// <param name="pipelineId"></param>
-		public StatisticsApi(string pipelineId) : this(GlobalConfiguration.Configuration.Resolve<Options>().ServerName, pipelineId)
+		public StatisticsApi(string pipelineId)
+			: this(GlobalConfiguration.Configuration.Resolve<Options>().ServerName, pipelineId, GlobalConfiguration.Configuration.Resolve<IStorage>())
         {
         }
 
@@ -27,9 +30,9 @@ namespace Gaucho.Server.Monitoring
 		/// </summary>
 		/// <param name="pipelineId"></param>
 		/// <param name="storage"></param>
-		public StatisticsApi(string pipelineId, IStorage storage) : this(pipelineId)
+		public StatisticsApi(string pipelineId, IStorage storage) 
+			: this(GlobalConfiguration.Configuration.Resolve<Options>().ServerName, pipelineId, storage)
 		{
-			_storage = storage;
 		}
 
 		/// <summary>
@@ -37,54 +40,38 @@ namespace Gaucho.Server.Monitoring
 		/// </summary>
 		/// <param name="serverName"></param>
 		/// <param name="pipelineId"></param>
-		public StatisticsApi(string serverName, string pipelineId)
+		/// <param name="storage"></param>
+		public StatisticsApi(string serverName, string pipelineId, IStorage storage)
         {
+	        _storage = storage;
 			PipelineId = pipelineId;
 
 			_metrics = new MetricCollection();
 
-			var storage = GetStorage();
 			var keys = storage.GetKeys(new StorageKey(PipelineId, $"metric:", serverName));
 			foreach (var key in keys)
 			{
 				var metric = storage.Get<Metric>(new StorageKey(key));
 				_metrics.Add(metric);
 			}
-        }
+
+			// add logs
+			_metrics.Add(new LogMetric(MetricType.WorkersLog, "Active Workers", () =>
+			{
+				var logs = storage.GetList<ActiveWorkersLogMessage>(new StorageKey(pipelineId, $"log:{MetricType.WorkersLog}", serverName));
+				return logs;
+			}));
+			_metrics.Add(new LogMetric(MetricType.EventLog, "Active Workers", () =>
+			{
+				var logs = storage.GetList<LogEvent>(new StorageKey(pipelineId, $"logs", serverName));
+				return logs;
+			}));
+		}
 
 		/// <summary>
 		/// Gets the pipelineId of the metrics
 		/// </summary>
         public string PipelineId { get; }
-		
-		/// <summary>
-		/// Set a metric. Overwrites existing metrics
-		/// </summary>
-		/// <param name="metric"></param>
-        public void SetMetric(IMetric metric)
-        {
-			
-				var saved = _metrics.Get(metric.Key);
-				if (saved != null)
-				{
-					_metrics.Remove(saved);
-				}
-
-				_metrics.Add(metric);
-
-			var storage = GetStorage();
-	        storage.Set(new StorageKey(PipelineId, $"metric:{metric.Key}"), metric);
-        }
-
-		/// <summary>
-		/// Gets the metric associated with the MetricType
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-        public IMetric GetMetric(MetricType type)
-        {
-				return _metrics.Get(type);
-        }
 
 		/// <summary>
 		/// Gets the metric value associated with the MetricType
@@ -113,15 +100,5 @@ namespace Gaucho.Server.Monitoring
         {
             return GetEnumerator();
         }
-
-        private IStorage GetStorage()
-        {
-	        if (_storage == null)
-	        {
-		        _storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-	        }
-
-			return _storage;
-		}
     }
 }

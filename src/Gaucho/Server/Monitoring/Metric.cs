@@ -8,10 +8,17 @@
 		/// <summary>
 		/// Creates a new instance of a metric
 		/// </summary>
+		public Metric()
+	    {
+	    }
+
+		/// <summary>
+		/// Creates a new instance of a metric
+		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="title"></param>
 		/// <param name="value"></param>
-        public Metric(MetricType key, string title, object value)
+		public Metric(MetricType key, string title, object value)
         {
             Key = key;
             Title = title;
@@ -22,16 +29,16 @@
 		/// <summary>
 		/// Gets or sets the MetricType
 		/// </summary>
-        public MetricType Key { get; }
+        public MetricType Key { get; set; }
 
 		/// <summary>
 		/// Gets or sets the title
 		/// </summary>
-        public string Title { get; }
+        public string Title { get; set; }
 
 		/// <summary>
 		/// Gets or sets the value
 		/// </summary>
-        public object Value { get; }
+        public object Value { get; set; }
     }
 }

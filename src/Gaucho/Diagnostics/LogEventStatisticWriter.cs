@@ -19,19 +19,10 @@ namespace Gaucho.Diagnostics
 		/// <summary>
 		/// Creates a new instance of LogEventStatisticWriter
 		/// </summary>
-		/// <param name="statistic"></param>
-		public LogEventStatisticWriter(StatisticsApi statistic)
+		/// <param name="pipelineId"></param>
+		public LogEventStatisticWriter(string pipelineId)
 		{
-			//statistic.AddMetricsCounter(new Metric(MetricType.EventLog, "Logs", () =>
-			//{
-			//	if (_logQueue == null)
-			//	{
-			//		InitLogQueue();
-			//	}
-
-			//	return _logQueue;
-			//}));
-			_pipelineId = statistic.PipelineId;
+			_pipelineId = pipelineId;
 
 			_minLogLevel = GlobalConfiguration.Configuration.Resolve<Options>().LogLevel;
 			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.Resolve<IStorage>());

@@ -1,22 +1,32 @@
 ﻿using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using System.Linq;
-using System.Text;
 using Gaucho.Handlers;
 
 namespace Gaucho.Server
 {
+	/// <summary>
+	/// The PipelineBuilder
+	/// </summary>
     public class PipelineBuilder
     {
         private readonly HandlerPluginManager _pluginManager;
         private readonly ILogger _logger;
 
+		/// <summary>
+		/// Creates a new instance of the PipelineBuilder
+		/// </summary>
         public PipelineBuilder()
         {
             _pluginManager = new HandlerPluginManager();
 			_logger = LoggerConfiguration.Setup();
 		}
 
+		/// <summary>
+		/// Build the pipeline based on the configuration
+		/// </summary>
+		/// <param name="server"></param>
+		/// <param name="config"></param>
         public void BuildPipeline(IProcessingServer server, PipelineConfiguration config)
         {
 			_logger.Write($"Setup Pipeline:{config}", Category.Log, LogLevel.Debug, "PipelineBuilder");
@@ -50,6 +60,13 @@ namespace Gaucho.Server
             });
         }
 
+		/// <summary>
+		/// Build a Handler based on the node configuration
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="nodeCtx"></param>
+		/// <param name="node"></param>
+		/// <returns></returns>
         public T BuildHandler<T>(IActivationContext nodeCtx, HandlerNode node)
         {
             nodeCtx.Register<IEventDataConverter>(node.BuildDataFilter);

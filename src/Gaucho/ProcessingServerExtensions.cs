@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using Gaucho.Configuration;
 using Gaucho.Server;
 
 namespace Gaucho
 {
+	/// <summary>
+	/// Extensions for the ProcessingServer
+	/// </summary>
     public static class ProcessingServerExtensions
     {
 		/// <summary>

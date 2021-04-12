@@ -5,9 +5,16 @@ using System.Linq;
 
 namespace Gaucho.Redis.Serializer
 {
-	internal static class ObjectExtensions
+	/// <summary>
+	/// Extensions for object
+	/// </summary>
+	public static class ObjectExtensions
 	{
-		//Serialize in Redis format:
+		/// <summary>
+		/// Serialize objects to HashEntries
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public static HashEntry[] SerializeToRedis(this object obj)
 		{
 			var properties = obj.GetType().GetProperties();
@@ -25,9 +32,19 @@ namespace Gaucho.Redis.Serializer
 			return hashset;
 		}
 
-		//Deserialize from Redis format
+		/// <summary>
+		/// Deserialize Redis hashEntries to Objects
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="hashEntries"></param>
+		/// <returns></returns>
 		public static T DeserializeRedis<T>(this HashEntry[] hashEntries)
 		{
+			if (!hashEntries.Any())
+			{
+				return default(T);
+			}
+
 			var properties = typeof(T).GetProperties();
 
 			if (!properties.Any())
@@ -51,7 +68,7 @@ namespace Gaucho.Redis.Serializer
 					continue;
 				}
 
-				property.SetValue(obj, Convert.ChangeType(entry.Value.ToString(), property.PropertyType));
+				property.SetValue(obj, TypeConverter.Convert(property.PropertyType, entry.Value.ToString()));
 			}
 
 			return (T)obj;

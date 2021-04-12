@@ -151,6 +151,7 @@ namespace Gaucho.Integration.Tests
 			var profiler  = ProfilerSession.StartSession()
 				.SetIterations(1000)
 				.SetThreads(5)
+				.Settings(s => s.RunWarmup = false)
 				.Task(() =>
 				{
 					client.Process(pipelineId, new InputItem

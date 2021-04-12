@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Gaucho.Diagnostics.MetricCounters
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	[Serializable]
-	public class WorkerCountMetric
+	public class ActiveWorkersLogMessage
 	{
 		/// <summary>
 		/// 

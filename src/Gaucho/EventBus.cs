@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Gaucho.Diagnostics;
 using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
+using Gaucho.Storage;
 
 namespace Gaucho
 {
@@ -23,7 +24,7 @@ namespace Gaucho
 
         private readonly List<EventProcessor> _processors = new List<EventProcessor>();
         private int _minThreads = 1;
-        private readonly StatisticsApi _statistic;
+        private readonly MetricService _metricService;
 
         /// <summary>
 		/// Creates a new instance of the eventbus
@@ -50,24 +51,23 @@ namespace Gaucho
         {
             PipelineId = pipelineId;
 
-            _statistic = new StatisticsApi(pipelineId);
-			//statistic.AddMetricsCounter(new Metric(MetricType.ThreadCount, "Active Workers", () => _processors.Count));
-			//statistic.AddMetricsCounter(new Metric(MetricType.QueueSize, "Events in Queue", () => _queue.Count));
+            var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
+            _metricService = new MetricService(storage, pipelineId);
 
 			_queue = new EventQueue();
             _logger = LoggerConfiguration.Setup
             (
 	            s =>
 	            {
-		            s.AddWriter(new ProcessedEventMetricCounter(_statistic));
-		            s.AddWriter(new WorkersLogMetricCounter(_statistic));
-		            s.AddWriter(new LogEventStatisticWriter(_statistic));
+		            s.AddWriter(new ProcessedEventMetricCounter(_metricService, pipelineId));
+		            s.AddWriter(new ActiveWorkersLogWriter(pipelineId));
+		            s.AddWriter(new LogEventStatisticWriter(pipelineId));
 	            }
             );
             SetupProcessors(_minThreads);
 
-            _statistic.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
-            _statistic.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
+            _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
+            _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 		}
 
 		/// <summary>
@@ -119,7 +119,7 @@ namespace Gaucho
         public void Publish(Event @event)
         {
             _queue.Enqueue(@event);
-            _statistic.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
+            _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 
 			if (_queue.Count / _processors.Count > 10)
             {
@@ -153,7 +153,7 @@ namespace Gaucho
 	            try
 	            {
 		            _logger.WriteMetric(@event.Id, StatisticType.ProcessedEvent);
-		            _statistic.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
+		            _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 
 					pipeline.Run(@event);
 	            }
@@ -180,7 +180,7 @@ namespace Gaucho
                     var thread = new EventProcessor(() => _pipelineFactory.Setup(), p => Process(p), _logger);
 
                     _processors.Add(thread);
-                    _statistic.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
+                    _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
 
 
 					_logger.Write($"Add Worker to EventBus. Active Workers: {i + 1}", Category.Log, source: "EventBus");
@@ -204,7 +204,7 @@ namespace Gaucho
 						_logger.WriteMetric(toRemove, StatisticType.WorkersLog);
                     }
 
-	                _statistic.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
+	                _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
 				}
             }
         }
@@ -232,7 +232,7 @@ namespace Gaucho
                     _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
 				}
 
-                _statistic.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
+                _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
 			}
         }
 

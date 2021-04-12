@@ -16,7 +16,7 @@ namespace Gaucho.Redis.Serializer
 		/// <returns></returns>
 		public static object Convert(Type type, string value)
 		{
-			if (type == typeof(string))
+			if (type == typeof(string) ||  type == typeof(object))
 			{
 				return value.Trim();
 			}
