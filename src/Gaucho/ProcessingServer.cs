@@ -9,21 +9,19 @@ namespace Gaucho
 	/// </summary>
     public class ProcessingServer : IProcessingServer, IDisposable
     {
-	    private static readonly IProcessingServer _server;
-
-        static ProcessingServer()
+	    static ProcessingServer()
         {
 			// setup the default server
 			// this is created even if it is not used
-			_server  = new ProcessingServer(new EventBusFactory());
+			Server  = new ProcessingServer(new EventBusFactory());
 		}
 
 		/// <summary>
 		/// Gets the singelton of the ProcessingServer
 		/// </summary>
-        public static IProcessingServer Server => _server;
+        public static IProcessingServer Server { get; }
 
-        private readonly IEventBusFactory _eventBusFactory;
+		private readonly IEventBusFactory _eventBusFactory;
         private readonly InputHandlerCollection _inputHandlers;
 
         private readonly ILogger _logger;
