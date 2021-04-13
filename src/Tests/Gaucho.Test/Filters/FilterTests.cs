@@ -65,7 +65,40 @@ namespace Gaucho.Test
 	        Assert.AreEqual(data.ToString(), "{\r\n   dst_lvl -> Info\r\n   Message -> The message\r\n}");
         }
 
-		
+        [Test]
+        public void Gaucho_Filter_ConvertDataMultipleTimes()
+        {
+	        var converter = new EventDataConverter();
+	        var filters = new List<string>
+	        {
+		        "Level -> dst_lvl",
+		        "Message -> msg"
+	        };
+
+	        foreach (var filter in filters)
+	        {
+		        converter.Add(FilterFactory.BuildFilter(filter));
+	        }
+
+	        var input = new LogMessage
+	        {
+		        Level = "Info",
+		        Message = "The message",
+		        Title = "title"
+	        };
+	        var factory = new EventDataFactory();
+	        var data = factory.BuildFrom(input);
+
+	        data = converter.Convert(data);
+	        
+	        Assert.That(data.All(p => p.Key != "Message"));
+
+			// the property Message -> msg cannot be converted because only msg is in the datacollection
+			// still has to return the msg property if present
+	        data = converter.Convert(data);
+
+			Assert.AreEqual(data.ToString(), "{\r\n   dst_lvl -> Info\r\n   msg -> The message\r\n}");
+        }
 	}
 
     public class FilterOutputHandler : IOutputHandler
@@ -85,9 +118,9 @@ namespace Gaucho.Test
         {
             var sb = new StringBuilder();
             var data = Converter.Convert(@event.Data);
-            foreach (var item in data.Properties)
+            foreach (var node in data)
             {
-                sb.Append($"[{item.Key} -> {item.Value}] ");
+                sb.Append($"[{node.Key} -> {node.Value}] ");
             }
 
             _log.Add(sb.ToString());

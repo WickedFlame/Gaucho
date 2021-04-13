@@ -9,7 +9,7 @@ namespace Gaucho
     {
         public static IGlobalConfiguration UseProcessingServer(this IGlobalConfiguration config, Action<PipelineBuilder> setup)
         {
-            var builder = new PipelineBuilder(config);
+            var builder = new PipelineBuilder();
             setup.Invoke(builder);
 
             return config;
@@ -53,5 +53,47 @@ namespace Gaucho
 
             return default(T);
         }
-    }
+
+		/// <summary>
+		/// Adds a service to the ActivationContext. This is resolved and injected to the instantiation of the handlers
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="config"></param>
+		/// <param name="service"></param>
+		/// <returns></returns>
+        public static IGlobalConfiguration AddService<T>(this IGlobalConfiguration config, Func<T> service)
+        {
+	        var ctx = config.Resolve<IActivationContext>();
+	        if (ctx == null)
+	        {
+		        ctx = new ActivationContext();
+		        config.Register(ctx);
+	        }
+
+	        ctx.Register(service);
+
+			return config;
+        }
+
+		/// <summary>
+		/// Adds a service to the ActivationContext. This is resolved and injected to the instantiation of the handlers
+		/// </summary>
+		/// <typeparam name="TService"></typeparam>
+		/// <typeparam name="TImpl"></typeparam>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public static IGlobalConfiguration AddService<TService, TImpl>(this IGlobalConfiguration config) where TImpl : TService
+        {
+	        var ctx = config.Resolve<IActivationContext>();
+	        if (ctx == null)
+	        {
+		        ctx = new ActivationContext();
+		        config.Register(ctx);
+	        }
+
+	        ctx.Register<TService, TImpl>();
+
+	        return config;
+        }
+	}
 }

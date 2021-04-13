@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
 
 namespace Gaucho.Diagnostics.MetricCounters
@@ -10,20 +6,20 @@ namespace Gaucho.Diagnostics.MetricCounters
 	/// <summary>
 	/// Logs the count workers for a statistics graph
 	/// </summary>
-	public class WorkersLogMetricCounter : ILogWriter<StatisticEvent<int>>
+	public class ActiveWorkersLogWriter : ILogWriter<StatisticEvent<int>>
 	{
-		private IList<WorkerCountMetric> _log;
 		private readonly string _pipelineId;
-		private IStorage _storage;
+		private readonly Lazy<IStorage> _storage;
 
 		/// <summary>
 		/// Creates a workers log metric counter
 		/// </summary>
-		/// <param name="statistic"></param>
-		public WorkersLogMetricCounter(StatisticsApi statistic)
+		/// <param name="pipelineId"></param>
+		public ActiveWorkersLogWriter(string pipelineId)
 		{
-			statistic.AddMetricsCounter(new Metric(MetricType.WorkersLog, "Active Workers", () => _log));
-			_pipelineId = statistic.PipelineId;
+			_pipelineId = pipelineId;
+
+			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.Resolve<IStorage>());
 		}
 
 		/// <summary>
@@ -56,33 +52,15 @@ namespace Gaucho.Diagnostics.MetricCounters
 
 			lock (_pipelineId)
 			{
-				if (_storage == null)
-				{
-					_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-					_log = _storage.GetList<WorkerCountMetric>(_pipelineId, "WorkersLog")?.ToList() ?? new List<WorkerCountMetric>();
-				}
-			}
-
-			lock (_pipelineId)
-			{
-				var metric = new WorkerCountMetric
+				var metric = new ActiveWorkersLogMessage
 				{
 					Timestamp = DateTime.Now,
 					PipelineId = _pipelineId,
 					ActiveWorkers = @event.Value
 				};
-				_log.Add(metric);
-				_storage.Add(_pipelineId, "WorkersLog", metric);
+
+				_storage.Value.AddToList(new StorageKey(_pipelineId, $"log:{@event.Metric}"), metric);
 			}
 		}
-	}
-
-	public class WorkerCountMetric
-	{
-		public string PipelineId { get; set; }
-
-		public DateTime Timestamp { get; set; }
-
-		public int ActiveWorkers { get; set; }
 	}
 }

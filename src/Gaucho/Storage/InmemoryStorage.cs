@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Gaucho.Storage.Inmemory;
 
 namespace Gaucho.Storage
 {
+	/// <summary>
+	/// The default Storage
+	/// </summary>
 	public class InmemoryStorage : IStorage
 	{
 		private readonly Dictionary<string, IStorageItem> _store = new Dictionary<string, IStorageItem>();
 
-		public void Add<T>(string pipelineId, string key, T value)
+		/// <inheritdoc/>
+		public void AddToList<T>(StorageKey key, T value)
 		{
-			var internalKey = InternalKey(pipelineId, key);
+			var internalKey = key.ToString();
 			if (!_store.ContainsKey(internalKey))
 			{
 				_store.Add(internalKey, new ListItem());
@@ -27,26 +30,12 @@ namespace Gaucho.Storage
 			lst.SetValue(value);
 		}
 
-		public void Set<T>(string pipelineId, string key, T value)
+		/// <inheritdoc/>
+		public IEnumerable<T> GetList<T>(StorageKey key) where T : class, new()
 		{
-			_store[InternalKey(pipelineId, key)] = new ValueItem(value);
-		}
-
-		public T Get<T>(string pipelineId, string key)
-		{
-			if (_store.ContainsKey(InternalKey(pipelineId, key)))
+			if (_store.ContainsKey(key.ToString()))
 			{
-				return (T)_store[InternalKey(pipelineId, key)].GetValue();
-			}
-
-			return (T) default;
-		}
-
-		public IEnumerable<T> GetList<T>(string pipelineId, string key)
-		{
-			if (_store.ContainsKey(InternalKey(pipelineId, key)))
-			{
-				if(_store[InternalKey(pipelineId, key)].GetValue() is List<object> items)
+				if (_store[key.ToString()].GetValue() is List<object> items)
 				{
 					return items.Cast<T>();
 				}
@@ -55,6 +44,39 @@ namespace Gaucho.Storage
 			return (IEnumerable<T>)default;
 		}
 
-		private string InternalKey(string pipelineId, string key) => $"{pipelineId}:{key}";
+		/// <inheritdoc/>
+		public void RemoveRangeFromList(StorageKey key, int count)
+		{
+			if (_store.ContainsKey(key.ToString()))
+			{
+				if (_store[key.ToString()].GetValue() is List<object> items)
+				{
+					items.RemoveRange(0, count);
+				}
+			}
+		}
+
+		/// <inheritdoc/>
+		public void Set<T>(StorageKey key, T value)
+		{
+			_store[key.ToString()] = new ValueItem(value);
+		}
+
+		/// <inheritdoc/>
+		public T Get<T>(StorageKey key)
+		{
+			if (_store.ContainsKey(key.ToString()))
+			{
+				return (T)_store[key.ToString()].GetValue();
+			}
+
+			return (T) default;
+		}
+
+		/// <inheritdoc/>
+		public IEnumerable<string> GetKeys(StorageKey key)
+		{
+			return _store.Keys.Where(k => k.StartsWith(key.ToString()));
+		}
 	}
 }

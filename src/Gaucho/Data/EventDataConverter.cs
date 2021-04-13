@@ -68,6 +68,12 @@ namespace Gaucho
 
     public static class EventDataConverterExtensions
     {
+		/// <summary>
+		/// Convert the data according to the filters
+		/// </summary>
+		/// <param name="converter"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
 	    public static EventData Convert(this IEventDataConverter converter, IEventData data)
 	    {
 		    var eventData = data as EventData;

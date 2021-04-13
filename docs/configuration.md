@@ -24,9 +24,9 @@ OutputHandlers:
     Filters:
       - Message -> msg
       - Level -> lvl
-	  - WebPortalId
+	    - WebPortalId
       - 'format <- {"level":"${lvl}","message":"${msg}"}'
-	  - 'json <- [lvl,msg -> message]'
+	    - 'json <- [lvl,msg -> message]'
 ```
 
 ### Arguments

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
+using Polaroider;
 
 namespace Gaucho.Test
 {
@@ -12,6 +14,25 @@ namespace Gaucho.Test
 		{
 			var e = new Event("", "data");
 			Assert.IsAssignableFrom<SimpleData>(e.Data);
+		}
+
+		[Test]
+		public void Event_DataFactory()
+		{
+			var item = new
+			{
+				Id = 1,
+				Value = "value"
+			};
+			var e = new Event("id", f => f.BuildFrom(item));
+
+			var options = SnapshotOptions.Create(o =>
+			{
+				// ignore regex when comparing
+				o.AddDirective(s => s.ReplaceGuid());
+			});
+
+			e.MatchSnapshot(options);
 		}
 	}
 }

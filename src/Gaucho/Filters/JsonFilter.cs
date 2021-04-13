@@ -27,7 +27,7 @@ namespace Gaucho.Filters
 			data = _converter.Convert(data);
 			var sb = new StringBuilder();
 
-			var content = string.Join(",", data.Properties.Select(p => $"\"{p.Key}\":\"{p.Value}\""));
+			var content = string.Join(",", data.Select(p => $"\"{p.Key}\":\"{p.Value}\""));
 
 			return new Property("json", $"{{{content}}}");
 		}

@@ -1,59 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using Gaucho.Diagnostics;
-using Gaucho.Server.Monitoring;
 
 namespace Gaucho
 {
-    public interface IProcessingServer
-    {
-        IEventBusFactory EventBusFactory { get; }
-
-        /// <summary>
-        /// gets all registered inputhandlers
-        /// </summary>
-		IEnumerable<IInputHandler> InputHandlers { get; }
-
-        void Register(string pipelineId, Func<EventPipeline> factory);
-
-        void Register(string pipelineId, IEventBus eventBus);
-
-        void Register(string pipelineId, IInputHandler plugin);
-
-        IInputHandler<T> GetHandler<T>(string pipelineId);
-
-        void Publish(Event @event);
-
-        /// <summary>
-        /// Wait for all events to be handled in the pipeline
-        /// </summary>
-        /// <param name="pipelineId">The Pipeline to wait for</param>
-        void WaitAll(string pipelineId);
-    }
-
+	/// <summary>
+	/// The ProcessingServer
+	/// </summary>
     public class ProcessingServer : IProcessingServer, IDisposable
     {
-        static IProcessingServer _server;
-
-        static ProcessingServer()
+	    static ProcessingServer()
         {
 			// setup the default server
 			// this is created even if it is not used
-			_server  = new ProcessingServer(new EventBusFactory());
+			Server  = new ProcessingServer(new EventBusFactory());
 		}
 
-        public static IProcessingServer Server => _server;
+		/// <summary>
+		/// Gets the singelton of the ProcessingServer
+		/// </summary>
+        public static IProcessingServer Server { get; }
 
-        private readonly IEventBusFactory _eventBusFactory;
+		private readonly IEventBusFactory _eventBusFactory;
         private readonly InputHandlerCollection _inputHandlers;
 
         private readonly ILogger _logger;
 
-        public ProcessingServer() 
+		/// <summary>
+		/// Create a new instance of the ProcessingServer
+		/// </summary>
+		public ProcessingServer() 
             : this(new EventBusFactory())
         {
         }
 
+		/// <summary>
+		/// Create a new instance of the ProcessingServer
+		/// </summary>
+		/// <param name="factory"></param>
         public ProcessingServer(IEventBusFactory factory)
         {
             _eventBusFactory = factory;
@@ -62,6 +46,9 @@ namespace Gaucho
             _logger = LoggerConfiguration.Setup();
         }
 
+		/// <summary>
+		/// Gets the associated EventBusFactory
+		/// </summary>
         public IEventBusFactory EventBusFactory => _eventBusFactory;
 
 		/// <summary>
@@ -69,12 +56,21 @@ namespace Gaucho
 		/// </summary>
         public IEnumerable<IInputHandler> InputHandlers => _inputHandlers;
 
-
+		/// <summary>
+		/// Register an EventPipeline to the pipeline
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		/// <param name="factory"></param>
 		public void Register(string pipelineId, Func<EventPipeline> factory)
         {
 	        _eventBusFactory.Register(pipelineId, factory);
         }
 
+		/// <summary>
+		/// Register an EventBus to the pipeline
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		/// <param name="eventBus"></param>
         public void Register(string pipelineId, IEventBus eventBus)
         {
 	        if (pipelineId != eventBus.PipelineId)
@@ -85,7 +81,12 @@ namespace Gaucho
 	        _eventBusFactory.Register(pipelineId, eventBus);
         }
 
-        public void Register(string pipelineId, IInputHandler plugin)
+		/// <summary>
+		/// Register an InputHandler to the pipeline
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		/// <param name="plugin"></param>
+		public void Register(string pipelineId, IInputHandler plugin)
         {
 	        if (plugin is IServerInitialize init)
 	        {
@@ -95,11 +96,21 @@ namespace Gaucho
 	        _inputHandlers.Register(pipelineId, plugin);
         }
 
-        public IInputHandler<T> GetHandler<T>(string pipelineId)
+		/// <summary>
+		/// Get the InputHandler for the pipeline
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="pipelineId"></param>
+		/// <returns></returns>
+		public IInputHandler<T> GetHandler<T>(string pipelineId)
         {
             return _inputHandlers.GetHandler<T>(pipelineId);
         }
 
+		/// <summary>
+		/// Publish an envent to the Pipeline
+		/// </summary>
+		/// <param name="event"></param>
 		public void Publish(Event @event)
         {
             var pipeline = _eventBusFactory.GetEventBus(@event.PipelineId);

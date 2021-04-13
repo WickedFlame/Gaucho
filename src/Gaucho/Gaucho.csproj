@@ -7,7 +7,7 @@
     <Company>WickedFlame</Company>
     <Authors>Christian Walpen</Authors>
     <Copyright>@ WickedFlame 2019</Copyright>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>Messagebroker Broker EventBus</PackageTags>
     <Version>1.0.0-RC01</Version>
     <AssemblyVersion>1.0.0</AssemblyVersion>
@@ -22,11 +22,8 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\Gaucho.xml</DocumentationFile>
+  </PropertyGroup>
 
 </Project>

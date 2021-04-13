@@ -1,0 +1,12 @@
+---data
+Data:
+  Key: Id
+  Value:
+    1
+  ValueType: System.Int32
+  Key: Value
+  Value:
+    value
+  ValueType: System.String
+Id: 00000000-0000-0000-0000-000000000000
+PipelineId: id

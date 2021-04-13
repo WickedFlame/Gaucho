@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Gaucho.Storage;
 using NUnit.Framework;
+using Polaroider;
 
 namespace Gaucho.Test.Storage
 {
@@ -19,52 +20,69 @@ namespace Gaucho.Test.Storage
 		public void InmemoryStorage_Set()
 		{
 			var storage = new InmemoryStorage();
-			storage.Set("storage", "key", "value");
+			storage.Set(new StorageKey("storage", "key"), "value");
 		}
 
 		[Test]
-		public void InmemoryStorage_Add()
+		public void InmemoryStorage_AddToList()
 		{
 			var storage = new InmemoryStorage();
-			storage.Add("storage", "key", "value");
+			storage.AddToList(new StorageKey("storage", "key"), "value");
 		}
 
 		[Test]
-		public void InmemoryStorage_Add_Multiple()
+		public void InmemoryStorage_AddToList_Multiple()
 		{
 			var storage = new InmemoryStorage();
-			storage.Add("storage", "key", "one");
-			storage.Add("storage", "key", "two");
+			storage.AddToList(new StorageKey("storage", "key"), "one");
+			storage.AddToList(new StorageKey("storage", "key"), "two");
 		}
 
 		[Test]
 		public void InmemoryStorage_Get()
 		{
 			var storage = new InmemoryStorage();
-			storage.Set("storage", "key", "value");
+			storage.Set(new StorageKey("storage", "key"), "value");
 
-			Assert.AreEqual("value", storage.Get<string>("storage", "key"));
+			Assert.AreEqual("value", storage.Get<string>(new StorageKey("storage", "key")));
 		}
 
 		[Test]
 		public void InmemoryStorage_Update()
 		{
 			var storage = new InmemoryStorage();
-			storage.Set("storage", "key", "value");
-			storage.Set("storage", "key", "reset");
+			storage.Set(new StorageKey("storage", "key"), "value");
+			storage.Set(new StorageKey("storage", "key"), "reset");
 
-			Assert.AreEqual("reset", storage.Get<string>("storage", "key"));
+			Assert.AreEqual("reset", storage.Get<string>(new StorageKey("storage", "key")));
 		}
 
 		[Test]
-		public void InmemoryStorage_GetList()
+		public void InmemoryStorage_List_Objects()
 		{
 			var storage = new InmemoryStorage();
-			storage.Add("storage", "key", "one");
-			storage.Add("storage", "key", "two");
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel {Id = 1, Value = "one"});
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id = 2, Value = "two" });
 
-			var items = storage.GetList<string>("storage", "key");
-			Assert.IsTrue(items.Count() == 2);
+			var items = storage.GetList<StorageModel>(new StorageKey("storage", "key"));
+			items.MatchSnapshot();
+		}
+
+		[Test]
+		public void InmemoryStorage_Item_Object()
+		{
+			var storage = new InmemoryStorage();
+			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+
+			var item = storage.Get<StorageModel>(new StorageKey("storage", "key"));
+			item.MatchSnapshot();
+		}
+
+		public class StorageModel
+		{
+			public int Id { get; set; }
+
+			public string Value { get; set; }
 		}
 	}
 }

@@ -6,6 +6,8 @@ using MeasureMap;
 using Gaucho.Configuration;
 using Gaucho.Integration.Tests.Handlers;
 using Gaucho.Server;
+using Gaucho.Server.Monitoring;
+using Gaucho.Storage;
 using NUnit.Framework;
 
 namespace Gaucho.Test.LoadTests
@@ -48,11 +50,18 @@ namespace Gaucho.Test.LoadTests
                 })
                 .SetIterations(100)
                 .SetThreads(10)
+                .Settings(s => s.RunWarmup = false)
                 .RunSession();
 
             ProcessingServer.Server.WaitAll(pipelineId);
 
-            result.Trace("### LoadTesting");
+			var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
+			Assert.GreaterOrEqual(100 * 10, storage.Get<long>(new StorageKey(pipelineId, "ProcessedEventsMetric")));
+
+			var stats = new StatisticsApi(pipelineId);
+			Assert.AreEqual(1, stats.GetMetricValue(MetricType.ThreadCount));
+
+			result.Trace("### LoadTesting");
         }
 
         public class ThreadWaitHandler : IOutputHandler

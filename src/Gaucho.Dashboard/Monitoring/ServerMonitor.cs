@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
+using Gaucho.Storage;
 
 namespace Gaucho.Dashboard.Monitoring
 {
@@ -37,20 +40,29 @@ namespace Gaucho.Dashboard.Monitoring
 
         public PipelineMetric Monitor(string pipelineId)
         {
-            var defaultkeys = new List<MetricType> {MetricType.ThreadCount, MetricType.QueueSize, MetricType.ProcessedEvents};
+	        var options = GlobalConfiguration.Configuration.Resolve<Options>();
 
-            var statistics = new StatisticsApi(pipelineId);
+			var defaultMetrics = new List<MetricType> {MetricType.ThreadCount, MetricType.QueueSize, MetricType.ProcessedEvents};
+
+			var statistics = new StatisticsApi(pipelineId);
             var metrics = new PipelineMetric(pipelineId);
 
-            foreach (var key in defaultkeys)
+            metrics.AddMetric("Server", "Server", options.ServerName ?? Environment.MachineName);
+
+            foreach (var key in defaultMetrics)
             {
                 var metric = statistics.FirstOrDefault(s => s.Key == key);
-                metrics.AddMetric(key.ToString(), metric?.Title, metric?.Factory.Invoke());
-            }
+                if (metric == null)
+                {
+	                metric = new Metric(key, "", "");
 
+                }
+                metrics.AddMetric(key.ToString(), metric?.Title, metric?.Value);
+            }
+			
             foreach (var metric in statistics)
             {
-                if (defaultkeys.Contains(metric.Key))
+                if (defaultMetrics.Contains(metric.Key))
                 {
                     continue;
                 }
@@ -58,9 +70,10 @@ namespace Gaucho.Dashboard.Monitoring
                 switch (metric.Key)
                 {
 					case MetricType.EventLog:
-						if(metric.Factory.Invoke() is List<ILogMessage> logs)
+						//LogEventStatisticWriter.cs
+						if (metric.Value is IEnumerable<LogEvent> logs)
 						{
-							foreach(var log in logs.OrderByDescending(l => l.Timestamp).Take(20).OrderBy(l => l.Timestamp))
+							foreach (var log in logs.OrderByDescending(l => l.Timestamp).Take(20).OrderBy(l => l.Timestamp))
 							{
 								metrics.AddElement(metric.Key.ToString(), metric.Title, new DashboardLog
 								{
@@ -74,7 +87,8 @@ namespace Gaucho.Dashboard.Monitoring
 						break;
 
 					case MetricType.WorkersLog:
-						if (metric.Factory.Invoke() is IEnumerable<WorkerCountMetric> workers)
+						//WorkersLogMetricCounter.cs
+						if (metric.Value is IEnumerable<ActiveWorkersLogMessage> workers)
 						{
 							foreach (var worker in workers.OrderBy(w => w.Timestamp).Take(50))
 							{
@@ -88,7 +102,7 @@ namespace Gaucho.Dashboard.Monitoring
 						break;
 
 					default:
-						metrics.AddMetric(metric.Key.ToString(), metric.Title, metric.Factory.Invoke() ?? 0);
+						metrics.AddMetric(metric.Key.ToString(), metric.Title, metric.Value ?? 0);
 						break;
                 }
             }

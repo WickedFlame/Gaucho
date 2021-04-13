@@ -98,7 +98,7 @@ body {
 
                     .pipeline-item-log-list {
                         background-color: $background-color-main;
-                        padding: 10px;
+                        /*padding: 10px;*/
 
                         .pipeline-item-log-item {
                             display: grid;
@@ -160,6 +160,10 @@ body {
 		+ .toggle-wrapper {
 			max-height: 100%;
 			transform: scaleY(1);
+		}
+
+		+ .pipeline-item-log-list {
+			padding: 10px;
 		}
 	}
 }

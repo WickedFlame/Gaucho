@@ -187,12 +187,12 @@ WriteLiteral("\" class=\"pipeline-item-log-list toggle-wrapper\">\r\n");
             #line default
             #line hidden
 WriteLiteral("\t\t\t\t\t    <div class=\"pipeline-item-log-item\">\r\n\t\t\t\t\t\t    <span class=\"pipeline-it" +
-"em-log-element\">");
+"em-log-element pipeline-log-debug\">");
 
 
             
             #line 41 "..\..\Pages\PipelinePartial.cshtml"
-                                             Write(e.Timestamp.ToString("o"));
+                                                                Write(e.Timestamp.ToString("o"));
 
             
             #line default
@@ -202,7 +202,7 @@ WriteLiteral("</span><span class=\"pipeline-item-log-element\">");
 
             
             #line 41 "..\..\Pages\PipelinePartial.cshtml"
-                                                                                                                      Write(e.Value);
+                                                                                                                                         Write(e.Value);
 
             
             #line default
@@ -241,7 +241,7 @@ WriteLiteral("\t    </div>\r\n\t    <div class=\"pipeline-item-log-container\">\
             #line default
             #line hidden
 WriteLiteral("\t\t\t    <div class=\"toggler-section\">\r\n\t\t\t\t    <span class=\"toggler-button\"></span" +
-">\r\n\t\t\t\t    <div class=\"label\" id=\"logs-label\">Logs</div>\r\n\t\t\t    </div>\r\n");
+">\r\n\t\t\t\t    <div class=\"label\" id=\"logs-label\">Events</div>\r\n\t\t\t    </div>\r\n");
 
 
             

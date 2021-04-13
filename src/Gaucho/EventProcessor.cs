@@ -5,27 +5,43 @@ using System.Threading.Tasks;
 
 namespace Gaucho
 {
+	/// <summary>
+	/// EventProcessor
+	/// </summary>
 	public class EventProcessor : IDisposable
 	{
 		private readonly string _id = Guid.NewGuid().ToString();
 		private readonly object _syncRoot = new object();
-		private readonly Action<IEventPipeline> _action;
+		private readonly Action _continuation;
 		private readonly ILogger _logger;
+		private readonly IWorker _worker;
 
 		private bool _isWorking;
-		private readonly Lazy<IEventPipeline> _pipeline;
+		
 
-		public EventProcessor(Func<IEventPipeline> factory, Action<IEventPipeline> action, ILogger logger)
+		/// <summary>
+		/// Creates a new instance of EventProcessor
+		/// </summary>
+		/// <param name="worker"></param>
+		/// <param name="continuation">Task to continue with after the worker is done</param>
+		/// <param name="logger"></param>
+		public EventProcessor(IWorker worker, Action continuation, ILogger logger)
 		{
 			logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
 
-			_action = action;
+			_worker = worker ?? throw new ArgumentNullException(nameof(worker));
+			_continuation = continuation ?? throw new ArgumentNullException(nameof(continuation));
 			_logger = logger;
-			_pipeline = new Lazy<IEventPipeline>(factory);
 		}
 
+		/// <summary>
+		/// The Task that the processor runs in
+		/// </summary>
 		public Task Task { get; private set; }
 
+		/// <summary>
+		/// Gets if the processor is working
+		/// </summary>
 		public bool IsWorking
 		{
 			get
@@ -37,6 +53,9 @@ namespace Gaucho
 			}
 		}
 
+		/// <summary>
+		/// Dispose the processor
+		/// </summary>
 		public void Dispose()
 		{
 			lock (_syncRoot)
@@ -46,6 +65,9 @@ namespace Gaucho
 			}
 		}
 
+		/// <summary>
+		/// Start processing events
+		/// </summary>
 		public void Start()
 		{
 			lock (_syncRoot)
@@ -62,11 +84,22 @@ namespace Gaucho
 
 			Task = Task.Factory.StartNew(() =>
 			{
-				_action(_pipeline.Value);
-
-				lock (_syncRoot)
+				try
 				{
-					_isWorking = false;
+					_worker.Execute();
+				}
+				catch (Exception e)
+				{
+					_logger.Write(e.Message, Category.Log, LogLevel.Error, "EventProcessor");
+				}
+				finally
+				{
+					lock (_syncRoot)
+					{
+						_isWorking = false;
+					}
+
+					_continuation();
 				}
 			}, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}

@@ -38,7 +38,7 @@
 				    @foreach (TimelineLog<int> e in element.Elements)
 				    {
 					    <div class="pipeline-item-log-item">
-						    <span class="pipeline-item-log-element">@e.Timestamp.ToString("o")</span><span class="pipeline-item-log-element">@e.Value</span>
+						    <span class="pipeline-item-log-element pipeline-log-debug">@e.Timestamp.ToString("o")</span><span class="pipeline-item-log-element">@e.Value</span>
 					    </div>
 				    }
 			    </div>
@@ -51,7 +51,7 @@
 			    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
 			    <div class="toggler-section">
 				    <span class="toggler-button"></span>
-				    <div class="label" id="logs-label">Logs</div>
+				    <div class="label" id="logs-label">Events</div>
 			    </div>
                     
 			    <div id="@id" class="pipeline-item-log-list toggle-wrapper">

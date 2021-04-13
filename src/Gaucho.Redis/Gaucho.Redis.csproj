@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>netstandard2.0</TargetFramework>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Description>Redis Storage for Gaucho</Description>
+	  <Company>WickedFlame</Company>
+	  <Authors>Christian Walpen</Authors>
+	  <Copyright>@ WickedFlame 2019</Copyright>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageTags>Messagebroker Broker EventBus Redis</PackageTags>
+	  <Version>1.0.0-RC01</Version>
+	  <AssemblyVersion>1.0.0</AssemblyVersion>
+	  <FileVersion>1.0.0-RC01</FileVersion>
+	  <PackageVersion>1.0.0-RC01</PackageVersion>
+	  <NeutralLanguage>en</NeutralLanguage>
+	  <Title>Gaucho.Redis</Title>
+	  <PackageProjectUrl>https://wickedflame.github.io/Gaucho/</PackageProjectUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\Gaucho.Redis.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gaucho\Gaucho.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -9,4 +9,5 @@
 A .NET Message Broker Middleware for handling, converting and delegating log messages
 
 ## Documentation
-https://wickedflame.github.io/Gaucho/
+Visit [https://wickedflame.github.io/Gaucho/](https://wickedflame.github.io/Gaucho/) for the full documentation.
+

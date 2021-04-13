@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using Gaucho.Configuration;
 using Gaucho.Server;
 
 namespace Gaucho
 {
+	/// <summary>
+	/// Extensions for the ProcessingServer
+	/// </summary>
     public static class ProcessingServerExtensions
     {
 		/// <summary>
@@ -28,7 +30,7 @@ namespace Gaucho
 		/// <returns></returns>
         public static IProcessingServer SetupPipeline(this IProcessingServer server, string pipelineId, PipelineConfiguration config)
         {
-	        var builder = new PipelineBuilder(GlobalConfiguration.Configuration);
+	        var builder = new PipelineBuilder();
 	        builder.BuildPipeline(server, config);
 
 	        return server;

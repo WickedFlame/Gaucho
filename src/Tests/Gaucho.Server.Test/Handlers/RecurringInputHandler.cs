@@ -27,7 +27,8 @@ namespace Gaucho.Server.Test.Handlers
                 interval = 10;
             }
 
-            _broadcaster.Recurring(Process, TimeSpan.FromSeconds(interval));
+			// delay start to end initializing
+            _broadcaster.Schedule(() => _broadcaster.Recurring(Process, TimeSpan.FromSeconds(interval)), TimeSpan.FromSeconds(10));
         }
 
         private int _count = 0;

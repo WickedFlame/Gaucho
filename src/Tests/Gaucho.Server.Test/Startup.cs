@@ -72,10 +72,12 @@ namespace Gaucho.Server.Test
 		            config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
 		            p.BuildPipeline(config);
 	            })
-	            .AddLogWriter(new ConsoleLogWriter())
+				.UseRedisStorage("localhost:6379", new Redis.RedisStorageOptions { Db = 15 })
+				.AddLogWriter(new ConsoleLogWriter())
 	            .UseOptions(new Options
 	            {
-		            LogLevel = Diagnostics.LogLevel.Debug
+		            LogLevel = Diagnostics.LogLevel.Debug,
+					ServerName = "Testserver"
 	            });
 
             app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions

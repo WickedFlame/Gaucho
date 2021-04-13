@@ -1,21 +1,44 @@
-﻿using System;
-
-namespace Gaucho.Server.Monitoring
+﻿namespace Gaucho.Server.Monitoring
 {
-    public class Metric : IMetric
+	/// <summary>
+	/// A metric item
+	/// </summary>
+	public class Metric : IMetric
     {
-        public Metric(MetricType key, string title, Func<object> func)
+		/// <summary>
+		/// Creates a new instance of a metric
+		/// </summary>
+		public Metric()
+	    {
+	    }
+
+		/// <summary>
+		/// Creates a new instance of a metric
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="title"></param>
+		/// <param name="value"></param>
+		public Metric(MetricType key, string title, object value)
         {
             Key = key;
             Title = title;
 
-            Factory = func;
+            Value = value;
         }
 
-        public MetricType Key { get; }
+		/// <summary>
+		/// Gets or sets the MetricType
+		/// </summary>
+        public MetricType Key { get; set; }
 
-        public string Title { get; }
+		/// <summary>
+		/// Gets or sets the title
+		/// </summary>
+        public string Title { get; set; }
 
-        public Func<object> Factory { get; }
+		/// <summary>
+		/// Gets or sets the value
+		/// </summary>
+        public object Value { get; set; }
     }
 }

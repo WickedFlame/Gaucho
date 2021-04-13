@@ -5,59 +5,44 @@ using System.Text;
 
 namespace Gaucho.Server
 {
-    public interface IActivationContext
-    {
-        void Register<TService, TImpl>() where TImpl : TService;
-
-        void Register<TService>(Func<TService> instanceCreator);
-        
-        T Resolve<T>();
-
-        T Resolve<T>(Type serviceType);
-
-        object Resolve(Type serviceType);
-        
-        IActivationContext ChildContext();
-    }
-
+	/// <summary>
+	/// The ActivationContext
+	/// </summary>
     public class ActivationContext : IActivationContext
     {
         private readonly Dictionary<Type, Func<object>> _registrations = new Dictionary<Type, Func<object>>();
 
+		/// <summary>
+		/// Gets a readonly dictionary for all registrations
+		/// </summary>
         public IReadOnlyDictionary<Type, Func<object>> Registrations => _registrations;
 
+		/// <inheritdoc/>
         public void Register<TService, TImpl>() where TImpl : TService
         {
             _registrations.Add(typeof(TService), () => Resolve(typeof(TImpl)));
         }
 
-        public void Register<TService>(Func<TService> instanceCreator)
+		/// <inheritdoc/>
+		public void Register<TService>(Func<TService> instanceCreator)
         {
             _registrations.Add(typeof(TService), () => instanceCreator());
         }
 
-        public void RegisterSingleton<TService>(TService instance)
-        {
-            _registrations.Add(typeof(TService), () => instance);
-        }
-
-        public void RegisterSingleton<TService>(Func<TService> instanceCreator)
-        {
-            var lazy = new Lazy<TService>(instanceCreator);
-            Register<TService>(() => lazy.Value);
-        }
-
-        public T Resolve<T>()
-        {
+		/// <inheritdoc/>
+		public T Resolve<T>()
+{
             return (T)Resolve(typeof(T));
         }
 
-        public T Resolve<T>(Type serviceType)
+		/// <inheritdoc/>
+		public T Resolve<T>(Type serviceType)
         {
             return (T) Resolve(serviceType);
         }
 
-        public object Resolve(Type serviceType)
+		/// <inheritdoc/>
+		public object Resolve(Type serviceType)
         {
             if (_registrations.TryGetValue(serviceType, out var creator))
             {
@@ -72,7 +57,8 @@ namespace Gaucho.Server
             throw new InvalidOperationException("No registration for " + serviceType);
         }
 
-        public IActivationContext ChildContext()
+		/// <inheritdoc/>
+		public IActivationContext ChildContext()
         {
             var ctx = new ActivationContext();
             foreach (var registration in _registrations)

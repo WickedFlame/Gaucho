@@ -3,21 +3,42 @@ using Gaucho.Storage;
 
 namespace Gaucho.Diagnostics.MetricCounters
 {
+	/// <summary>
+	/// Writes Metrics to the Statistics API
+	/// </summary>
 	public class ProcessedEventMetricCounter : ILogWriter<StatisticEvent<string>>
     {
-        private int _count = -1;
+        private long _count = -1;
         private readonly string _pipelineId;
-		private IStorage _storage;
+		private readonly IMetricService _metrics;
 
-        public ProcessedEventMetricCounter(StatisticsApi statistic)
+		/// <summary>
+		/// Creates a new instance of ProcessedEventMetricCounter
+		/// </summary>
+		/// <param name="metrics"></param>
+		/// <param name="pipelineId"></param>
+		public ProcessedEventMetricCounter(IMetricService metrics, string pipelineId)
         {
-			statistic.AddMetricsCounter(new Metric(MetricType.ProcessedEvents, "Processed Events", () => _count));
-			_pipelineId = statistic.PipelineId;
+	        _metrics = metrics;
+	        _pipelineId = pipelineId;
+
+			_count = metrics.GetMetricValue<long>(MetricType.ProcessedEvents);
+			if(_count == 0)
+			{
+				metrics.SetMetric(new Metric(MetricType.ProcessedEvents, "Processed Events", _count));
+			}
         }
 
-        public Category Category => Category.EventStatistic;
+		/// <summary>
+		/// The loggercategory
+		/// </summary>
+		public Category Category => Category.EventStatistic;
 
-        public void Write(ILogEvent @event)
+		/// <summary>
+		/// Write the ILogEvent to the Logs
+		/// </summary>
+		/// <param name="event"></param>
+		public void Write(ILogEvent @event)
         {
 			if (@event is StatisticEvent<string> e)
             {
@@ -25,28 +46,22 @@ namespace Gaucho.Diagnostics.MetricCounters
 			}
         }
 
-        public void Write(StatisticEvent<string> @event)
+		/// <summary>
+		/// Write the StatisticEvent to the Logs
+		/// </summary>
+		/// <param name="event"></param>
+		public void Write(StatisticEvent<string> @event)
         {
 	        if (@event.Metric != StatisticType.ProcessedEvent)
 	        {
 		        return;
 	        }
 
-			lock (_pipelineId)
-			{
-				if (_storage == null)
-				{
-					_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-					_count = _storage.Get<int>(_pipelineId, "ProcessedEventsMetric");
-				}
-			}
-
 	        lock (_pipelineId)
 	        {
 		        _count += 1;
-		        _storage.Set(_pipelineId, "ProcessedEventsMetric", _count);
+		        _metrics.SetMetric(new Metric(MetricType.ProcessedEvents, "Processed Events", _count));
 	        }
-
         }
     }
 }
