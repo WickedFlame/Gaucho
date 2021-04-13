@@ -10,6 +10,11 @@ namespace Gaucho.Server.Monitoring
 	{
 		private readonly IStorage _storage;
 
+		/// <summary>
+		/// Creates a new instacen of MetricService
+		/// </summary>
+		/// <param name="storage"></param>
+		/// <param name="pipelineId"></param>
 		public MetricService(IStorage storage, string pipelineId)
 		{
 			_storage = storage;

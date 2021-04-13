@@ -9,7 +9,7 @@ namespace Gaucho
 	/// </summary>
     public class ProcessingServer : IProcessingServer, IDisposable
     {
-        static IProcessingServer _server;
+	    private static readonly IProcessingServer _server;
 
         static ProcessingServer()
         {

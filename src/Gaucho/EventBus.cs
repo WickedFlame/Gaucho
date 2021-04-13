@@ -132,40 +132,7 @@ namespace Gaucho
                 process.Start();
             }
         }
-
-		/// <summary>
-		/// Start porcessing the pipeline
-		/// </summary>
-		/// <param name="pipeline"></param>
-        public void Process(IEventPipeline pipeline)
-        {
-	        _logger.Write("Begin processing events", Category.Log, LogLevel.Debug, "EventBus");
-
-			if (pipeline == null)
-            {
-                _logger.Write($"Pipeline with the Id {PipelineId} does not exist. Event could not be sent to any Pipeline.", Category.Log, LogLevel.Error, "EventBus");
-                
-                return;
-            }
-
-            while (_queue.TryDequeue(out var @event))
-            {
-	            try
-	            {
-		            _logger.WriteMetric(@event.Id, StatisticType.ProcessedEvent);
-		            _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
-
-					pipeline.Run(@event);
-	            }
-	            catch (Exception e)
-	            {
-		            _logger.Write($"Error processing eveng{Environment.NewLine}EventId: {@event.Id}{Environment.NewLine}Pipeline: {PipelineId}{Environment.NewLine}{e.Message}", Category.Log, LogLevel.Error, "EventBus");
-	            }
-            }
-
-            CleanupProcessors();
-        }
-
+		
         private void SetupProcessors(int threadCount)
         {
             if (threadCount < 1)
@@ -177,9 +144,9 @@ namespace Gaucho
             {
                 for (var i = _processors.Count; i < threadCount; i++)
                 {
-                    var thread = new EventProcessor(() => _pipelineFactory.Setup(), p => Process(p), _logger);
+                    var thread = new EventProcessor(() => _pipelineFactory.Setup(), new EventPipelineWorker(_logger, _queue, _metricService), CleanupProcessors, _logger);
 
-                    _processors.Add(thread);
+					_processors.Add(thread);
                     _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
 
 

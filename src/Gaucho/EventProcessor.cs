@@ -12,8 +12,9 @@ namespace Gaucho
 	{
 		private readonly string _id = Guid.NewGuid().ToString();
 		private readonly object _syncRoot = new object();
-		private readonly Action<IEventPipeline> _action;
+		private readonly Action _continuation;
 		private readonly ILogger _logger;
+		private readonly IWorker<IEventPipeline> _worker;
 
 		private bool _isWorking;
 		private readonly Lazy<IEventPipeline> _pipeline;
@@ -22,13 +23,15 @@ namespace Gaucho
 		/// Creates a new instance of EventProcessor
 		/// </summary>
 		/// <param name="factory"></param>
-		/// <param name="action"></param>
+		/// <param name="worker"></param>
+		/// <param name="continuation"></param>
 		/// <param name="logger"></param>
-		public EventProcessor(Func<IEventPipeline> factory, Action<IEventPipeline> action, ILogger logger)
+		public EventProcessor(Func<IEventPipeline> factory, IWorker<IEventPipeline> worker, Action continuation, ILogger logger)
 		{
 			logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
 
-			_action = action;
+			_worker = worker ?? throw new ArgumentNullException(nameof(worker));
+			_continuation = continuation ?? throw new ArgumentNullException(nameof(continuation));
 			_logger = logger;
 			_pipeline = new Lazy<IEventPipeline>(factory);
 		}
@@ -83,11 +86,22 @@ namespace Gaucho
 
 			Task = Task.Factory.StartNew(() =>
 			{
-				_action(_pipeline.Value);
-
-				lock (_syncRoot)
+				try
 				{
-					_isWorking = false;
+					_worker.Execute(_pipeline.Value);
+				}
+				catch (Exception e)
+				{
+					_logger.Write(e.Message, Category.Log, LogLevel.Error, "EventProcessor");
+				}
+				finally
+				{
+					lock (_syncRoot)
+					{
+						_isWorking = false;
+					}
+
+					_continuation();
 				}
 			}, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
