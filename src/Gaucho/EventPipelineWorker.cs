@@ -7,36 +7,39 @@ namespace Gaucho
 	/// <summary>
 	/// The EventBusWorker
 	/// </summary>
-	public class EventPipelineWorker : IWorker<IEventPipeline>
+	public class EventPipelineWorker : IWorker
 	{
 		private readonly ILogger _logger;
-		private readonly EventQueue _queue;
 		private readonly IMetricService _metrics;
+		private readonly EventQueue _queue;
+		private readonly Lazy<IEventPipeline> _pipeline;
 
 		/// <summary>
 		/// Creates a new instance of the EventBusWorker
 		/// </summary>
-		/// <param name="logger"></param>
 		/// <param name="queue"></param>
+		///<param name="factory"></param>
+		/// <param name="logger"></param>
 		/// <param name="metrics"></param>
-		public EventPipelineWorker(ILogger logger, EventQueue queue, IMetricService metrics)
+		public EventPipelineWorker(EventQueue queue, Func<IEventPipeline> factory,  ILogger logger,  IMetricService metrics)
 		{
 			_logger = logger ?? throw new ArgumentException(nameof(logger));
 			_queue = queue ?? throw new ArgumentException(nameof(queue));
 			_metrics = metrics ?? throw new ArgumentException(nameof(metrics));
+
+			_pipeline = new Lazy<IEventPipeline>(factory);
 		}
 
 		/// <summary>
 		/// Execute the worker
 		/// </summary>
-		/// <param name="pipeline"></param>
-		public void Execute(IEventPipeline pipeline)
+		public void Execute()
 		{
 			_logger.Write("Begin processing events", Category.Log, LogLevel.Debug, "EventBus");
 
-			if (pipeline == null)
+			if (_pipeline.Value == null)
 			{
-				throw new ArgumentException(nameof(pipeline), $"Pipeline does not exist or in not configured. Event could not be sent to any Pipeline.");
+				throw new ArgumentException($"Pipeline does not exist or in not configured. Event could not be sent to any Pipeline.");
 			}
 
 			while (_queue.TryDequeue(out var @event))
@@ -46,7 +49,7 @@ namespace Gaucho
 					_logger.WriteMetric(@event.Id, StatisticType.ProcessedEvent);
 					_metrics.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 
-					pipeline.Run(@event);
+					_pipeline.Value.Run(@event);
 				}
 				catch (Exception e)
 				{

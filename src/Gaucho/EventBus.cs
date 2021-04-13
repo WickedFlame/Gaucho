@@ -144,7 +144,7 @@ namespace Gaucho
             {
                 for (var i = _processors.Count; i < threadCount; i++)
                 {
-                    var thread = new EventProcessor(() => _pipelineFactory.Setup(), new EventPipelineWorker(_logger, _queue, _metricService), CleanupProcessors, _logger);
+                    var thread = new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger);
 
 					_processors.Add(thread);
                     _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));

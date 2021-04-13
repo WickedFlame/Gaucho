@@ -14,26 +14,24 @@ namespace Gaucho
 		private readonly object _syncRoot = new object();
 		private readonly Action _continuation;
 		private readonly ILogger _logger;
-		private readonly IWorker<IEventPipeline> _worker;
+		private readonly IWorker _worker;
 
 		private bool _isWorking;
-		private readonly Lazy<IEventPipeline> _pipeline;
+		
 
 		/// <summary>
 		/// Creates a new instance of EventProcessor
 		/// </summary>
-		/// <param name="factory"></param>
 		/// <param name="worker"></param>
-		/// <param name="continuation"></param>
+		/// <param name="continuation">Task to continue with after the worker is done</param>
 		/// <param name="logger"></param>
-		public EventProcessor(Func<IEventPipeline> factory, IWorker<IEventPipeline> worker, Action continuation, ILogger logger)
+		public EventProcessor(IWorker worker, Action continuation, ILogger logger)
 		{
 			logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
 
 			_worker = worker ?? throw new ArgumentNullException(nameof(worker));
 			_continuation = continuation ?? throw new ArgumentNullException(nameof(continuation));
 			_logger = logger;
-			_pipeline = new Lazy<IEventPipeline>(factory);
 		}
 
 		/// <summary>
@@ -88,7 +86,7 @@ namespace Gaucho
 			{
 				try
 				{
-					_worker.Execute(_pipeline.Value);
+					_worker.Execute();
 				}
 				catch (Exception e)
 				{

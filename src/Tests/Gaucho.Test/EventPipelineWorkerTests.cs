@@ -21,19 +21,19 @@ namespace Gaucho.Test
 		[Test]
 		public void EventPipelineWorker_Null_Logger()
 		{
-			Assert.Throws<ArgumentException>(() => new EventPipelineWorker(null, new EventQueue(), new Mock<IMetricService>().Object));
+			Assert.Throws<ArgumentException>(() => new EventPipelineWorker(new EventQueue(), () => null, null, new Mock<IMetricService>().Object));
 		}
 
 		[Test]
 		public void EventPipelineWorker_Null_Queue()
 		{
-			Assert.Throws<ArgumentException>(() => new EventPipelineWorker(new Logger(), null, new Mock<IMetricService>().Object));
+			Assert.Throws<ArgumentException>(() => new EventPipelineWorker(null, () => null, new Logger(), new Mock<IMetricService>().Object));
 		}
 
 		[Test]
 		public void EventPipelineWorker_Null_Metrics()
 		{
-			Assert.Throws<ArgumentException>(() => new EventPipelineWorker(new Logger(), new EventQueue(), null));
+			Assert.Throws<ArgumentException>(() => new EventPipelineWorker(new EventQueue(), () => null, new Logger(), null));
 		}
 
 		[Test]
@@ -43,8 +43,8 @@ namespace Gaucho.Test
 			queue.Enqueue(new Event(string.Empty, new EventData()));
 			queue.Enqueue(new Event(string.Empty, new EventData()));
 
-			var worker = new EventPipelineWorker(new Logger(), queue, new Mock<IMetricService>().Object);
-			worker.Execute(_pipeline.Object);
+			var worker = new EventPipelineWorker(queue, () => _pipeline.Object, new Logger(), new Mock<IMetricService>().Object);
+			worker.Execute();
 
 			_pipeline.Verify(exp => exp.Run(It.IsAny<Event>()), Times.Exactly(2));
 		}
@@ -52,8 +52,8 @@ namespace Gaucho.Test
 		[Test]
 		public void EventPipelineWorker_Execute_Null_Pipeline()
 		{
-			var worker = new EventPipelineWorker(new Logger(), new EventQueue(), new Mock<IMetricService>().Object);
-			Assert.Throws<ArgumentException>(() => worker.Execute(null));
+			var worker = new EventPipelineWorker(new EventQueue(), () => null, new Logger(), new Mock<IMetricService>().Object);
+			Assert.Throws<ArgumentException>(() => worker.Execute());
 		}
 
 		[Test]
@@ -61,8 +61,8 @@ namespace Gaucho.Test
 		{
 			var queue = new EventQueue();
 
-			var worker = new EventPipelineWorker(new Logger(), queue, new Mock<IMetricService>().Object);
-			worker.Execute(_pipeline.Object);
+			var worker = new EventPipelineWorker(queue, () => _pipeline.Object, new Logger(), new Mock<IMetricService>().Object);
+			worker.Execute();
 
 			_pipeline.Verify(exp => exp.Run(It.IsAny<Event>()), Times.Never);
 		}
@@ -76,8 +76,8 @@ namespace Gaucho.Test
 
 			var logger = new Mock<ILogger>();
 
-			var worker = new EventPipelineWorker(logger.Object, queue, new Mock<IMetricService>().Object);
-			worker.Execute(_pipeline.Object);
+			var worker = new EventPipelineWorker(queue, () => _pipeline.Object, logger.Object, new Mock<IMetricService>().Object);
+			worker.Execute();
 
 			logger.Verify(exp => exp.Write(It.IsAny<StatisticEvent<string>>(), Category.EventStatistic), Times.Exactly(2));
 		}
@@ -91,11 +91,11 @@ namespace Gaucho.Test
 
 			var metrics = new Mock<IMetricService>();
 
-			var worker = new EventPipelineWorker(new Logger(), queue, metrics.Object);
-			worker.Execute(_pipeline.Object);
+			var worker = new EventPipelineWorker(queue, () => _pipeline.Object, new Logger(), metrics.Object);
+			worker.Execute();
 
-			metrics.Verify(exp => exp.SetMetric(It.Is<Metric>(m => (int)m.Value == 1)), Times.Exactly(1));
-			metrics.Verify(exp => exp.SetMetric(It.Is<Metric>(m => (int)m.Value == 0)), Times.Exactly(1));
+			metrics.Verify(exp => exp.SetMetric(It.Is<Metric>(m => (int) m.Value == 1)), Times.Exactly(1));
+			metrics.Verify(exp => exp.SetMetric(It.Is<Metric>(m => (int) m.Value == 0)), Times.Exactly(1));
 		}
 
 		[Test]
@@ -108,8 +108,8 @@ namespace Gaucho.Test
 			var logger = new Mock<ILogger>();
 			_pipeline.Setup(exp => exp.Run(It.IsAny<Event>())).Throws(new Exception());
 
-			var worker = new EventPipelineWorker(logger.Object, queue, new Mock<IMetricService>().Object);
-			worker.Execute(_pipeline.Object);
+			var worker = new EventPipelineWorker(queue, () => _pipeline.Object, logger.Object, new Mock<IMetricService>().Object);
+			worker.Execute();
 
 			logger.Verify(exp => exp.Write(It.Is<LogEvent>(l => l.Level == LogLevel.Error && l.Source == "EventBus"), Category.Log), Times.Exactly(2));
 		}
