@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Gaucho
 {
-    public interface IGlobalConfiguration
+	/// <summary>
+	/// Storage for global configurations
+	/// </summary>
+	public interface IGlobalConfiguration
     {
+		/// <summary>
+		/// Gets the storage context for configurations
+		/// </summary>
         Dictionary<string, object> Context { get; }
     }
 }

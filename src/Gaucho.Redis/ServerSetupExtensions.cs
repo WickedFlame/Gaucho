@@ -6,13 +6,13 @@ using StackExchange.Redis;
 
 namespace Gaucho
 {
-	public static class GlobalConfigurationExtensions
+	public static class ServerSetupExtensions
 	{
-		public static IGlobalConfiguration UseRedisStorage(this IGlobalConfiguration configuration, ConnectionMultiplexer connectionMultiplexer, RedisStorageOptions options = null)
+		public static ServerSetup UseRedisStorage(this ServerSetup setup, ConnectionMultiplexer connectionMultiplexer, RedisStorageOptions options = null)
 		{
-			if (configuration == null)
+			if (setup == null)
 			{
-				throw new ArgumentNullException(nameof(configuration));
+				throw new ArgumentNullException(nameof(setup));
 			}
 
 			if (connectionMultiplexer == null)
@@ -22,14 +22,16 @@ namespace Gaucho
 
 			var storage = new RedisStorage(connectionMultiplexer, options);
 			
-			return configuration.Register<IStorage>(storage);
+			setup.Register<IStorage>(storage);
+
+			return setup;
 		}
 
-		public static IGlobalConfiguration UseRedisStorage(this IGlobalConfiguration configuration, string connectionString, RedisStorageOptions options = null)
+		public static ServerSetup UseRedisStorage(this ServerSetup setup, string connectionString, RedisStorageOptions options = null)
 		{
-			if (configuration == null)
+			if (setup == null)
 			{
-				throw new ArgumentNullException(nameof(configuration));
+				throw new ArgumentNullException(nameof(setup));
 			}
 
 			if (string.IsNullOrEmpty(connectionString))
@@ -46,7 +48,9 @@ namespace Gaucho
 			var connectionMultiplexer = ConnectionMultiplexer.Connect(connectionString);
 			var storage = new RedisStorage(connectionMultiplexer, options);
 
-			return configuration.Register<IStorage>(storage);
+			setup.Register<IStorage>(storage);
+
+			return setup;
 		}
 	}
 }

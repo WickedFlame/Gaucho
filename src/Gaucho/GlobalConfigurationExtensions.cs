@@ -5,8 +5,12 @@ using Gaucho.Server;
 
 namespace Gaucho
 {
-    public static class GlobalConfigurationExtensions
+	/// <summary>
+	/// Extensions for <see cref="IGlobalConfiguration"/>
+	/// </summary>
+	public static class GlobalConfigurationExtensions
     {
+		[Obsolete("Use GlobalConfiguration.Setup(c => {})")]
         public static IGlobalConfiguration UseProcessingServer(this IGlobalConfiguration config, Action<PipelineBuilder> setup)
         {
             var builder = new PipelineBuilder();
@@ -15,13 +19,8 @@ namespace Gaucho
             return config;
         }
 
-        public static IGlobalConfiguration AddLogWriter<T>(this IGlobalConfiguration config, ILogWriter<T> writer) where T : ILogMessage
-		{
-			LoggerConfiguration.AddLogWriter(writer);
-			return config;
-        }
-
-        public static IGlobalConfiguration UseOptions(this IGlobalConfiguration config, Options options)
+		[Obsolete("Use GlobalConfiguration.Setup(c => {})", true)]
+		public static IGlobalConfiguration UseOptions(this IGlobalConfiguration config, Options options)
         {
 	        var def = config.Resolve<Options>();
 	        if (def == null)
@@ -35,7 +34,27 @@ namespace Gaucho
 	        return config;
         }
 
-        public static IGlobalConfiguration Register<T>(this IGlobalConfiguration config, T item)
+		/// <summary>
+		/// Add a LogWriter to the Configuration
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="config"></param>
+		/// <param name="writer"></param>
+		/// <returns></returns>
+		public static IGlobalConfiguration AddLogWriter<T>(this IGlobalConfiguration config, ILogWriter<T> writer) where T : ILogMessage
+		{
+			LoggerConfiguration.AddLogWriter(writer);
+			return config;
+		}
+
+		/// <summary>
+		/// Register a item in the <see cref="IGlobalConfiguration"/> Context
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="config"></param>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		public static IGlobalConfiguration Register<T>(this IGlobalConfiguration config, T item)
         {
             var key = typeof(T).Name;
             config.Context[key] = item;
@@ -43,7 +62,13 @@ namespace Gaucho
 			return config;
         }
 
-        public static T Resolve<T>(this IGlobalConfiguration config)
+		/// <summary>
+		/// Resolve a item from the <see cref="IGlobalConfiguration"/> Context
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public static T Resolve<T>(this IGlobalConfiguration config)
         {
             var key = typeof(T).Name;
             if (config.Context.ContainsKey(key))
