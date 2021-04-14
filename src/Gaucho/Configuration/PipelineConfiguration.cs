@@ -1,18 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Gaucho.Configuration
 {
+	/// <summary>
+	/// Configuration of a Pipeline
+	/// </summary>
     public class PipelineConfiguration
     {
+		/// <summary>
+		/// Gets or sets the PipelineId
+		/// </summary>
         public string Id { get; set; }
 
+		/// <summary>
+		/// Gets or set the configuration of the InputHandler
+		/// </summary>
         public HandlerNode InputHandler { get; set; }
 
-        public List<HandlerNode> OutputHandlers { get; set; }
+		/// <summary>
+		/// Gets or set the configurations of the OutputHandlers
+		/// </summary>
+		public List<HandlerNode> OutputHandlers { get; set; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			var sb = new StringBuilder();

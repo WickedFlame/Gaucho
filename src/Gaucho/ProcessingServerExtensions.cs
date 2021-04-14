@@ -14,12 +14,13 @@ namespace Gaucho
 		/// </summary>
 		/// <param name="server"></param>
 		/// <param name="pipelineId"></param>
-		/// <param name="setup"></param>
-        public static void SetupPipeline(this IProcessingServer server, string pipelineId, Action<ServerRegistrationContext> setup)
+		/// <param name="registration"></param>
+		public static void SetupPipeline(this IProcessingServer server, string pipelineId, Action<PipelineRegistration> registration)
         {
-            var context = new ServerRegistrationContext(pipelineId, server);
-            setup(context);
-        }
+			//TODO: add the possibility to delay the setup
+			var context = new PipelineRegistration(pipelineId, server);
+			registration(context);
+		}
 
 		/// <summary>
 		/// creates or updates a pipeline based on the given configuration
