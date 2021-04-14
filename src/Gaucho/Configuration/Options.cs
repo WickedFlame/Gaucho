@@ -16,6 +16,11 @@ namespace Gaucho.Configuration
 		/// Gets or sets the name of the Serverinstance. Uses Machinename if none is provided
 		/// </summary>
 		public string ServerName { get; set; }
+
+		/// <summary>
+		/// Gets or sets the interval for publishing the Hearbeat to the storage in milliseconds. Defaults to 2 minuts or 120000 milliseconds
+		/// </summary>
+		public int HeartbeatInterval { get; set; } = 120000;
 	}
 	
 	/// <summary>
@@ -38,6 +43,11 @@ namespace Gaucho.Configuration
 			if (!string.IsNullOrEmpty(merge.ServerName))
 			{
 				defaultOptions.ServerName = merge.ServerName;
+			}
+
+			if(defaultOptions.HeartbeatInterval == 120000)
+			{
+				defaultOptions.HeartbeatInterval = merge.HeartbeatInterval;
 			}
 		}
 	}

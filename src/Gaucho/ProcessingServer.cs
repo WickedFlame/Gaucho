@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gaucho.Configuration;
 using Gaucho.Diagnostics;
+using Gaucho.Server.Monitoring;
+using Gaucho.Storage;
 
 namespace Gaucho
 {
@@ -25,8 +28,10 @@ namespace Gaucho
         private readonly InputHandlerCollection _inputHandlers;
 
         private readonly ILogger _logger;
+        private bool _initialized;
+        private HeartbeatBackgroundProcess _heartbeat;
 
-		/// <summary>
+        /// <summary>
 		/// Create a new instance of the ProcessingServer
 		/// </summary>
 		public ProcessingServer() 
@@ -64,8 +69,10 @@ namespace Gaucho
 		public void Register(string pipelineId, Func<EventPipeline> factory)
         {
 	        _eventBusFactory.Register(pipelineId, factory);
-        }
 
+	        InitializeServer();
+        }
+		
 		/// <summary>
 		/// Register an EventBus to the pipeline
 		/// </summary>
@@ -79,7 +86,9 @@ namespace Gaucho
 	        }
 
 	        _eventBusFactory.Register(pipelineId, eventBus);
-        }
+
+	        InitializeServer();
+		}
 
 		/// <summary>
 		/// Register an InputHandler to the pipeline
@@ -94,7 +103,7 @@ namespace Gaucho
 	        }
 
 	        _inputHandlers.Register(pipelineId, plugin);
-        }
+		}
 
 		/// <summary>
 		/// Get the InputHandler for the pipeline
@@ -146,7 +155,20 @@ namespace Gaucho
                 dispose?.Dispose();
             }
 
+            _heartbeat.Dispose();
             _logger.Write("ProcessingServer stopped", Category.Log);
         }
-    }
+
+        private void InitializeServer()
+        {
+	        if (_initialized)
+	        {
+		        return;
+	        }
+
+	        _heartbeat = new HeartbeatBackgroundProcess();
+
+	        _initialized = true;
+        }
+	}
 }

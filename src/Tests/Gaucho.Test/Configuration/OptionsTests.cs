@@ -55,5 +55,21 @@ namespace Gaucho.Test.Configuration
 			def.Merge(new Options { ServerName = "overwrite" });
 			Assert.AreEqual("overwrite", def.ServerName);
 		}
+
+		[Test]
+		public void Options_Merge_HeartbeatInterval_Default()
+		{
+			var def = new Options { HeartbeatInterval = 20};
+			def.Merge(new Options());
+			Assert.AreEqual(20, def.HeartbeatInterval);
+		}
+
+		[Test]
+		public void Options_Merge_HeartbeatInterval_Overwrite()
+		{
+			var def = new Options();
+			def.Merge(new Options { HeartbeatInterval = 22 });
+			Assert.AreEqual(22, def.HeartbeatInterval);
+		}
 	}
 }
