@@ -45,6 +45,17 @@ namespace Gaucho.Server.Monitoring
 		{
 			_storage.Set(new StorageKey(PipelineId, $"metric:{metric.Key}"), metric);
 		}
+
+		public void SetPipelineHeartbeat()
+		{
+			var server = GlobalConfiguration.Configuration.GetOptions().ServerName;
+			_storage.Set(new StorageKey($"{server}:pipeline:{PipelineId}"), new PipelineModel
+			{
+				PipelineId = PipelineId,
+				ServerName = server,
+				Heartbeat = DateTime.Now.ToString("o")
+			});
+		}
 	}
 
 	/// <summary>

@@ -68,12 +68,13 @@ namespace Gaucho
 
             _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
             _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
-		}
+            _metricService.SetPipelineHeartbeat();
+        }
 
 		/// <summary>
 		/// Gets the PipelineId
 		/// </summary>
-        public string PipelineId { get; }
+		public string PipelineId { get; }
 
 		/// <summary>
 		/// Gets the pipelinefactory that creates the pipeline for this eventbus

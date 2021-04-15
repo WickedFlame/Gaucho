@@ -19,8 +19,8 @@ namespace Gaucho.Server.Monitoring
 		/// </summary>
 		public HeartbeatBackgroundProcess()
 		{
-			_storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-			var options = GlobalConfiguration.Configuration.Resolve<Options>();
+			_storage = GlobalConfiguration.Configuration.GetStorage();
+			var options = GlobalConfiguration.Configuration.GetOptions();
 			_serverName = options.ServerName;
 			var interval = options.HeartbeatInterval;
 			if (interval <= 0)
@@ -33,28 +33,12 @@ namespace Gaucho.Server.Monitoring
 
 		private void Execute(object stateInfo)
 		{
-			_storage.Set(new StorageKey($"server:{_serverName}"), new HeartbeatModel { Name =_serverName, Heartbeat = DateTime.Now.ToString("o") });
+			_storage.Set(new StorageKey($"server:{_serverName}"), new ServerModel { Name =_serverName, Heartbeat = DateTime.Now.ToString("o") });
 		}
 
 		public void Dispose()
 		{
 			_timer.Dispose();
 		}
-	}
-
-	/// <summary>
-	/// Heartbeat that is published by the <see cref="HeartbeatBackgroundProcess"/>
-	/// </summary>
-	public class HeartbeatModel
-	{
-		/// <summary>
-		/// Gets or sets the ServerName
-		/// </summary>
-		public string Name { get; set; }
-
-		/// <summary>
-		/// Gets or sets the Heartbeat timestamp
-		/// </summary>
-		public string Heartbeat { get; set; }
 	}
 }

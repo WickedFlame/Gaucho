@@ -14,10 +14,10 @@ namespace Gaucho.Dashboard
     {
         private readonly RequestDelegate _next;
         private readonly RouteCollection _routes;
-        private readonly IServerMonitor _monitor;
+        private readonly IPipelineMonitor _monitor;
         private readonly DashboardOptions _options;
 
-        public DashboardMiddleware(RequestDelegate next, RouteCollection routes, IServerMonitor monitor, DashboardOptions options)
+        public DashboardMiddleware(RequestDelegate next, RouteCollection routes, IPipelineMonitor monitor, DashboardOptions options)
         {
             if (next == null)
             {

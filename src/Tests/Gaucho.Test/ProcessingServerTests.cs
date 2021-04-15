@@ -74,7 +74,7 @@ namespace Gaucho.Test
 	        // give the hearbeat some time to execute
 			Task.Delay(500).Wait();
 
-			storage.Verify(exp => exp.Set<HeartbeatModel>(It.IsAny<StorageKey>(), It.IsAny<HeartbeatModel>()), Times.Once);
+			storage.Verify(exp => exp.Set<ServerModel>(It.IsAny<StorageKey>(), It.IsAny<ServerModel>()), Times.Once);
 
 			// cleanup
 	        GlobalConfiguration.Setup(s => { });
@@ -94,7 +94,7 @@ namespace Gaucho.Test
 			// give the hearbeat some time to execute
 	        Task.Delay(500).Wait();
 
-	        storage.Verify(exp => exp.Set<HeartbeatModel>(It.IsAny<StorageKey>(), It.IsAny<HeartbeatModel>()), Times.Once);
+	        storage.Verify(exp => exp.Set<ServerModel>(It.IsAny<StorageKey>(), It.IsAny<ServerModel>()), Times.Once);
 
 	        // cleanup
 			GlobalConfiguration.Setup(s => { });
@@ -112,7 +112,7 @@ namespace Gaucho.Test
 	        // give the hearbeat some time to execute
 	        Task.Delay(500).Wait();
 
-			storage.Verify(exp => exp.Set<HeartbeatModel>(It.IsAny<StorageKey>(), It.IsAny<HeartbeatModel>()), Times.Never);
+			storage.Verify(exp => exp.Set<ServerModel>(It.IsAny<StorageKey>(), It.IsAny<ServerModel>()), Times.Never);
 
 	        // cleanup
 			GlobalConfiguration.Setup(s => { });

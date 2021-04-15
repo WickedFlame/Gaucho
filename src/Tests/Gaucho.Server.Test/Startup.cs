@@ -77,8 +77,8 @@ namespace Gaucho.Server.Test
 	            .UseOptions(new Options
 	            {
 		            LogLevel = Diagnostics.LogLevel.Debug,
-		            ServerName = "Testserver"
-	            }));
+					ServerName = "Testserver"
+				}));
 
             app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions
             {

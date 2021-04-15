@@ -2,6 +2,7 @@
 using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using Gaucho.Server;
+using Gaucho.Storage;
 
 namespace Gaucho
 {
@@ -120,5 +121,26 @@ namespace Gaucho
 
 	        return config;
         }
+
+
+		/// <summary>
+		/// Gets the <see cref="IStorage"/> from the <see cref="IGlobalConfiguration"/>
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public static IStorage GetStorage(this IGlobalConfiguration config)
+		{
+			return config.Resolve<IStorage>();
+		}
+
+		/// <summary>
+		/// Gets the <see cref="Options"/> from the <see cref="IGlobalConfiguration"/>
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public static Options GetOptions(this IGlobalConfiguration config)
+		{
+			return config.Resolve<Options>();
+		}
 	}
 }

@@ -6,53 +6,57 @@ using Microsoft.AspNetCore.Http;
 
 namespace Gaucho.Dashboard
 {
+	/// <summary>
+	/// 
+	/// </summary>
     public class DashboardContext
     {
-        public DashboardContext(HttpContext httpContext, IServerMonitor monitor, DashboardOptions options)
+		/// <summary>
+		/// Creates a new instance of the DashboardContext
+		/// </summary>
+		/// <param name="httpContext"></param>
+		/// <param name="monitor"></param>
+		/// <param name="options"></param>
+        public DashboardContext(HttpContext httpContext, IPipelineMonitor monitor, DashboardOptions options)
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            HttpContext = httpContext;
+	        HttpContext = httpContext ?? throw new ArgumentNullException(nameof(httpContext));
             Request = new DashboardRequest(httpContext);
             Response = new DashboardResponse(httpContext);
 
-            ServerMonitor = monitor;
+            Monitor = monitor;
             Options = options;
 
             //var antiforgery = HttpContext.RequestServices.GetService<IAntiforgery>();
-
-            //if (antiforgery != null)
-            //{
-            //    var tokenSet = antiforgery.GetAndStoreTokens(HttpContext);
-
-            //    AntiforgeryHeader = tokenSet.HeaderName;
-            //    AntiforgeryToken = tokenSet.RequestToken;
-            //}
         }
 
+		/// <summary>
+		/// Gets the <see cref="HttpContext"/>
+		/// </summary>
         public HttpContext HttpContext { get; }
 
-        public IServerMonitor ServerMonitor { get; }
+		/// <summary>
+		/// Gets or sets the <see cref="IPipelineMonitor"/>
+		/// </summary>
+        public IPipelineMonitor Monitor { get; }
 
+		/// <summary>
+		/// Gets the <see cref="DashboardOptions"/>
+		/// </summary>
         public DashboardOptions Options { get; }
 
-        //public override IBackgroundJobClient GetBackgroundJobClient()
-        //{
-        //    return HttpContext.RequestServices.GetService<IBackgroundJobClient>() ?? base.GetBackgroundJobClient();
-        //}
-
-        //public override IRecurringJobManager GetRecurringJobManager()
-        //{
-        //    return HttpContext.RequestServices.GetService<IRecurringJobManager>() ?? base.GetRecurringJobManager();
-        //}
-
+		/// <summary>
+		/// Gets the <see cref="Math"/>
+		/// </summary>
         public Match UriMatch { get; set; }
 
+		/// <summary>
+		/// Gets the <see cref="DashboardResponse"/>
+		/// </summary>
         public DashboardResponse Response { get; protected set; }
 
+		/// <summary>
+		/// Gets the <see cref="DashboardRequest"/>
+		/// </summary>
         public DashboardRequest Request { get; protected set; }
     }
 }

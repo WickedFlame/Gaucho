@@ -5,7 +5,11 @@
 @using Gaucho.Dashboard.Pages
 @inherits RazorPage
 
-<div class="pipeline-item" id="@Pipeline.PipelineId">
+@{
+	var pId = Pipeline.ServerName + "-" + Pipeline.PipelineId;
+}
+
+<div class="pipeline-item" id="@pId">
     <div class="pipeline-item-container">
         <div class="pipeline-item-header">
             <h3>@Pipeline.PipelineId</h3>
@@ -13,7 +17,7 @@
 	    <div class="pipeline-item-content">
 		    @foreach (var m in Pipeline.Metrics)
 		    {
-			    var id = Pipeline.PipelineId + "-" + m.Key;
+			    var id = Pipeline.ServerName + "-" + Pipeline.PipelineId + "-" + m.Key;
 			    var labelId = id + "-label";
 
 			    <div>
@@ -26,10 +30,10 @@
 	    
 	    <div class="pipeline-item-log-container">
 		    @if (Pipeline.Elements.ContainsKey("WorkersLog"))
-		    {
-			    var element = Pipeline.Elements["WorkersLog"];
-			    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
-			    <div class="toggler-section is-open">
+			{
+				var element = Pipeline.Elements["WorkersLog"];
+				var id = Pipeline.ServerName + "-" + Pipeline.PipelineId + "-" + element.Key.ToLower();
+			    <div class="toggler-section">
 				    <span class="toggler-button"></span>
 				    <div class="label" id="logs-label">Workers Timeline</div>
 			    </div>
@@ -46,9 +50,9 @@
 	    </div>
 	    <div class="pipeline-item-log-container">
 		    @if (Pipeline.Elements.ContainsKey("EventLog"))
-		    {
-			    var element = Pipeline.Elements["EventLog"];
-			    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
+			{
+				var element = Pipeline.Elements["EventLog"];
+				var id = Pipeline.ServerName + "-" + Pipeline.PipelineId + "-" + element.Key.ToLower();
 			    <div class="toggler-section">
 				    <span class="toggler-button"></span>
 				    <div class="label" id="logs-label">Events</div>

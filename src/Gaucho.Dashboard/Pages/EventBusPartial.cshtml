@@ -5,7 +5,7 @@
 @inherits RazorPage
 
 <div>
-    @foreach (var pipeline in ServerMonitor.GetPipelineMetrics())
+    @foreach (var pipeline in ServerMonitor.GetMetrics())
     {
         @Html.RenderPartial(new PipelinePartial(pipeline))
     }
