@@ -55,12 +55,24 @@ WriteLiteral("\r\n");
 
 
 
-WriteLiteral("\r\n<div class=\"pipeline-item\" id=\"");
+WriteLiteral("\r\n");
 
 
             
             #line 8 "..\..\Pages\PipelinePartial.cshtml"
-                          Write(Pipeline.PipelineId);
+  
+	var pId = Pipeline.ServerName + "-" + Pipeline.PipelineId;
+
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n<div class=\"pipeline-item\" id=\"");
+
+
+            
+            #line 12 "..\..\Pages\PipelinePartial.cshtml"
+                          Write(pId);
 
             
             #line default
@@ -70,7 +82,7 @@ WriteLiteral("\">\r\n    <div class=\"pipeline-item-container\">\r\n        <div
 
 
             
-            #line 11 "..\..\Pages\PipelinePartial.cshtml"
+            #line 15 "..\..\Pages\PipelinePartial.cshtml"
            Write(Pipeline.PipelineId);
 
             
@@ -80,10 +92,10 @@ WriteLiteral("</h3>\r\n        </div>\r\n\t    <div class=\"pipeline-item-conten
 
 
             
-            #line 14 "..\..\Pages\PipelinePartial.cshtml"
+            #line 18 "..\..\Pages\PipelinePartial.cshtml"
  		    foreach (var m in Pipeline.Metrics)
 		    {
-			    var id = Pipeline.PipelineId + "-" + m.Key;
+			    var id = Pipeline.ServerName + "-" + Pipeline.PipelineId + "-" + m.Key;
 			    var labelId = id + "-label";
 
 
@@ -94,7 +106,7 @@ WriteLiteral("\t\t\t    <div>\r\n\t\t\t\t    <div class=\"label\" id=\"");
 
 
             
-            #line 20 "..\..\Pages\PipelinePartial.cshtml"
+            #line 24 "..\..\Pages\PipelinePartial.cshtml"
                           Write(labelId);
 
             
@@ -104,7 +116,7 @@ WriteLiteral("\">");
 
 
             
-            #line 20 "..\..\Pages\PipelinePartial.cshtml"
+            #line 24 "..\..\Pages\PipelinePartial.cshtml"
                                     Write(m.Title);
 
             
@@ -114,7 +126,7 @@ WriteLiteral("</div>\r\n\t\t\t\t    <div id=\"");
 
 
             
-            #line 21 "..\..\Pages\PipelinePartial.cshtml"
+            #line 25 "..\..\Pages\PipelinePartial.cshtml"
             Write(id);
 
             
@@ -124,7 +136,7 @@ WriteLiteral("\">");
 
 
             
-            #line 21 "..\..\Pages\PipelinePartial.cshtml"
+            #line 25 "..\..\Pages\PipelinePartial.cshtml"
                  Write(m.Value);
 
             
@@ -134,7 +146,7 @@ WriteLiteral("</div>\r\n\t\t\t    </div>\r\n");
 
 
             
-            #line 23 "..\..\Pages\PipelinePartial.cshtml"
+            #line 27 "..\..\Pages\PipelinePartial.cshtml"
 		    }
 
             
@@ -144,22 +156,22 @@ WriteLiteral("\r\n\t    </div>\r\n\t    \r\n\t    <div class=\"pipeline-item-log
 
 
             
-            #line 28 "..\..\Pages\PipelinePartial.cshtml"
+            #line 32 "..\..\Pages\PipelinePartial.cshtml"
  		    if (Pipeline.Elements.ContainsKey("WorkersLog"))
-		    {
-			    var element = Pipeline.Elements["WorkersLog"];
-			    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
+			{
+				var element = Pipeline.Elements["WorkersLog"];
+				var id = Pipeline.ServerName + "-" + Pipeline.PipelineId + "-" + element.Key.ToLower();
 
             
             #line default
             #line hidden
-WriteLiteral("\t\t\t    <div class=\"toggler-section is-open\">\r\n\t\t\t\t    <span class=\"toggler-button" +
-"\"></span>\r\n\t\t\t\t    <div class=\"label\" id=\"logs-label\">Workers Timeline</div>\r\n\t\t" +
-"\t    </div>\r\n");
+WriteLiteral("\t\t\t    <div class=\"toggler-section\">\r\n\t\t\t\t    <span class=\"toggler-button\"></span" +
+">\r\n\t\t\t\t    <div class=\"label\" id=\"logs-label\">Workers Timeline</div>\r\n\t\t\t    </d" +
+"iv>\r\n");
 
 
             
-            #line 36 "..\..\Pages\PipelinePartial.cshtml"
+            #line 40 "..\..\Pages\PipelinePartial.cshtml"
                     
 
             
@@ -169,7 +181,7 @@ WriteLiteral("\t\t\t    <div id=\"");
 
 
             
-            #line 37 "..\..\Pages\PipelinePartial.cshtml"
+            #line 41 "..\..\Pages\PipelinePartial.cshtml"
            Write(id);
 
             
@@ -179,7 +191,7 @@ WriteLiteral("\" class=\"pipeline-item-log-list toggle-wrapper\">\r\n");
 
 
             
-            #line 38 "..\..\Pages\PipelinePartial.cshtml"
+            #line 42 "..\..\Pages\PipelinePartial.cshtml"
  				    foreach (TimelineLog<int> e in element.Elements)
 				    {
 
@@ -191,7 +203,7 @@ WriteLiteral("\t\t\t\t\t    <div class=\"pipeline-item-log-item\">\r\n\t\t\t\t\t
 
 
             
-            #line 41 "..\..\Pages\PipelinePartial.cshtml"
+            #line 45 "..\..\Pages\PipelinePartial.cshtml"
                                                                 Write(e.Timestamp.ToString("o"));
 
             
@@ -201,7 +213,7 @@ WriteLiteral("</span><span class=\"pipeline-item-log-element\">");
 
 
             
-            #line 41 "..\..\Pages\PipelinePartial.cshtml"
+            #line 45 "..\..\Pages\PipelinePartial.cshtml"
                                                                                                                                          Write(e.Value);
 
             
@@ -211,7 +223,7 @@ WriteLiteral("</span>\r\n\t\t\t\t\t    </div>\r\n");
 
 
             
-            #line 43 "..\..\Pages\PipelinePartial.cshtml"
+            #line 47 "..\..\Pages\PipelinePartial.cshtml"
 				    }
 
             
@@ -221,7 +233,7 @@ WriteLiteral("\t\t\t    </div>\r\n");
 
 
             
-            #line 45 "..\..\Pages\PipelinePartial.cshtml"
+            #line 49 "..\..\Pages\PipelinePartial.cshtml"
 		    }
 
             
@@ -231,11 +243,11 @@ WriteLiteral("\t    </div>\r\n\t    <div class=\"pipeline-item-log-container\">\
 
 
             
-            #line 48 "..\..\Pages\PipelinePartial.cshtml"
+            #line 52 "..\..\Pages\PipelinePartial.cshtml"
  		    if (Pipeline.Elements.ContainsKey("EventLog"))
-		    {
-			    var element = Pipeline.Elements["EventLog"];
-			    var id = Pipeline.PipelineId + "-" + element.Key.ToLower();
+			{
+				var element = Pipeline.Elements["EventLog"];
+				var id = Pipeline.ServerName + "-" + Pipeline.PipelineId + "-" + element.Key.ToLower();
 
             
             #line default
@@ -245,7 +257,7 @@ WriteLiteral("\t\t\t    <div class=\"toggler-section\">\r\n\t\t\t\t    <span cla
 
 
             
-            #line 56 "..\..\Pages\PipelinePartial.cshtml"
+            #line 60 "..\..\Pages\PipelinePartial.cshtml"
                     
 
             
@@ -255,7 +267,7 @@ WriteLiteral("\t\t\t    <div id=\"");
 
 
             
-            #line 57 "..\..\Pages\PipelinePartial.cshtml"
+            #line 61 "..\..\Pages\PipelinePartial.cshtml"
            Write(id);
 
             
@@ -265,7 +277,7 @@ WriteLiteral("\" class=\"pipeline-item-log-list toggle-wrapper\">\r\n");
 
 
             
-            #line 58 "..\..\Pages\PipelinePartial.cshtml"
+            #line 62 "..\..\Pages\PipelinePartial.cshtml"
  				    foreach (DashboardLog e in element.Elements)
 				    {
 					    var levelClass = $"pipeline-log-{e.Level.ToLower()}";
@@ -278,7 +290,7 @@ WriteLiteral("\t\t\t\t\t    <div class=\"pipeline-item-log-item\">\r\n\t\t\t\t\t
 
 
             
-            #line 62 "..\..\Pages\PipelinePartial.cshtml"
+            #line 66 "..\..\Pages\PipelinePartial.cshtml"
                                             Write(levelClass);
 
             
@@ -288,7 +300,7 @@ WriteLiteral("\">");
 
 
             
-            #line 62 "..\..\Pages\PipelinePartial.cshtml"
+            #line 66 "..\..\Pages\PipelinePartial.cshtml"
                                                          Write(e.Timestamp.ToString("o"));
 
             
@@ -298,7 +310,7 @@ WriteLiteral("</span><span class=\"pipeline-item-log-element\">[");
 
 
             
-            #line 62 "..\..\Pages\PipelinePartial.cshtml"
+            #line 66 "..\..\Pages\PipelinePartial.cshtml"
                                                                                                                                    Write(e.Source);
 
             
@@ -308,7 +320,7 @@ WriteLiteral("]</span><span class=\"pipeline-item-log-element\">[");
 
 
             
-            #line 62 "..\..\Pages\PipelinePartial.cshtml"
+            #line 66 "..\..\Pages\PipelinePartial.cshtml"
                                                                                                                                                                                              Write(e.Level);
 
             
@@ -318,7 +330,7 @@ WriteLiteral("]</span><span class=\"pipeline-item-log-element\">");
 
 
             
-            #line 62 "..\..\Pages\PipelinePartial.cshtml"
+            #line 66 "..\..\Pages\PipelinePartial.cshtml"
                                                                                                                                                                                                                                                      Write(e.Message);
 
             
@@ -328,7 +340,7 @@ WriteLiteral("</span>\r\n\t\t\t\t\t    </div>\r\n");
 
 
             
-            #line 64 "..\..\Pages\PipelinePartial.cshtml"
+            #line 68 "..\..\Pages\PipelinePartial.cshtml"
 				    }
 
             
@@ -338,7 +350,7 @@ WriteLiteral("\t\t\t    </div>\r\n");
 
 
             
-            #line 66 "..\..\Pages\PipelinePartial.cshtml"
+            #line 70 "..\..\Pages\PipelinePartial.cshtml"
 		    }
 
             

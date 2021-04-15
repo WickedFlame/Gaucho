@@ -12,8 +12,8 @@ namespace Gaucho.Dashboard.Dispatchers
             var page = new StubPage();
             page.Assign(context);
 
-            var monitor = context.ServerMonitor;
-            var pipelines = monitor.GetPipelineMetrics();
+            var monitor = context.Monitor;
+            var pipelines = monitor.GetMetrics();
             
             var settings = new JsonSerializerSettings
             {

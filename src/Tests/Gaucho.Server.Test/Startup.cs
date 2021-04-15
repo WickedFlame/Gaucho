@@ -63,7 +63,7 @@ namespace Gaucho.Server.Test
             });
 
 
-            GlobalConfiguration.Configuration.UseProcessingServer(p =>
+            GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
 	            {
 		            var reader = new WickedFlame.Yaml.YamlReader();
 		            var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
@@ -72,13 +72,13 @@ namespace Gaucho.Server.Test
 		            config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
 		            p.BuildPipeline(config);
 	            })
-				.UseRedisStorage("localhost:6379", new Redis.RedisStorageOptions { Db = 15 })
-				.AddLogWriter(new ConsoleLogWriter())
+	            .UseRedisStorage("localhost:6379", new Redis.RedisStorageOptions {Db = 15})
+	            .AddLogWriter(new ConsoleLogWriter())
 	            .UseOptions(new Options
 	            {
 		            LogLevel = Diagnostics.LogLevel.Debug,
 					ServerName = "Testserver"
-	            });
+				}));
 
             app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions
             {

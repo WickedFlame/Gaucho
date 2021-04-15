@@ -39,8 +39,7 @@ namespace Gaucho.Test
 
 			var dependency = new Dependency();
 			var server = new ProcessingServer();
-			GlobalConfiguration.Configuration
-				.UseProcessingServer(p =>
+			GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
 				{
 					var config = new PipelineConfiguration
 					{
@@ -52,8 +51,33 @@ namespace Gaucho.Test
 						InputHandler = new HandlerNode("CustomInput")
 					};
 					p.BuildPipeline(server, config);
-				})
+				}))
 				.AddService<IDependency>(() => dependency);
+
+			Assert.AreSame(dependency, ((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance);
+		}
+
+		[Test]
+		public void GlobalConfiguration_AddService_Func_InSetup()
+		{
+			GlobalConfiguration.Setup(s => { });
+
+			var dependency = new Dependency();
+			var server = new ProcessingServer();
+			GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
+				{
+					var config = new PipelineConfiguration
+					{
+						Id = "dependency_handler",
+						OutputHandlers = new List<HandlerNode>
+						{
+							new HandlerNode(typeof(DependencyHandler))
+						},
+						InputHandler = new HandlerNode("CustomInput")
+					};
+					p.BuildPipeline(server, config);
+				}).AddService<IDependency>(() => dependency)
+			);
 
 			Assert.AreSame(dependency, ((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance);
 		}
@@ -64,8 +88,7 @@ namespace Gaucho.Test
 			GlobalConfiguration.Setup(s => { });
 
 			var server = new ProcessingServer();
-			GlobalConfiguration.Configuration
-				.UseProcessingServer(p =>
+			GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
 				{
 					var config = new PipelineConfiguration
 					{
@@ -78,7 +101,31 @@ namespace Gaucho.Test
 					};
 					p.BuildPipeline(server, config);
 				})
-				.AddService<IDependency, Dependency>();
+			).AddService<IDependency, Dependency>();
+
+			Assert.IsNotNull(((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance);
+		}
+
+		[Test]
+		public void GlobalConfiguration_AddService_ByType_InSetup()
+		{
+			GlobalConfiguration.Setup(s => { });
+
+			var server = new ProcessingServer();
+			GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
+				{
+					var config = new PipelineConfiguration
+					{
+						Id = "dependency_handler",
+						OutputHandlers = new List<HandlerNode>
+						{
+							new HandlerNode(typeof(DependencyHandler))
+						},
+						InputHandler = new HandlerNode("CustomInput")
+					};
+					p.BuildPipeline(server, config);
+				}).AddService<IDependency, Dependency>()
+			);
 
 			Assert.IsNotNull(((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance);
 		}

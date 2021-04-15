@@ -21,7 +21,7 @@ namespace Gaucho.Server.Monitoring
 		/// </summary>
 		/// <param name="pipelineId"></param>
 		public StatisticsApi(string pipelineId)
-			: this(GlobalConfiguration.Configuration.Resolve<Options>().ServerName, pipelineId, GlobalConfiguration.Configuration.Resolve<IStorage>())
+			: this(GlobalConfiguration.Configuration.GetOptions().ServerName, pipelineId, GlobalConfiguration.Configuration.GetStorage())
         {
         }
 
@@ -31,7 +31,7 @@ namespace Gaucho.Server.Monitoring
 		/// <param name="pipelineId"></param>
 		/// <param name="storage"></param>
 		public StatisticsApi(string pipelineId, IStorage storage) 
-			: this(GlobalConfiguration.Configuration.Resolve<Options>().ServerName, pipelineId, storage)
+			: this(GlobalConfiguration.Configuration.GetOptions().ServerName, pipelineId, storage)
 		{
 		}
 

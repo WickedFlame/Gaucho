@@ -24,8 +24,8 @@ namespace Gaucho.Diagnostics
 		{
 			_pipelineId = pipelineId;
 
-			_minLogLevel = GlobalConfiguration.Configuration.Resolve<Options>().LogLevel;
-			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.Resolve<IStorage>());
+			_minLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel;
+			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.GetStorage());
 		}
 
 		/// <summary>

@@ -9,7 +9,7 @@ namespace Gaucho.Dashboard
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseGauchoDashboard(this IApplicationBuilder app, string pathMatch = "/gaucho", IServerMonitor monitor = null, DashboardOptions options = null)
+        public static IApplicationBuilder UseGauchoDashboard(this IApplicationBuilder app, string pathMatch = "/gaucho", IPipelineMonitor monitor = null, DashboardOptions options = null)
         {
             if (app == null)
             {
@@ -23,7 +23,7 @@ namespace Gaucho.Dashboard
 
             var routes = app.ApplicationServices.GetRequiredService<RouteCollection>();
             options = options ?? app.ApplicationServices.GetService<DashboardOptions>() ?? new DashboardOptions();
-            monitor = monitor ?? app.ApplicationServices.GetRequiredService<IServerMonitor>();
+            monitor = monitor ?? app.ApplicationServices.GetRequiredService<IPipelineMonitor>();
             if (monitor == null)
             {
                 throw new InvalidOperationException("Unable to find the required services. Please add all the required services by calling 'IServiceCollection.AddGaucho' inside the call to 'ConfigureServices(...)' in the application startup code.");

@@ -27,7 +27,7 @@ namespace Gaucho.Dashboard
 
         public DashboardRequest Request { get; set; }
 
-        public IServerMonitor ServerMonitor { get; private set; }
+        public IPipelineMonitor ServerMonitor { get; private set; }
 
         public DashboardOptions DashboardOptions { get; private set; }
 
@@ -53,7 +53,7 @@ namespace Gaucho.Dashboard
             Response = context.Response;
 
             //AppPath = context.Options.AppPath;
-            ServerMonitor = context.ServerMonitor;
+            ServerMonitor = context.Monitor;
             DashboardOptions = context.Options;
             Url = new UrlHelper(context);
 

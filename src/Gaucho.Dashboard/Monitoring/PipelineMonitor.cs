@@ -1,53 +1,61 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Gaucho.Configuration;
-using Gaucho.Diagnostics;
+﻿using Gaucho.Diagnostics;
 using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Gaucho.Dashboard.Monitoring
 {
-    public interface IServerMonitor
-    {
-        IEnumerable<PipelineMetric> GetPipelineMetrics();
-        
-        IEnumerable<string> GetPipelines();
-    }
-
-    public class ServerMonitor : IServerMonitor
+	/// <summary>
+	/// Monitor object for all pipelines
+	/// </summary>
+	public class PipelineMonitor : IPipelineMonitor
     {
         private readonly IProcessingServer _server;
 
-        public ServerMonitor(IProcessingServer server)
+		/// <summary>
+		/// Creates a new instance of the PipelineMonitor
+		/// </summary>
+		/// <param name="server"></param>
+        public PipelineMonitor(IProcessingServer server)
         {
             _server = server;
         }
 
-        public IEnumerable<string> GetPipelines()
+		/// <summary>
+		/// Gets all Metrics
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<PipelineMetric> GetMetrics()
         {
-            return _server.EventBusFactory.Pipelines;
+	        var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
+
+	        var pipelines = new List<PipelineModel>();
+
+	        var keys = storage.GetKeys(new StorageKey("server:"));
+	        var servers = keys.Select(key => storage.Get<ServerModel>(new StorageKey(key)));
+	        foreach (var server in servers.OrderByDescending(s => s.Heartbeat))
+	        {
+		        keys = storage.GetKeys(new StorageKey($"{server.Name}:pipeline:"));
+		        pipelines.AddRange(keys.Select(key => storage.Get<PipelineModel>(new StorageKey(key))));
+	        }
+
+	        //var pipelines = _server.EventBusFactory.Pipelines;
+
+            return pipelines.Select(p => Monitor(p, storage));
         }
-
-        public IEnumerable<PipelineMetric> GetPipelineMetrics()
+		
+        private PipelineMetric Monitor(PipelineModel pipeline, IStorage storage)
         {
-            var pipelines = _server.EventBusFactory.Pipelines;
-
-            return pipelines.Select(p => Monitor(p));
-        }
-
-        public PipelineMetric Monitor(string pipelineId)
-        {
-	        var options = GlobalConfiguration.Configuration.Resolve<Options>();
-
 			var defaultMetrics = new List<MetricType> {MetricType.ThreadCount, MetricType.QueueSize, MetricType.ProcessedEvents};
+			var server = pipeline.ServerName ?? Environment.MachineName;
 
-			var statistics = new StatisticsApi(pipelineId);
-            var metrics = new PipelineMetric(pipelineId);
+			var statistics = new StatisticsApi(server, pipeline.PipelineId, storage);
+            var metrics = new PipelineMetric(pipeline.PipelineId, server);
 
-            metrics.AddMetric("Server", "Server", options.ServerName ?? Environment.MachineName);
+            metrics.AddMetric("Server", "Server", server);
 
             foreach (var key in defaultMetrics)
             {

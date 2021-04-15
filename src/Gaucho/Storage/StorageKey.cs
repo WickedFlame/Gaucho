@@ -83,7 +83,7 @@ namespace Gaucho.Storage
 				return serverName;
 			}
 
-			var options = GlobalConfiguration.Configuration.Resolve<Options>();
+			var options = GlobalConfiguration.Configuration.GetOptions();
 			return options.ServerName;
 		}
 	}

@@ -65,20 +65,20 @@ export class Gaucho {
 
 	updateStatus(data, gaucho) {
 		data.forEach(function (pipeline) {
-			gaucho.updateMetrics(pipeline.pipelineId, pipeline.metrics);
-			gaucho.updateElements(pipeline.pipelineId, pipeline.elements);
+			gaucho.updateMetrics(pipeline.serverName, pipeline.pipelineId, pipeline.metrics);
+			gaucho.updateElements(pipeline.serverName, pipeline.pipelineId, pipeline.elements);
 		});
 	}
 
-	updateMetrics(pipelineId, metrics) {
-		metrics.forEach(function(metric) {
-			let elem = document.getElementById(`${pipelineId}-${metric.key}`);
+	updateMetrics(serverName, pipelineId, metrics) {
+		metrics.forEach(function (metric) {
+			let elem = document.getElementById(`${serverName}-${pipelineId}-${metric.key}`);
 			if (!elem) {
 				return;
 			}
 
 			if (elem.innerText === "") {
-				let label = document.getElementById(`${pipelineId}-${metric.key}-label`);
+				let label = document.getElementById(`${serverName}-${pipelineId}-${metric.key}-label`);
 				if (label) {
 					label.innerText = metric.title;
 				}
@@ -88,11 +88,11 @@ export class Gaucho {
 		});
 	}
 
-	updateElements(pipelineId, elements) {
+	updateElements(serverName, pipelineId, elements) {
 		for (var prop in elements) {
 			if (prop.toLowerCase() === "eventlog") {
 				var element = elements[prop];
-				var pipelineLog = `${pipelineId}-${element.key.toLowerCase()}`;
+				var pipelineLog = `${serverName}-${pipelineId}-${element.key.toLowerCase()}`;
 				let elem = document.getElementById(pipelineLog);
 
 
@@ -105,7 +105,7 @@ export class Gaucho {
 
 				    <div id="${pipelineLog}" class="pipeline-item-log-list toggle-wrapper">
 				    </div></div>`;
-					var section = document.querySelector(`#${pipelineId}`).querySelector('.pipeline-item-log-container')
+					var section = document.querySelector(`#${serverName}-${pipelineId}`).querySelector('.pipeline-item-log-container')
 						.appendChild(div.firstChild);
 
 					this.bindTogglers(section);

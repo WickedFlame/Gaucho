@@ -59,7 +59,8 @@ body {
           .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .label {
             text-transform: uppercase;
             color: #ccc;
-            padding-bottom: 4px; }
+            padding-bottom: 4px;
+            font-size: 12px; }
           .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container .pipeline-item-log-list {
             background-color: #232832;
             /*padding: 10px;*/ }
@@ -83,7 +84,8 @@ body {
 
 .toggler-section {
   display: flex;
-  align-items: baseline; }
+  align-items: baseline;
+  padding-bottom: 5px; }
   .toggler-section + .toggle-wrapper {
     max-height: 0;
     transform: scaleY(0);

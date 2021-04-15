@@ -94,6 +94,7 @@ body {
                         text-transform: uppercase;
                         color: #ccc;
                         padding-bottom: 4px;
+						font-size: 12px;
                     }
 
                     .pipeline-item-log-list {
@@ -144,6 +145,7 @@ body {
 .toggler-section {
 	display: flex;
 	align-items: baseline;
+	padding-bottom: 5px;
 
 	+ .toggle-wrapper {
 		max-height: 0;

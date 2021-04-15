@@ -6,6 +6,10 @@ using Gaucho.Storage;
 
 namespace Gaucho
 {
+	/// <summary>
+	/// Storage for global configurations.
+	/// Uses a singleton instance that is created and configured with <see cref="Setup(Action{ServerSetup})"/>.
+	/// </summary>
     public class GlobalConfiguration : IGlobalConfiguration
     {
 	    static GlobalConfiguration()
@@ -29,10 +33,12 @@ namespace Gaucho
         public Dictionary<string, object> Context { get; } = new Dictionary<string, object>();
 
 		/// <summary>
-		/// Setup and configure a new Configuration object. This replaces the existing configuration
+		/// Setup and configure a new Configuration object. This replaces the existing configuration.
+		/// Overwrites all existing configurations previousley created.
 		/// </summary>
 		/// <param name="setup"></param>
-        public static void Setup(Action<IGlobalConfiguration> setup)
+		/// <returns>The new <see cref="IGlobalConfiguration"/></returns>
+        public static IGlobalConfiguration Setup(Action<ServerSetup> setup)
         {
 	        var config = new GlobalConfiguration()
 		        .Register(new Options
@@ -42,9 +48,18 @@ namespace Gaucho
 		        .Register<IStorage>(new InmemoryStorage())
 		        .Register<IActivationContext>(new ActivationContext());
 
-	        setup(config);
+	        Configuration = config;
 
-			Configuration = config;
+			var serverSetup = new ServerSetup(config);
+
+			setup(serverSetup);
+
+			foreach (var delayed in serverSetup.DelayedSetup)
+			{
+				delayed.Invoke();
+			}
+
+			return config;
         }
     }
 }

@@ -5,27 +5,8 @@ using Gaucho.Server.Monitoring;
 namespace Gaucho
 {
 	/// <summary>
-	/// Interface fot the EventBusFactory
+	/// EventBusFactory
 	/// </summary>
-    public interface IEventBusFactory
-    {
-		/// <summary>
-		/// Gets a list of all registered pipelines in the factory
-		/// </summary>
-        IEnumerable<string> Pipelines { get; }
-
-        void Register(string pipelineId, Func<IEventPipeline> factory);
-
-        void Register(string pipelineId, IEventBus eventBus);
-
-		/// <summary>
-		/// get the eventbus associated with the pipeline
-		/// </summary>
-		/// <param name="pipelineId"></param>
-		/// <returns></returns>
-        IEventBus GetEventBus(string pipelineId);
-    }
-
     public class EventBusFactory : IEventBusFactory
     {
 	    private static object _lock = new object();
@@ -33,6 +14,9 @@ namespace Gaucho
         private readonly Dictionary<string, IPipelineFactory> _pipelineRegistrations;
         private readonly Dictionary<string, IEventBus> _activeEventBus;
 
+		/// <summary>
+		/// Creates a new instance of the EventBusFactory
+		/// </summary>
         public EventBusFactory()
         {
             _pipelineRegistrations = new Dictionary<string, IPipelineFactory>();
@@ -44,6 +28,11 @@ namespace Gaucho
 		/// </summary>
 		public IEnumerable<string> Pipelines => _pipelineRegistrations.Keys;
 
+		/// <summary>
+		/// Register a new <see cref="IEventPipeline"/> factory to the EventBusFactory
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		/// <param name="factory"></param>
         public void Register(string pipelineId, Func<IEventPipeline> factory)
         {
 			lock(_lock)
@@ -61,7 +50,12 @@ namespace Gaucho
 			}
         }
 
-        public void Register(string pipelineId, IEventBus eventBus)
+		/// <summary>
+		/// Register a new <see cref="IEventBus"/> to the EventBusFactory
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		/// <param name="eventBus"></param>
+		public void Register(string pipelineId, IEventBus eventBus)
         {
 			lock(_lock)
 			{
