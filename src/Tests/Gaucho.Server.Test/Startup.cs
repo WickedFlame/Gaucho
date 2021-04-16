@@ -82,7 +82,7 @@ namespace Gaucho.Server.Test
 
             app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions
             {
-				//Title = "Gaucho Testapp"
+				//Title = "Gaucho Testapp" 
             });
 
 

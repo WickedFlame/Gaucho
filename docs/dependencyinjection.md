@@ -4,26 +4,21 @@ layout: "default"
 nav_order: 6
 ---
 ## DependencyInjection
-There is a very basic builtin implementation of DependencyInjection. 
-Services can be added to the ActivationContext when configuring the Server.
+There is a very basic builtin implementation of DependencyInjection.  
+Services are added to the ActivationContext when configuring the Server.  
 ```
-GlobalConfiguration.Configuration
-    .UseProcessingServer(p =>
+GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
     {
-        var config = new PipelineConfiguration
-        {
-            Id = "dependency_handler",
-            OutputHandlers = new List<HandlerNode>
-            {
-                new HandlerNode(typeof(DependencyHandler))
-            },
-            InputHandler = new HandlerNode("CustomInput")
-        };
+        var reader = new WickedFlame.Yaml.YamlReader();
+        var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
+        p.BuildPipeline(config);
+
+        config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
         p.BuildPipeline(config);
     })
-    .AddService<IDependency>(() => new Dependency());
+    .AddService<IDependency>(() => new Dependency()));
 ```
-
+  
 ### ActivationContext
 The ActivationContext can be overriden with a own implementation that uses a real DI Container.
 ```
