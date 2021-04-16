@@ -6,7 +6,7 @@ nav_order: 6
 ## Redis
 Gaucho has a default inmemory storagem to save metrics and logs.  
 The package Gaucho.Redis is used to persist the data in Redis.  
-A Gaucho cluster can be setup by using the same Redis Database for each server.
+A Gaucho cluster can be setup by using the same Redis Database for all servers that create the cluster.
 
 Installation
 ---
