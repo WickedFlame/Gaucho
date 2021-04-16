@@ -10,8 +10,10 @@ The Dashboard is displaed in a Webapplication when navigating to the url \gaucho
 Installation
 ---
 Gaucho.Dashboard is installed with NuGet  
+```
 https://www.nuget.org/packages/Gaucho.Dashboard/  
-
+```
+  
 Setup
 ---
 Gaucho.Dashboard is added in the setup through a ExtensionMethod of the IApplicationBuilder

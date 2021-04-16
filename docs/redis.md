@@ -11,8 +11,10 @@ A Gaucho cluster can be setup by using the same Redis Database for each server.
 Installation
 ---
 Gaucho.Redis is installed with NuGet  
-https://www.nuget.org/packages/Gaucho.Redis/  
-
+```
+https://www.nuget.org/packages/Gaucho.Redis/
+```
+  
 Setup
 ---
 Gaucho.Redis is added in the setup through the GlobalConfiguration Setup

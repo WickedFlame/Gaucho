@@ -14,8 +14,10 @@ OutputHandlers dispach the updated data to the desired storage
 Installation
 ---
 Gaucho is installed with NuGet  
-https://www.nuget.org/packages/Gaucho/  
-
+```
+https://www.nuget.org/packages/Gaucho/
+```
+  
 Setup
 ---
 ```
