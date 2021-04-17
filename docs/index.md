@@ -5,10 +5,11 @@ nav_order: 1
 ---
 # Gaucho
 
-A .NET Message Broker Middleware for handling, converting and delegating log messages  
+A .NET Message Broker Middleware for handling, converting and delegating events.  
   
-Messages are sent to a pipeline for processing. A pipeline is setup of a InputHandler, 1-n OutputHandlers and a set of filter definitions.  
+Events are sent to a pipeline for processing. A pipeline is setup of a InputHandler, 1-n OutputHandlers and a set of filter definitions.  
 InputHandlers take a object in, do some datamanipulation and pass this to the OutpuHandlers.  
+Filters are used to define the granularity and content the of the data passed to the handlers  
 OutputHandlers dispach the updated data to the desired storage  
 
 Installation

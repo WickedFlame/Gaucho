@@ -20,7 +20,7 @@ GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
 ```
   
 ### ActivationContext
-The ActivationContext can be overriden with a own implementation that uses a real DI Container.
+A custom DI Container can be added by implementing the interface IActivationContext and registering to the GlobalConfiguration.  
 ```
 public class CustomActivationContext : IActivationContext
 {
@@ -65,6 +65,5 @@ public class CustomActivationContext : IActivationContext
 
 ```
 var container = new TinyIoCCContainer();
-GlobalConfiguration.Configuration
-    .Register<IActivationContext>(new CustomActivationContext(container));
+GlobalConfiguration.Setup(c => c.Register<IActivationContext>(new CustomActivationContext(container)));
 ```

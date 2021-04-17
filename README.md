@@ -6,7 +6,7 @@
 | Travis-ci | Master | [![Build Status](https://travis-ci.org/WickedFlame/Gaucho.svg?branch=master)](https://travis-ci.org/WickedFlame/Gaucho) |
 
 
-A .NET Message Broker Middleware for handling, converting and delegating log messages
+A .NET Message Broker Middleware for handling, converting and delegating events
 
 ## Documentation
 Visit [https://wickedflame.github.io/Gaucho/](https://wickedflame.github.io/Gaucho/) for the full documentation.
