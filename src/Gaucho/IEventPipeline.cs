@@ -2,6 +2,9 @@
 
 namespace Gaucho
 {
+	/// <summary>
+	/// The interface for EventPipelines
+	/// </summary>
 	public interface IEventPipeline
 	{
 		/// <summary>
