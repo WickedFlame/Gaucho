@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Gaucho.Configuration;
 using Gaucho.Diagnostics;
+using Gaucho.Handlers;
 using Gaucho.Server;
 using Gaucho.Storage;
 using NUnit.Framework;
@@ -30,6 +31,89 @@ namespace Gaucho.Test
 		{
 			var options = GlobalConfiguration.Configuration.Resolve<Options>();
 			Assert.IsAssignableFrom<Options>(options);
+		}
+
+		[Test]
+		public void GlobalConfiguration_UseProcessingServer_BuildPipeline_OutputHandlers()
+		{
+			var server = new ProcessingServer();
+			GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
+				{
+					var config = new PipelineConfiguration
+					{
+						Id = "pipeline1",
+						OutputHandlers = new List<HandlerNode>
+						{
+							new HandlerNode(typeof(ConsoleOutputHandler))
+						},
+						InputHandler = new HandlerNode(typeof(CustomInputHandler))
+					};
+					p.BuildPipeline(server, config);
+				}));
+
+			var handlers = GetOutputHandlers(server, "pipeline1");
+
+			Assert.IsInstanceOf<ConsoleOutputHandler>(handlers.Single());
+		}
+
+		[Test]
+		public void GlobalConfiguration_UseProcessingServer_BuildPipeline_InputHandlers()
+		{
+			var server = new ProcessingServer();
+			GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
+			{
+				var config = new PipelineConfiguration
+				{
+					Id = "pipeline1",
+					OutputHandlers = new List<HandlerNode>
+					{
+						new HandlerNode(typeof(ConsoleOutputHandler))
+					},
+					InputHandler = new HandlerNode(typeof(CustomInputHandler))
+				};
+				p.BuildPipeline(server, config);
+			}));
+
+			var handler = server.InputHandlers.Single();
+
+			Assert.IsInstanceOf<CustomInputHandler>(handler);
+			Assert.AreEqual("pipeline1", handler.PipelineId);
+		}
+
+		[Test]
+		public void GlobalConfiguration_UseProcessingServer_BuildPipeline_Filters()
+		{
+			var server = new ProcessingServer();
+			GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
+			{
+				var config = new PipelineConfiguration
+				{
+					Id = "pipeline1",
+					OutputHandlers = new List<HandlerNode>
+					{
+						new HandlerNode(typeof(ConsoleOutputHandler))
+						{
+							Filters = new List<string>
+							{
+								"Level -> lvl",
+								"Message",
+								"Id <- ${lvl}_error_${Message}"
+							}
+						}
+					},
+					
+					InputHandler = new HandlerNode(typeof(CustomInputHandler))
+				};
+				p.BuildPipeline(server, config);
+			}));
+
+			var handler = GetOutputHandlers(server, "pipeline1").Single();
+			Assert.IsAssignableFrom<DataFilterDecorator>(handler);
+
+			var converter = ((DataFilterDecorator) handler).Converter;
+			Assert.That(converter.Filters.Any(f => f.Key == "Level" && f.FilterType == Gaucho.Filters.FilterType.Property));
+			Assert.That(converter.Filters.Any(f => f.Key == "Message" && f.FilterType == Gaucho.Filters.FilterType.Property));
+			Assert.That(converter.Filters.Any(f => f.Key == "Id" && f.FilterType == Gaucho.Filters.FilterType.Formatter));
 		}
 
 		[Test]
