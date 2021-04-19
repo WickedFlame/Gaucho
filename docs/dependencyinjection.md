@@ -5,24 +5,36 @@ nav_order: 6
 ---
 ## DependencyInjection
 There is a very basic builtin implementation of DependencyInjection.  
-Services are added to the ActivationContext when configuring the Server.  
+Services can be added to the ActivationContext through the GlobalConfiguration when configuring the Server.  
 ```
 GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
     {
-        var reader = new WickedFlame.Yaml.YamlReader();
-        var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
-        p.BuildPipeline(config);
-
-        config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
+        // create the configuration of a pipeline
+        var config = new PipelineConfiguration
+        {
+            Id = "pipeline1",
+            OutputHandlers = new List<HandlerNode>
+            {
+                new HandlerNode(typeof(ConsoleOutputHandler)),
+                new HandlerNode(typeof(SqlOuputHandler))
+            },
+            InputHandler = new HandlerNode(typeof(InputHandler<LogMessage>))
+        };
         p.BuildPipeline(config);
     })
     .AddService<IDependency>(() => new Dependency()));
 ```
   
 ### ActivationContext
-A custom DI Container can be added by implementing the interface IActivationContext and registering to the GlobalConfiguration.  
+A custom DI Container can be added by implementing the interface IActivationContext and registering this to the GlobalConfiguration.  
 ```
-public class CustomActivationContext : IActivationContext
+var container = new TinyIoCCContainer();
+GlobalConfiguration.Setup(c => c.Register<IActivationContext>(new TinyIoCActivationContext(container)));
+```
+  
+#### Example implementation
+```
+public class TinyIoCActivationContext : IActivationContext
 {
     private readonly TinyIoCContainer _container;
 
@@ -61,9 +73,4 @@ public class CustomActivationContext : IActivationContext
         return new CustomActivationContext(_container.GetChildContainer());
     }
 }
-```
-
-```
-var container = new TinyIoCCContainer();
-GlobalConfiguration.Setup(c => c.Register<IActivationContext>(new CustomActivationContext(container)));
 ```
