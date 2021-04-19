@@ -36,4 +36,4 @@ To acces Arguments in the Handlers, the handler has to request a ConfiguredArgum
 
 ### Filters
 Filters are used to define or format the properties that are passed to the handlers.  
-See [filters.html](Filters) for a detailed description.
+See [Filters](filters.html) for a detailed description.
