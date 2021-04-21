@@ -37,5 +37,17 @@ namespace Gaucho.Test.Storage
 		{
 			Assert.DoesNotThrow(() => new StorageKey("pipelineId", "key", null));
 		}
+
+		[Test]
+		public void StorageKey_ToString()
+		{
+			Assert.AreEqual("server:pipelineid:key", new StorageKey("pipelineId", "key", "server").ToString());
+		}
+
+		[Test]
+		public void StorageKey_ToString_Case()
+		{
+			Assert.AreEqual("server:pipelineid:key", new StorageKey("pipelineId", "KEY", "Server").ToString());
+		}
 	}
 }

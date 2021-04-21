@@ -78,6 +78,38 @@ namespace Gaucho.Test.Storage
 			item.MatchSnapshot();
 		}
 
+		[Test]
+		public void InmemoryStorage_RemoveRange()
+		{
+			var storage = new InmemoryStorage();
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+
+			Assert.AreEqual(2, storage.GetList<StorageModel>(new StorageKey("storage", "key")).Count());
+
+			storage.RemoveRangeFromList(new StorageKey("storage", "key"), 3);
+
+			Assert.IsEmpty(storage.GetList<StorageModel>(new StorageKey("storage", "key")));
+		}
+
+		[Test]
+		public void InmemoryStorage_Get_Invalid()
+		{
+			var storage = new InmemoryStorage();
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+
+			Assert.IsNull(storage.Get<StorageModel>(new StorageKey("storage", "key")));
+		}
+
+		[Test]
+		public void InmemoryStorage_GetList_Invalid()
+		{
+			var storage = new InmemoryStorage();
+			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+
+			Assert.IsEmpty(storage.GetList<StorageModel>(new StorageKey("storage", "key")));
+		}
+
 		public class StorageModel
 		{
 			public int Id { get; set; }
