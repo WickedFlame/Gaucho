@@ -50,92 +50,109 @@ body {
 }
 
 .main-wrapper {
-    width: 100vw;
-    height: calc(100vh - #{$header_height});
-    padding-top: 40px;
-    /*background: brown;*/
-    .container {
-        /*background-color: orange;*/
-        .pipeline-item {
-            padding-top: 5px;
-            padding-bottom: 5px;
+	width: 100vw;
+	height: calc(100vh - #{$header_height});
+	padding-top: 40px;
+	/*background: brown;*/
+	.container {
+		/*background-color: orange;*/
+		.pipeline-item {
+			padding-top: 5px;
+			padding-bottom: 5px;
 
-            .pipeline-item-container {
-                display: grid;
-                grid-template-rows: 1fr 1fr;
-                padding: 10px 40px;
-                background-color: #323741;
-                border-radius: 2px;
+			.pipeline-item-container {
+				display: grid;
+				grid-template-rows: 1fr 1fr;
+				padding: 10px 40px;
+				background-color: #323741;
+				border-radius: 2px;
 
-                .pipeline-item-header {
-                    padding: 15px 0;
-                    border-bottom: 0.5px solid #ccc;
-                }
+				.pipeline-item-header {
+					padding: 15px 0;
+					border-bottom: 0.5px solid #ccc;
+				}
 
-                .pipeline-item-content {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr 1fr 1fr;
-                    padding-top: 10px;
-                    font-size: small;
+				.pipeline-item-content {
+					display: grid;
+					grid-template-columns: 1fr 1fr 1fr 1fr;
+					padding-top: 10px;
+					font-size: small;
 
-                    .label {
-                        text-transform: uppercase;
-                        color: #ccc;
-                        padding-bottom: 4px;
-                    }
-                }
+					.label {
+						text-transform: uppercase;
+						color: #ccc;
+						padding-bottom: 4px;
+					}
+				}
 
-                .pipeline-item-log-container {
-                    /*border-top: 0.5px solid #ccc;*/
-                    padding-top: 10px;
-                    /*margin-top: 10px;*/
+				.pipeline-item-log-container {
+					/*border-top: 0.5px solid #ccc;*/
+					padding-top: 10px;
+					/*margin-top: 10px;*/
+					/* width */
+					::-webkit-scrollbar {
+						width: 10px;
+					}
+					/* Track */
+					::-webkit-scrollbar-track {
+						background: #f1f1f1;
+					}
+					/* Handle */
+					::-webkit-scrollbar-thumb {
+						background: #888;
+					}
+					/* Handle on hover */
+					::-webkit-scrollbar-thumb:hover {
+						background: #555;
+					}
 
-                    .label {
-                        text-transform: uppercase;
-                        color: #ccc;
-                        padding-bottom: 4px;
+
+					.label {
+						text-transform: uppercase;
+						color: #ccc;
+						padding-bottom: 4px;
 						font-size: 12px;
-                    }
+					}
 
-                    .pipeline-item-log-list {
-                        background-color: $background-color-main;
-                        /*padding: 10px;*/
+					.pipeline-item-log-list {
+						background-color: $background-color-main;
+						overflow-y: auto;
+						/*padding: 10px;*/
+						.pipeline-item-log-item {
+							display: grid;
+							grid-template-columns: auto auto auto 1fr;
+							font-size: 12px;
 
-                        .pipeline-item-log-item {
-                            display: grid;
-                            grid-template-columns: auto auto auto 1fr;
-                            font-size: 12px;
+							.pipeline-item-log-element {
+								padding-left: 3px;
+								padding-right: 3px;
+							}
 
-                            .pipeline-item-log-element {
-                                padding-left: 3px;
-                                padding-right: 3px;
-                            }
+							.pipeline-log-debug {
+								color: gray;
+							}
 
-                            .pipeline-log-debug {
-                                color: gray;
-                            }
+							.pipeline-log-info {
+								color: green;
+							}
 
-                            .pipeline-log-info {
-                                color: green;
-                            }
+							.pipeline-log-warning {
+								color: orange;
+							}
 
-                            .pipeline-log-warning {
-                                color: orange;
-                            }
+							.pipeline-log-error {
+								color: red;
+							}
 
-                            .pipeline-log-error {
-                                color: red;
-                            }
-
-                            .pipeline-log-critical {
-                                color: purple;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+							.pipeline-log-critical {
+								color: purple;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -149,6 +166,7 @@ body {
 
 	+ .toggle-wrapper {
 		max-height: 0;
+		height: 0;
 		transform: scaleY(0);
 		transform-origin: top;
 		transition: all 0.15s ease-in-out;
@@ -162,10 +180,12 @@ body {
 		+ .toggle-wrapper {
 			max-height: 100%;
 			transform: scaleY(1);
+			height: inherit;
 		}
 
 		+ .pipeline-item-log-list {
 			padding: 10px;
+			max-height: 250px;
 		}
 	}
 }
