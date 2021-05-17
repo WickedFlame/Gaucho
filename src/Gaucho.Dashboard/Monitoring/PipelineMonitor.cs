@@ -98,7 +98,7 @@ namespace Gaucho.Dashboard.Monitoring
 						//WorkersLogMetricCounter.cs
 						if (metric.Value is IEnumerable<ActiveWorkersLogMessage> workers)
 						{
-							foreach (var worker in workers.OrderBy(w => w.Timestamp).Take(50))
+							foreach (var worker in workers.OrderByDescending(w => w.Timestamp).Take(50))
 							{
 								metrics.AddElement(metric.Key.ToString(), metric.Title, new TimelineLog<int>
 								{
