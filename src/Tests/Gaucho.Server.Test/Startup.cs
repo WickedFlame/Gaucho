@@ -35,7 +35,7 @@ namespace Gaucho.Server.Test
             services.AddMvc();
 
             // register the default processingserver
-            services.AddGauchoDashboard(ProcessingServer.Server);
+            services.AddGauchoServer(ProcessingServer.Server);
 
             services.AddSwaggerGen(c =>
             {

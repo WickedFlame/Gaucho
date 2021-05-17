@@ -10,13 +10,19 @@ namespace Gaucho.Dashboard
 	/// </summary>
 	public static class ServiceCollectionExtensions
     {
+		[Obsolete("Use AddGauchoServer instead")]
+	    public static IServiceCollection AddGauchoDashboard(this IServiceCollection services, IProcessingServer server)
+	    {
+		    return AddGauchoServer(services, server);
+	    }
+
 		/// <summary>
 		/// Add the dashbaord API
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="server"></param>
 		/// <returns></returns>
-        public static IServiceCollection AddGauchoDashboard(this IServiceCollection services, IProcessingServer server)
+		public static IServiceCollection AddGauchoServer(this IServiceCollection services, IProcessingServer server)
         {
             if (services == null)
             {
