@@ -19,30 +19,10 @@ namespace Gaucho.Dashboard
 
         public DashboardMiddleware(RequestDelegate next, RouteCollection routes, IPipelineMonitor monitor, DashboardOptions options)
         {
-            if (next == null)
-            {
-                throw new ArgumentNullException(nameof(next));
-            }
-
-            if (routes == null)
-            {
-                throw new ArgumentNullException(nameof(routes));
-            }
-
-            if (monitor == null)
-            {
-                throw new ArgumentNullException(nameof(monitor));
-            }
-
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            _next = next;
-            _routes = routes;
-            _monitor = monitor;
-            _options = options;
+	        _next = next ?? throw new ArgumentNullException(nameof(next));
+            _routes = routes ?? throw new ArgumentNullException(nameof(routes));
+            _monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         public async Task Invoke(HttpContext httpContext)
