@@ -52,7 +52,7 @@ namespace Gaucho.Dashboard.Monitoring
 			var defaultMetrics = new List<MetricType> {MetricType.ThreadCount, MetricType.QueueSize, MetricType.ProcessedEvents};
 			var server = pipeline.ServerName ?? Environment.MachineName;
 
-			var heartbeat = storage.Get<PipelineModel>(new StorageKey($"{server}:pipeline:{pipeline.PipelineId}"));
+			var heartbeat = storage.Get<ServerModel>(new StorageKey($"server:{server.ToLower()}"));
 
 			var statistics = new StatisticsApi(server, pipeline.PipelineId, storage);
             var metrics = new PipelineMetric(pipeline.PipelineId, server, heartbeat != null ? DateTime.Parse(heartbeat.Heartbeat) : (DateTime?)null);
