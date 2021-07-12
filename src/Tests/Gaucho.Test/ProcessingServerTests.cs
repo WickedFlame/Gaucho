@@ -13,7 +13,27 @@ namespace Gaucho.Test
     [TestFixture]
     public class ProcessingServerTests
     {
-        [Test]
+	    [Test]
+	    public void ProcessingServer_ctor()
+	    {
+		    var bus = new EventBus(() => null, "one");
+		    Assert.DoesNotThrow(() => new ProcessingServer());
+	    }
+
+	    [Test]
+	    public void ProcessingServer_ctor_EventBusFactory()
+	    {
+		    var factory = new Mock<IEventBusFactory>();
+		    Assert.DoesNotThrow(() => new ProcessingServer(factory.Object));
+	    }
+
+	    [Test]
+	    public void ProcessingServer_ctor_NullEventBusFactory()
+	    {
+		    Assert.Throws<ArgumentNullException>(() => new ProcessingServer(null));
+	    }
+
+		[Test]
         public void ProcessingServer_RegisterEventBus_UnequalPipelineId()
         {
 	        var bus = new EventBus(() => null, "one");
@@ -117,5 +137,64 @@ namespace Gaucho.Test
 	        // cleanup
 			GlobalConfiguration.Setup(s => { });
 		}
+
+        [Test]
+        public void ProcessingServer_Dispose_RegisterFactory()
+        {
+	        var factory = new Mock<IEventBusFactory>();
+	        var server = new ProcessingServer(factory.Object);
+
+	        server.Register("pipeline", () => (EventPipeline) null);
+
+			Assert.DoesNotThrow(() => server.Dispose());
+        }
+
+        [Test]
+        public void ProcessingServer_Dispose_RegisterEventBus()
+        {
+	        var factory = new Mock<IEventBusFactory>();
+	        var server = new ProcessingServer(factory.Object);
+
+	        var bus = new Mock<IEventBus>();
+	        bus.Setup(exp => exp.PipelineId).Returns("pipeline");
+
+			server.Register("pipeline", bus.Object);
+
+	        Assert.DoesNotThrow(() => server.Dispose());
+        }
+
+		[Test]
+        public void ProcessingServer_Dispose_Uninitialized()
+        {
+	        var factory = new Mock<IEventBusFactory>();
+	        var server = new ProcessingServer(factory.Object);
+
+			Assert.DoesNotThrow(() => server.Dispose());
+        }
+
+
+        [Test]
+        public void ProcessingServer_Publish()
+        {
+	        var bus = new Mock<IEventBus>();
+	        bus.Setup(exp => exp.PipelineId).Returns("pipeline");
+
+			var factory = new Mock<IEventBusFactory>();
+			factory.Setup(exp => exp.GetEventBus(It.IsAny<string>())).Returns(() => bus.Object);
+	        var server = new ProcessingServer(factory.Object);
+			
+			server.Publish(new Event("pipeline", new EventData()));
+
+			bus.Verify(exp => exp.Publish(It.IsAny<Event>()), Times.Once);
+        }
+
+		[Test]
+        public void ProcessingServer_Publish_NoPipeline()
+        {
+	        var factory = new Mock<IEventBusFactory>();
+	        var server = new ProcessingServer(factory.Object);
+
+	        Assert.DoesNotThrow(() => server.Publish(new Event("pipeline", new EventData())));
+        }
 	}
 }
