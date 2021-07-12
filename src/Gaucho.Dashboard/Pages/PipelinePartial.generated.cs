@@ -102,7 +102,7 @@ WriteLiteral("</h3>\r\n        </div>\r\n\t    <div class=\"pipeline-item-conten
             
             #line default
             #line hidden
-WriteLiteral("\t\t\t    <div>\r\n\t\t\t\t    <div class=\"label\" id=\"");
+WriteLiteral("\t\t\t    <div class=\"pipeline-metric-item\">\r\n\t\t\t\t    <div class=\"label\" id=\"");
 
 
             

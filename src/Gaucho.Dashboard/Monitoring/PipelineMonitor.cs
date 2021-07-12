@@ -44,7 +44,7 @@ namespace Gaucho.Dashboard.Monitoring
 
 	        //var pipelines = _server.EventBusFactory.Pipelines;
 
-            return pipelines.Select(p => Monitor(p, storage));
+            return pipelines.Select(p => Monitor(p, storage)).OrderByDescending(m => m.Hearbeat);
         }
 		
         private PipelineMetric Monitor(PipelineModel pipeline, IStorage storage)
@@ -52,10 +52,13 @@ namespace Gaucho.Dashboard.Monitoring
 			var defaultMetrics = new List<MetricType> {MetricType.ThreadCount, MetricType.QueueSize, MetricType.ProcessedEvents};
 			var server = pipeline.ServerName ?? Environment.MachineName;
 
+			var heartbeat = storage.Get<PipelineModel>(new StorageKey($"{server}:pipeline:{pipeline.PipelineId}"));
+
 			var statistics = new StatisticsApi(server, pipeline.PipelineId, storage);
-            var metrics = new PipelineMetric(pipeline.PipelineId, server);
+            var metrics = new PipelineMetric(pipeline.PipelineId, server, heartbeat != null ? DateTime.Parse(heartbeat.Heartbeat) : (DateTime?)null);
 
             metrics.AddMetric("Server", "Server", server);
+            metrics.AddMetric("Heartbeat", "Heartbeat", heartbeat != null ? DateTime.Parse(heartbeat.Heartbeat).ToString("yyyy.MM.dd HH:mm:ss") : "");
 
             foreach (var key in defaultMetrics)
             {

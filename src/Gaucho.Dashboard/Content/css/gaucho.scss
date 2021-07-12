@@ -73,15 +73,21 @@ body {
 				}
 
 				.pipeline-item-content {
-					display: grid;
-					grid-template-columns: 1fr 1fr 1fr 1fr;
+					display: inline-flex;
+					justify-content: space-between;
+					flex-direction: row;
+					align-items: self-start;
 					padding-top: 10px;
 					font-size: small;
 
-					.label {
-						text-transform: uppercase;
-						color: #ccc;
-						padding-bottom: 4px;
+					.pipeline-metric-item {
+						width: 100%;
+
+						.label {
+							text-transform: uppercase;
+							color: #ccc;
+							padding-bottom: 4px;
+						}
 					}
 				}
 

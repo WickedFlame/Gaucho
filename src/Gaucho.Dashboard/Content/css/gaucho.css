@@ -44,14 +44,18 @@ body {
           padding: 15px 0;
           border-bottom: 0.5px solid #ccc; }
         .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-content {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr 1fr;
+          display: inline-flex;
+          justify-content: space-between;
+          flex-direction: row;
+          align-items: self-start;
           padding-top: 10px;
           font-size: small; }
-          .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-content .label {
-            text-transform: uppercase;
-            color: #ccc;
-            padding-bottom: 4px; }
+          .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-content .pipeline-metric-item {
+            width: 100%; }
+            .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-content .pipeline-metric-item .label {
+              text-transform: uppercase;
+              color: #ccc;
+              padding-bottom: 4px; }
         .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-log-container {
           /*border-top: 0.5px solid #ccc;*/
           padding-top: 10px;

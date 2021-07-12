@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Gaucho.Dashboard.Monitoring
 {
@@ -15,10 +16,12 @@ namespace Gaucho.Dashboard.Monitoring
 		/// </summary>
 		/// <param name="pipelineId"></param>
 		/// <param name="server"></param>
-        public PipelineMetric(string pipelineId, string server)
+		/// <param name="heartbeat"></param>
+        public PipelineMetric(string pipelineId, string server, DateTime? heartbeat)
         {
             PipelineId = pipelineId;
 			ServerName = server;
+			Hearbeat = heartbeat;
         }
 
 		/// <summary>
@@ -30,6 +33,11 @@ namespace Gaucho.Dashboard.Monitoring
 		/// Gets the pipelineid
 		/// </summary>
         public string PipelineId { get; }
+
+		/// <summary>
+		/// Gets the last heartbeat of the Pipeline
+		/// </summary>
+		public DateTime? Hearbeat { get; }
 
 		/// <summary>
 		/// Gets a list of all <see cref="DashboardMetric"/>
