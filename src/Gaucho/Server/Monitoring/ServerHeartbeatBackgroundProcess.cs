@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading;
-using Gaucho.Configuration;
 using Gaucho.Storage;
 
 namespace Gaucho.Server.Monitoring
@@ -8,18 +6,20 @@ namespace Gaucho.Server.Monitoring
 	/// <summary>
 	/// BackgroundProcess that publishes the heartbeat and serverinfo to the storage
 	/// </summary>
-	public class HeartbeatBackgroundProcess : IBackgroundProcess
+	public class ServerHeartbeatBackgroundProcess : IBackgroundProcess
 	{
 		private readonly IStorage _storage;
 		private readonly string _serverName;
-		private readonly Timer _timer;
+		private readonly BackgroundProcess _process;
 
 		/// <summary>
 		/// Creates a new instance of HeartbeatBackgroundProcess
 		/// </summary>
-		public HeartbeatBackgroundProcess()
+		/// <param name="storage"></param>
+		public ServerHeartbeatBackgroundProcess(IStorage storage)
 		{
-			_storage = GlobalConfiguration.Configuration.GetStorage();
+			_storage = storage ?? throw new ArgumentNullException(nameof(storage));
+
 			var options = GlobalConfiguration.Configuration.GetOptions();
 			_serverName = options.ServerName;
 			var interval = options.HeartbeatInterval;
@@ -28,17 +28,24 @@ namespace Gaucho.Server.Monitoring
 				interval = 120000;
 			}
 
-			_timer = new Timer(Execute, null, 0, interval);
+			_process = new BackgroundProcess(Execute, interval);
 		}
 
-		private void Execute(object stateInfo)
+		private void Execute()
 		{
-			_storage.Set(new StorageKey($"server:{_serverName}"), new ServerModel { Name =_serverName, Heartbeat = DateTime.Now.ToString("o") });
+			_storage.Set(new StorageKey($"server:{_serverName}"), new ServerModel
+			{
+				Name =_serverName, 
+				Heartbeat = DateTime.Now.ToString("o")
+			});
 		}
 
+		/// <summary>
+		/// Dispose the processor
+		/// </summary>
 		public void Dispose()
 		{
-			_timer.Dispose();
+			_process.Dispose();
 		}
 	}
 }

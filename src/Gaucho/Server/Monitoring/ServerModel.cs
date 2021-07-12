@@ -2,7 +2,7 @@
 namespace Gaucho.Server.Monitoring
 {
 	/// <summary>
-	/// Heartbeat that is published by the <see cref="HeartbeatBackgroundProcess"/>
+	/// Heartbeat that is published by the <see cref="ServerHeartbeatBackgroundProcess"/>
 	/// </summary>
 	public class ServerModel
 	{

@@ -6,9 +6,10 @@ namespace Gaucho.Server.Monitoring
 	/// <summary>
 	/// Service class for metrics
 	/// </summary>
-	public class MetricService : IMetricService
+	public class MetricService : IMetricService, IDisposable
 	{
 		private readonly IStorage _storage;
+		private PipelineHeartbeatBackgroundProcess _backgroundProcess;
 
 		/// <summary>
 		/// Creates a new instacen of MetricService
@@ -48,13 +49,12 @@ namespace Gaucho.Server.Monitoring
 
 		public void SetPipelineHeartbeat()
 		{
-			var server = GlobalConfiguration.Configuration.GetOptions().ServerName;
-			_storage.Set(new StorageKey($"{server}:pipeline:{PipelineId}"), new PipelineModel
-			{
-				PipelineId = PipelineId,
-				ServerName = server,
-				Heartbeat = DateTime.Now.ToString("o")
-			});
+			_backgroundProcess = new PipelineHeartbeatBackgroundProcess(_storage, PipelineId);
+		}
+
+		public void Dispose()
+		{
+			_backgroundProcess?.Dispose();
 		}
 	}
 

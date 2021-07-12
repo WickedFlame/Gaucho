@@ -29,7 +29,7 @@ namespace Gaucho
 
         private readonly ILogger _logger;
         private bool _initialized;
-        private HeartbeatBackgroundProcess _heartbeat;
+        private ServerHeartbeatBackgroundProcess _heartbeat;
 
         /// <summary>
 		/// Create a new instance of the ProcessingServer
@@ -45,7 +45,7 @@ namespace Gaucho
 		/// <param name="factory"></param>
         public ProcessingServer(IEventBusFactory factory)
         {
-            _eventBusFactory = factory;
+            _eventBusFactory = factory ?? throw new ArgumentNullException(nameof(factory));
 
             _inputHandlers = new InputHandlerCollection();
             _logger = LoggerConfiguration.Setup();
@@ -147,6 +147,9 @@ namespace Gaucho
             eventBus.WaitAll();
         }
 
+		/// <summary>
+		/// Dispose the server
+		/// </summary>
         public void Dispose()
         {
             foreach (var handler in _inputHandlers)
@@ -155,7 +158,7 @@ namespace Gaucho
                 dispose?.Dispose();
             }
 
-            _heartbeat.Dispose();
+            _heartbeat?.Dispose();
             _logger.Write("ProcessingServer stopped", Category.Log);
         }
 
@@ -166,7 +169,8 @@ namespace Gaucho
 		        return;
 	        }
 
-	        _heartbeat = new HeartbeatBackgroundProcess();
+	        var storage = GlobalConfiguration.Configuration.GetStorage();
+			_heartbeat = new ServerHeartbeatBackgroundProcess(storage);
 
 	        _initialized = true;
         }

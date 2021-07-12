@@ -200,7 +200,7 @@ namespace Gaucho
                     _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
 				}
 
-                _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
+				_metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
 			}
         }
 
@@ -221,6 +221,11 @@ namespace Gaucho
                 foreach (var processor in _processors)
                 {
                     processor.Dispose();
+                }
+
+                lock (_syncRoot)
+                {
+	                _metricService.Dispose();
                 }
             }
 
