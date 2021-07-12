@@ -7,16 +7,16 @@ nav_order: 5
 The dashboard show metrics and logs of all pipelines  
 The Dashboard is displaed in a Webapplication when navigating to the url \gaucho
 
-Installation
----
+## Installation
+
 Gaucho.Dashboard is installed with NuGet  
 ```
 https://www.nuget.org/packages/Gaucho.Dashboard/  
 ```
   
-Setup
----
-Gaucho.Dashboard is added in the setup through a ExtensionMethod of the IApplicationBuilder
+## Setup
+
+In ASP.NET Core the Gaucho.Dashboard is added in the setup through a ExtensionMethod of the IApplicationBuilder
 ```
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
 {
@@ -26,3 +26,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApp
     });
 }
 ```
+  
+## View the dashboard
+The dashboard is mapped to the path provided in the parameter pathMatch.  
+In the browser simply navigate to the configured Url to display the dashboard.
