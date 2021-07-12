@@ -45,7 +45,7 @@ namespace Gaucho.Dashboard
         public DashboardOptions Options { get; }
 
 		/// <summary>
-		/// Gets the <see cref="Math"/>
+		/// Gets the <see cref="Match"/>
 		/// </summary>
         public Match UriMatch { get; set; }
 
