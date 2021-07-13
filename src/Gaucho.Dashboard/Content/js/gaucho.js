@@ -9,13 +9,18 @@ export class Gaucho {
 	}
 
 	bindTogglers(elem) {
-		Array.from(elem.querySelectorAll('.toggler-button')).forEach(elem => {
-			elem.addEventListener('click',
-				e => {
+		for(const button of elem.querySelectorAll('.toggler-button')) {
+			button.addEventListener('click', e => {
 					var elem = e.target.closest('.toggler-section');
 					elem.classList.toggle('is-open');
 				});
-		});
+		};
+		for (const button of elem.querySelectorAll('.pipeline-item-header')) {
+			button.addEventListener('click', e => {
+					var elem = e.target.closest('.toggler-section');
+					elem.classList.toggle('is-open');
+				});
+		};
 	}
 
 	poll(fn, interval) {
