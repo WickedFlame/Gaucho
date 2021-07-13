@@ -72,7 +72,7 @@ namespace Gaucho.Server.Test
 		            config = reader.Read<PipelineConfiguration>("RecurringJob.yml");
 		            p.BuildPipeline(config);
 	            })
-	            .UseRedisStorage("localhost:6379", new Redis.RedisStorageOptions {Db = 15})
+	            .UseRedisStorage("localhost:6379", new Redis.RedisStorageOptions {Db = 15, Prefix = "gaucho"})
 	            .AddLogWriter(new ConsoleLogWriter())
 	            .UseOptions(new Options
 	            {
