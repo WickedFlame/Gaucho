@@ -15,11 +15,16 @@ export class Gaucho {
 					elem.classList.toggle('is-open');
 				});
 		};
-		for (const button of elem.querySelectorAll('.pipeline-item-header')) {
+		for (const button of elem.querySelectorAll('.pipeline-title-button')) {
 			button.addEventListener('click', e => {
 					var elem = e.target.closest('.toggler-section');
 					elem.classList.toggle('is-open');
 				});
+		};
+		for (const button of elem.querySelectorAll('.trash-button')) {
+			button.addEventListener('click', e => {
+				
+			});
 		};
 	}
 

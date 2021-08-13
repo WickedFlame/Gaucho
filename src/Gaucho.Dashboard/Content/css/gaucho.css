@@ -42,8 +42,9 @@ body {
         border-radius: 2px; }
         .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-header {
           padding: 15px 0;
-          /*border-bottom: 0.5px solid #ccc;*/
-          cursor: pointer; }
+          justify-content: space-between; }
+          .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-header .pipeline-title-button {
+            cursor: pointer; }
         .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-content {
           /*display: contents;*/ }
           .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-content .pipeline-metric-content {
@@ -132,7 +133,8 @@ body {
   display: block;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  margin-right: 15px; }
+  margin-right: 15px;
+  cursor: pointer; }
   .toggler-button::before {
     content: '';
     background: transparent;
@@ -150,3 +152,43 @@ body {
     background-size: 100%;
     background-repeat: no-repeat;
     transform: rotate(-90deg); }
+
+.trash-button {
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  transform: scale(var(--ggs, 1));
+  /*width: 10px;*/
+  /*height: 12px;*/
+  width: 7px;
+  height: 10px;
+  border: 2px solid transparent;
+  box-shadow: 0 0 0 2px, inset -2px 0 0, inset 2px 0 0;
+  border-bottom-left-radius: 1px;
+  border-bottom-right-radius: 1px;
+  margin-top: 4px;
+  margin-right: 4px;
+  cursor: pointer; }
+  .trash-button::after, .trash-button::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute; }
+  .trash-button::after {
+    background: currentColor;
+    border-radius: 3px;
+    /*width: 16px;*/
+    width: 13px;
+    height: 2px;
+    top: -4px;
+    left: -5px; }
+  .trash-button::before {
+    /*width: 10px;*/
+    width: 7px;
+    height: 4px;
+    border: 2px solid;
+    border-bottom: transparent;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    top: -7px;
+    left: -2px; }
