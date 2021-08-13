@@ -1,12 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Gaucho
 {
+	/// <summary>
+	/// Extensions for <see cref="EventData"/>
+	/// </summary>
 	public static class EventDataExtensions
 	{
+		/// <summary>
+		/// Add a new value to the data. The name of the field is taken from the propertyname
+		/// </summary>
+		/// <param name="eventData"></param>
+		/// <param name="exp"></param>
+		/// <returns></returns>
 		public static EventData Add(this EventData eventData, Expression<Func<object>> exp)
 		{
 			var name = GetName(exp);
@@ -40,11 +48,29 @@ namespace Gaucho
 			return null;
 		}
 
+		/// <summary>
+		/// Add a new item to the data
+		/// </summary>
+		/// <param name="eventData"></param>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
 		public static EventData Add(this EventData eventData, string key, object value)
 		{
 			eventData.Add(new Property(key, value));
 
 			return eventData;
+		}
+
+		/// <summary>
+		/// Check if the key is already contained in the data
+		/// </summary>
+		/// <param name="eventData"></param>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public static bool Contains(this EventData eventData, string key)
+		{
+			return eventData.Any(d => d.Key == key);
 		}
 	}
 }
