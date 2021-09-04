@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using Polaroider;
 
 namespace Gaucho.Test
 {
@@ -79,9 +80,44 @@ namespace Gaucho.Test
 			Assert.That(eventData["Message"].Equals("this is a test"));
 		}
 
+		[Test]
+		public void EventDataFactory_Complex()
+		{
+			var data = new ComplexData
+			{
+				Index = 1,
+				MessageData = new MessageData
+				{
+					Message = "test"
+				},
+				Inner = new ComplexData
+				{
+					Index = 2,
+					MessageData = new MessageData
+					{
+						Message = "inner"
+					}
+				}
+			};
+
+			var factory = new EventDataFactory();
+			var eventData = factory.BuildFrom(data);
+
+			eventData.MatchSnapshot();
+		}
+
 		public class MessageData
 		{
 			public string Message { get; set; }
+		}
+
+		public class ComplexData
+		{
+			public int Index { get; set; }
+
+			public MessageData MessageData { get; set; }
+
+			public ComplexData Inner { get; set; }
 		}
 	}
 }
