@@ -9,7 +9,7 @@ namespace Gaucho.Redis
 		/// <summary>
 		/// Gets or sets the prefix used in the Redis key
 		/// </summary>
-		public string Prefix { get; set; } = "gaucho";
+		public string Prefix { get; set; } = "{gaucho}";
 
 		/// <summary>
 		/// Gets or sets the default database number used in Redis

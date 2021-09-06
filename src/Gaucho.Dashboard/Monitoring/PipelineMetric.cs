@@ -40,6 +40,11 @@ namespace Gaucho.Dashboard.Monitoring
 		public DateTime? Hearbeat { get; }
 
 		/// <summary>
+		/// Gets a value indicating if the Pipeline has had a heartbeat in the last 5 minutes
+		/// </summary>
+		public bool IsActive => Hearbeat == null || Hearbeat.Value.AddMinutes(5) > DateTime.Now; 
+
+		/// <summary>
 		/// Gets a list of all <see cref="DashboardMetric"/>
 		/// </summary>
         public IEnumerable<DashboardMetric> Metrics => _metrics;

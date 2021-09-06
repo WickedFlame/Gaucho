@@ -4,13 +4,13 @@ layout: "default"
 nav_order: 6
 ---
 ## Redis
-Gaucho has a default inmemory storagem to save metrics and logs.  
-The package Gaucho.Redis is used to persist the data in Redis.  
-A Gaucho cluster can be setup by using the same Redis Database for all servers that create the cluster.
+Gaucho uses the default inmemory storage to save metrics and logs.  
+The library Gaucho.Redis is used to persist the data in a Redis server.  
+A Gaucho swarm can be setup by configuring all server instances with the same Redis Database that makeup the cluster.
 
 Installation
 ---
-Gaucho.Redis is installed with NuGet  
+Gaucho.Redis is installed by NuGet  
 ```
 https://www.nuget.org/packages/Gaucho.Redis/
 ```
@@ -19,5 +19,5 @@ Setup
 ---
 Gaucho.Redis is added in the setup through the GlobalConfiguration Setup
 ```
-GlobalConfiguration.Setup(c => c.UseRedisStorage("localhost:6379", new Redis.RedisStorageOptions {Db = 15}));
+GlobalConfiguration.Setup(c => c.UseRedisStorage("localhost:6379", new Redis.RedisStorageOptions {Db = 15, Prefix = "{Gaucho}"}));
 ```
