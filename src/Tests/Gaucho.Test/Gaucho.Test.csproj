@@ -19,4 +19,8 @@
     <ProjectReference Include="..\..\Gaucho\Gaucho.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Filters\_Snapshots\" />
+  </ItemGroup>
+
 </Project>

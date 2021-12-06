@@ -8,20 +8,41 @@ using Gaucho.Filters;
 
 namespace Gaucho
 {
-    public interface IEventDataConverter
+	/// <summary>
+	/// Convert configrured values in EventData 
+	/// </summary>
+	public interface IEventDataConverter
     {
+		/// <summary>
+		/// Gets a list of all configured <see cref="IFilter"/>
+		/// </summary>
         IEnumerable<IFilter> Filters { get; }
 
+		/// <summary>
+		/// Add a new <see cref="IFilter"/>
+		/// </summary>
+		/// <param name="filter"></param>
         void Add(IFilter filter);
 
+		/// <summary>
+		/// Calls all converters and creates a new <see cref="EventData"/> with the converted results
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
         EventData Convert(EventData data);
     }
 
-    public class EventDataConverter : System.Collections.IEnumerable, IEventDataConverter
+	/// <summary>
+	/// Convert configrured values in EventData 
+	/// </summary>
+	public class EventDataConverter : System.Collections.IEnumerable, IEventDataConverter
     {
         private readonly List<IFilter> _filters;
         private readonly ILogger _logger;
 
+		/// <summary>
+		/// Create a new EventDataConverter
+		/// </summary>
         public EventDataConverter()
         {
 			_logger = LoggerConfiguration.Setup();
@@ -30,14 +51,26 @@ namespace Gaucho
 
 		internal ILogger Logger => _logger;
 
-        public IEnumerable<IFilter> Filters => _filters;
+		/// <summary>
+		/// Gets a list of all configured <see cref="IFilter"/>
+		/// </summary>
+		public IEnumerable<IFilter> Filters => _filters;
 
-        public void Add(IFilter filter)
+		/// <summary>
+		/// Add a new <see cref="IFilter"/>
+		/// </summary>
+		/// <param name="filter"></param>
+		public void Add(IFilter filter)
         {
             _filters.Add(filter);
         }
 
-        public EventData Convert(EventData data)
+		/// <summary>
+		/// Calls all converters and creates a new <see cref="EventData"/> with the converted results
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		public EventData Convert(EventData data)
         {
 	        var filers = _filters.Where(f => f.FilterType == FilterType.Property).ToList();
             if (!filers.Any())
@@ -85,10 +118,24 @@ namespace Gaucho
 		    return converter.Convert(eventData);
 	    }
 
+		/// <summary>
+		/// Format the property
+		/// </summary>
+		/// <param name="converter"></param>
+		/// <param name="key"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
 	    public static string Format(this EventDataConverter converter, string key, EventData data)
 		    => Format(converter as IEventDataConverter, key, data);
 
-	    public static string Format(this IEventDataConverter converter, string key, IEventData data)
+		/// <summary>
+		/// Format the property
+		/// </summary>
+		/// <param name="converter"></param>
+		/// <param name="key"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		public static string Format(this IEventDataConverter converter, string key, IEventData data)
 	    {
 		    var eventData = data as EventData;
 		    if (eventData == null)
@@ -99,6 +146,13 @@ namespace Gaucho
 		    return converter.Format(key, eventData);
 		}
 
+		/// <summary>
+		/// Format the property
+		/// </summary>
+		/// <param name="converter"></param>
+		/// <param name="key"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
 		public static string Format(this IEventDataConverter converter, string key, EventData data)
 	    {
 		    var formatter = converter.Filters.FirstOrDefault(f => f.FilterType == FilterType.Formatter && f.Key == key);
@@ -126,9 +180,21 @@ namespace Gaucho
 		    return formatter.Filter(data).Value as string;
 	    }
 
+		/// <summary>
+		/// Format the property
+		/// </summary>
+		/// <param name="converter"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
 		public static IEventDataConverter AppendFormated(this IEventDataConverter converter, IEventData data)
 			=> AppendFormated(converter, data as EventData);
 
+		/// <summary>
+		/// Format the property
+		/// </summary>
+		/// <param name="converter"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
 		public static IEventDataConverter AppendFormated(this IEventDataConverter converter, EventData data)
 		{
 			if (data == null)
