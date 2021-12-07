@@ -1,0 +1,6 @@
+---data
+{
+   first.second.third -> value1
+   first.fourth -> test fourth
+   fifth -> 5
+}

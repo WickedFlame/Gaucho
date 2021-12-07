@@ -26,28 +26,22 @@ namespace Gaucho
         {
             var data = new EventData();
 
-            if (typeof(T).IsGenericType && input is IDictionary dict)
-            {
-	            foreach (DictionaryEntry entry in dict)
-	            {
-		            data.Add(entry.Key.ToString(), entry.Value);
-	            }
-
-				return data;
-			}
-
             AppendObject(data, input, null);
             
             return data;
         }
-
-
+        
         private void AppendObject(EventData data, object input, string parentName)
         {
 	        if (input == null)
 	        {
 		        return;
 	        }
+
+            if (AppendDictionary(data, input, parentName))
+            {
+                return;
+            }
 
 	        foreach (var property in input.GetType().GetProperties())
 	        {
@@ -63,6 +57,30 @@ namespace Gaucho
 		        data.Add(name, value);
 	        }
 		}
+
+        private bool AppendDictionary(EventData data, object input, string parentName)
+        {
+            if (!input.GetType().IsGenericType || !(input is IDictionary dict))
+            {
+                return false;
+            }
+
+            foreach (DictionaryEntry entry in dict)
+            {
+                var name = string.IsNullOrEmpty(parentName) ? entry.Key.ToString() : $"{parentName}.{entry.Key}";
+                if (entry.Value is IDictionary sub)
+                {
+                    AppendObject(data, sub, name);
+                }
+                else
+                {
+                    data.Add(name, entry.Value);
+                }
+            }
+
+            return true;
+
+        }
 
         /// <summary>
         /// Gets the Evaluator used by the Mapper for value types. Value types are simply added to the match with ToString()
