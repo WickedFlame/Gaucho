@@ -21,7 +21,17 @@ namespace Gaucho.Configuration
 		/// Gets or sets the interval for publishing the Hearbeat to the storage in milliseconds. Defaults to 2 minuts or 120000 milliseconds
 		/// </summary>
 		public int HeartbeatInterval { get; set; } = 120000;
-	}
+
+		/// <summary>
+		/// Gets or sets the maximum log size. The log will be shrinked to the size of <see cref="LogShrinkSize"/>
+		/// </summary>
+        public int MaxLogSize { get; set; } = 100;
+
+		/// <summary>
+		/// The size that the log gets shrinked to. This should be about half of <see cref="MaxLogSize"/>
+		/// </summary>
+        public int LogShrinkSize { get; set; } = 50;
+    }
 	
 	/// <summary>
 	/// Extensions and Logic for the options
@@ -49,6 +59,16 @@ namespace Gaucho.Configuration
 			{
 				defaultOptions.HeartbeatInterval = merge.HeartbeatInterval;
 			}
+
+            if (defaultOptions.MaxLogSize == 100)
+            {
+				defaultOptions.MaxLogSize = merge.MaxLogSize;
+            }
+
+            if (defaultOptions.LogShrinkSize == 50)
+            {
+                defaultOptions.LogShrinkSize = merge.LogShrinkSize;
+            }
 		}
 	}
 }

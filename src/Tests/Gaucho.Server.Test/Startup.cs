@@ -65,7 +65,7 @@ namespace Gaucho.Server.Test
 
             GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
 	            {
-		            var reader = new WickedFlame.Yaml.YamlReader();
+		            var reader = new YamlMap.YamlFileReader();
 		            var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
 		            p.BuildPipeline(config);
 
