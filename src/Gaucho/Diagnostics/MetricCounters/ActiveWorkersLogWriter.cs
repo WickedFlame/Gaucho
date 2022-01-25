@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Gaucho.BackgroundTasks;
 using Gaucho.Storage;
 
 namespace Gaucho.Diagnostics.MetricCounters
@@ -10,8 +13,10 @@ namespace Gaucho.Diagnostics.MetricCounters
 	{
 		private readonly string _pipelineId;
 		private readonly Lazy<IStorage> _storage;
+		private IBackgroundTaskDispatcher<StorageContext> _taskDispatcher;
+        private readonly DispatcherLock _dispatcherLock;
 
-		/// <summary>
+        /// <summary>
 		/// Creates a workers log metric counter
 		/// </summary>
 		/// <param name="pipelineId"></param>
@@ -20,6 +25,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 			_pipelineId = pipelineId;
 
 			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.Resolve<IStorage>());
+			_dispatcherLock = new DispatcherLock();
 		}
 
 		/// <summary>
@@ -60,7 +66,21 @@ namespace Gaucho.Diagnostics.MetricCounters
 				};
 
 				_storage.Value.AddToList(new StorageKey(_pipelineId, $"log:{@event.Metric}"), metric);
-			}
+
+                if (_dispatcherLock.IsLocked())
+                {
+                    return;
+                }
+
+				_dispatcherLock.Lock();
+
+                if (_taskDispatcher == null)
+                {
+                    _taskDispatcher = new BackgroundTaskDispatcher(new StorageContext(_storage.Value));
+                }
+
+                _taskDispatcher.StartNew(new ActiveWorkersLogCleanupTask(_dispatcherLock, new StorageKey(_pipelineId, $"log:{@event.Metric}")));
+            }
 		}
 	}
 }
