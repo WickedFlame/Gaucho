@@ -87,7 +87,7 @@ namespace Gaucho.Test.Diagnostics
 
             writer.Write(new LogEvent { Level = LogLevel.Info });
 
-            Assert.AreEqual(5 + 1, writer.Logs.Count());
+            Assert.AreEqual(5, writer.Logs.Count());
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace Gaucho.Test.Diagnostics
                 writer.Write(new LogEvent { Level = LogLevel.Info });
             }
 
-            storage.Verify(x => x.RemoveRangeFromList(It.Is<StorageKey>(k => k.ToString().EndsWith(":pipeline:logs")), 5), Times.Once);
+            storage.Verify(x => x.RemoveRangeFromList(It.Is<StorageKey>(k => k.ToString().EndsWith(":pipeline:logs")), 6), Times.Once);
         }
     }
 }

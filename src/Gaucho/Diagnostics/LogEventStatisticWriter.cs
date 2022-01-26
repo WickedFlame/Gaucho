@@ -107,9 +107,10 @@ namespace Gaucho.Diagnostics
 		}
 
 		private void ShrinkLog()
-		{
-			_logQueue.RemoveRange(0, _options.Value.LogShrinkSize);
-			_storage.Value.RemoveRangeFromList(new StorageKey(_pipelineId, "logs"), _options.Value.LogShrinkSize);
+        {
+            var size = _logQueue.Count - _options.Value.LogShrinkSize;
+			_logQueue.RemoveRange(0, size);
+			_storage.Value.RemoveRangeFromList(new StorageKey(_pipelineId, "logs"), size);
 		}
 	}
 }
