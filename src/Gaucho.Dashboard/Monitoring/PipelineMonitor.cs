@@ -84,7 +84,7 @@ namespace Gaucho.Dashboard.Monitoring
 						//LogEventStatisticWriter.cs
 						if (metric.Value is IEnumerable<LogEvent> logs)
 						{
-							foreach (var log in logs.OrderByDescending(l => l.Timestamp).Take(20).OrderBy(l => l.Timestamp))
+							foreach (var log in logs.OrderByDescending(l => l.Timestamp).Take(20))
 							{
 								metrics.AddElement(metric.Key.ToString(), metric.Title, new DashboardLog
 								{
