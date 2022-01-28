@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Gaucho.BackgroundTasks;
 using Gaucho.Diagnostics;
 using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
@@ -15,16 +16,16 @@ namespace Gaucho
 	/// </summary>
     public class EventBus : IAsyncEventBus, IEventBus
     {
-        private readonly object _syncRoot = new object();
-
         private readonly EventQueue _queue;
         private IPipelineFactory _pipelineFactory;
         private readonly ILogger _logger;
         private bool _isDisposed;
 
-        private readonly List<EventProcessor> _processors = new List<EventProcessor>();
+        private readonly EventProcessorList _processors = new EventProcessorList();
         private int _minThreads = 1;
         private readonly MetricService _metricService;
+        private readonly EventBusPorcessDispatcher _dispatcher;
+        private readonly DispatcherLock _cleanupLock;
 
         /// <summary>
 		/// Creates a new instance of the eventbus
@@ -64,11 +65,14 @@ namespace Gaucho
 		            s.AddWriter(new LogEventStatisticWriter(pipelineId));
 	            }
             );
-            SetupProcessors(_minThreads);
 
             _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
             _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
             _metricService.SetPipelineHeartbeat();
+
+            _cleanupLock = new DispatcherLock();
+            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger), _logger, _metricService, _minThreads);
+            Task.Factory.StartNew(() => _dispatcher.RunDispatcher(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
 		/// <summary>
@@ -86,14 +90,34 @@ namespace Gaucho
 		/// </summary>
 		public void WaitAll()
         {
-            var tasks = _processors.Select(t => t.Task)
-                .Where(t => t != null)
-                .ToArray();
-
-            if(tasks.Any())
+            while (_cleanupLock.IsLocked())
             {
-                Task.WaitAll(tasks, -1, CancellationToken.None);
+                System.Diagnostics.Trace.WriteLine("Wait for processors to cleanup");
+                WaitOne(50);
             }
+
+            var tasks = _processors.GetTasks();
+
+            var cnt = 0;
+            while (_queue.Count > 0)
+            {
+                System.Diagnostics.Trace.WriteLine("Wait for queue to be processed");
+                WaitOne(500);
+                if (cnt > 5)
+                {
+                    break;
+                }
+
+                cnt += 1;
+            }
+
+            while (tasks.Any())
+            {
+                Task.WaitAll(tasks, 1000, CancellationToken.None);
+                tasks = _processors.GetTasks();
+            }
+
+            CleanupProcessors();
         }
 
 		/// <summary>
@@ -122,86 +146,50 @@ namespace Gaucho
             _queue.Enqueue(@event);
             _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 
-			if (_queue.Count / _processors.Count > 10)
-            {
-	            _logger.Write($"Items in Queue count: {_queue.Count}", Category.Log, source: "EventBus");
-				SetupProcessors(_processors.Count + 1);
-            }
-
-            foreach (var process in _processors.ToList())
-            {
-                process.Start();
-            }
-        }
-		
-        private void SetupProcessors(int threadCount)
-        {
-            if (threadCount < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(threadCount), "The EventBus requires at least one worker thread.");
-            }
-
-            lock (_syncRoot)
-            {
-                for (var i = _processors.Count; i < threadCount; i++)
-                {
-                    var thread = new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger);
-
-					_processors.Add(thread);
-                    _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
-
-
-					_logger.Write($"Add Worker to EventBus. Active Workers: {i + 1}", Category.Log, source: "EventBus");
-                    _logger.WriteMetric(i + 1, StatisticType.WorkersLog);
-                }
-
-                var toRemove = _processors.Count - threadCount;
-
-                if (toRemove > 0)
-                {
-	                while (toRemove > 0)
-                    {
-                        var processor = _processors[_processors.Count - 1];
-
-                        _processors.Remove(processor);
-                        processor.Dispose();
-
-						toRemove--;
-
-						_logger.Write($"Removed Worker from EventBus. Active Workers: {toRemove}", Category.Log, source: "EventBus");
-						_logger.WriteMetric(toRemove, StatisticType.WorkersLog);
-                    }
-
-	                _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
-				}
-            }
+            _dispatcher.WaitHandle.Set();
         }
 
         private void CleanupProcessors()
         {
-            lock (_syncRoot)
+            if (_cleanupLock.IsLocked())
             {
-                foreach (var processor in _processors.ToList())
+                return;
+            }
+
+            _cleanupLock.Lock();
+
+            foreach (var processor in _processors.ToList())
+            {
+                if (processor.IsWorking)
                 {
-                    if (processor.IsWorking)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    if (_processors.Count == _minThreads)
-                    {
-                        return;
-                    }
+                if (_processors.Count == _minThreads)
+                {
+                    break;
+                }
 
-                    _processors.Remove(processor);
-                    processor.Dispose();
+                _processors.Remove(processor);
+                processor.Dispose();
 
-                    _logger.Write($"Remove Worker from EventBus. Workers: {_processors.Count}", Category.Log, source: "EventBus");
-                    _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
-				}
+                _logger.Write($"Remove Worker from EventBus. Workers: {_processors.Count}", Category.Log, source: "EventBus");
+                _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
+            }
 
-				_metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
-			}
+            _cleanupLock.Unlock();
+
+            _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
+        }
+
+        /// <summary>
+        /// Wait on the tread for the given amount of milliseconds
+        /// </summary>
+        /// <param name="delay"></param>
+        /// <returns></returns>
+        private void WaitOne(int delay)
+        {
+            Task.Delay(delay).Wait();
         }
 
         public void Dispose()
@@ -209,7 +197,7 @@ namespace Gaucho
             Dispose(true);
         }
 
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (_isDisposed)
             {
@@ -218,15 +206,13 @@ namespace Gaucho
 
             if (disposing)
             {
+                _dispatcher.Dispose();
                 foreach (var processor in _processors)
                 {
                     processor.Dispose();
                 }
 
-                lock (_syncRoot)
-                {
-	                _metricService.Dispose();
-                }
+                _metricService.Dispose();
             }
 
             _isDisposed = true;

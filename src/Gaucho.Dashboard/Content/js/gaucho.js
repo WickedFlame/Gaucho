@@ -60,7 +60,7 @@ export class Gaucho {
 					};
 					return new Promise(fn);
 				},
-				1000)
+			    config.pollInterval)
 			.then(function () {
 				// Polling done, now do something else!
 			}).catch(function () {
