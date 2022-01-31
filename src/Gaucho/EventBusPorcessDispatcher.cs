@@ -29,8 +29,15 @@ namespace Gaucho
 
         public ManualResetEvent WaitHandle { get; }
 
+        /// <summary>
+        /// Checks if the Dispatcher is running
+        /// </summary>
+        public bool IsRunning => _isRunning;
+
         public void RunDispatcher()
         {
+            _isRunning = true;
+
             while (_isRunning)
             {
                 WaitHandle.Reset();

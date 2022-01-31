@@ -24,7 +24,7 @@ namespace Gaucho
         private readonly EventProcessorList _processors = new EventProcessorList();
         private int _minThreads = 1;
         private readonly MetricService _metricService;
-        private readonly EventBusPorcessDispatcher _dispatcher;
+        private EventBusPorcessDispatcher _dispatcher;
         private readonly DispatcherLock _cleanupLock;
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Gaucho
 
             _cleanupLock = new DispatcherLock();
             _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger), _logger, _metricService, _minThreads);
-            Task.Factory.StartNew(() => _dispatcher.RunDispatcher(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            RunDispatcher();
         }
 
 		/// <summary>
@@ -146,7 +146,17 @@ namespace Gaucho
             _queue.Enqueue(@event);
             _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 
+            if (!_dispatcher.IsRunning)
+            {
+                RunDispatcher();
+            }
+
             _dispatcher.WaitHandle.Set();
+        }
+
+        private void RunDispatcher()
+        {
+            Task.Factory.StartNew(() => _dispatcher.RunDispatcher(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
         private void CleanupProcessors()
