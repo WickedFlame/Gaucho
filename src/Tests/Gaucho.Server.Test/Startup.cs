@@ -57,6 +57,11 @@ namespace Gaucho.Server.Test
 
             app.UseAuthorization();
 
+            app.UseGauchoDashboard(pathMatch: "/gaucho", options: new DashboardOptions
+            {
+                //Title = "Gaucho Testapp" 
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -80,10 +85,7 @@ namespace Gaucho.Server.Test
 					ServerName = "Testserver"
 				}));
 
-            app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions
-            {
-				//Title = "Gaucho Testapp" 
-            });
+            
 
 
 
