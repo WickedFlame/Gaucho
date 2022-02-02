@@ -42,7 +42,7 @@ namespace Gaucho.Integration.Tests
 			//server.EventBusFactory.GetEventBus("2").Publish(new Event("2", new EventData()));
 
 			var runner = new BenchmarkRunner();
-			runner.SetIterations(100);
+			runner.SetIterations(10);
 
 			runner.AddSession("Simple resolver",
 				ProfilerSession.StartSession()

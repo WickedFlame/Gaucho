@@ -31,6 +31,16 @@ namespace Gaucho.Configuration
 		/// The size that the log gets shrinked to. This should be about half of <see cref="MaxLogSize"/>
 		/// </summary>
         public int LogShrinkSize { get; set; } = 50;
+
+        /// <summary>
+        /// Gets the maximum items that are allowed per thread in the queue
+        /// </summary>
+        public int MaxItemsInQueue { get; set; } = 20;
+
+        /// <summary>
+        /// Gets the maximum amount of <see cref="EventProcessor"/> that are created to work on the queue
+        /// </summary>
+        public int MaxProcessors { get; set; } = 20;
     }
 	
 	/// <summary>
@@ -68,6 +78,16 @@ namespace Gaucho.Configuration
             if (defaultOptions.LogShrinkSize == 50)
             {
                 defaultOptions.LogShrinkSize = merge.LogShrinkSize;
+            }
+
+            if (defaultOptions.MaxItemsInQueue == 20)
+            {
+				defaultOptions.MaxItemsInQueue = merge.MaxItemsInQueue;
+            }
+
+            if (defaultOptions.MaxProcessors == 10)
+            {
+				defaultOptions.MaxProcessors = merge.MaxProcessors;
             }
 		}
 	}

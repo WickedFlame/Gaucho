@@ -17,9 +17,21 @@ namespace Gaucho.Test.LoadTests
 	[Category("Loadtesting")]
 	public class EventBusLoadTests
     {
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            GlobalConfiguration.Setup(s => s.UseOptions(new Options()));
+        }
+
         [Test]
         public void LoadTesting()
         {
+            //GlobalConfiguration.Setup(s => s.UseOptions(new Options
+            //{
+            //    MaxItemsInQueue = 10,
+            //    MaxProcessors = 50
+            //}));
+
             var pipelineId = Guid.NewGuid().ToString();
             var config = new PipelineConfiguration
             {
@@ -68,7 +80,7 @@ namespace Gaucho.Test.LoadTests
         {
 	        public void Handle(Event @event)
 	        {
-		        Thread.Sleep(5000);
+		        Thread.Sleep(500);
 	        }
         }
 	}

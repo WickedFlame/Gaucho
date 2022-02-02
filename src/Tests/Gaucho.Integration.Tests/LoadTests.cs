@@ -34,13 +34,14 @@ namespace Gaucho.Integration.Tests
 				pipeline.AddHandler(new LoadTestOuptuHandler(e =>
 				{
 					proc += 1;
-					// to some heavy work
-					Thread.Sleep(500);
+					// do some heavy work
+					Thread.Sleep(100);
 				}));
 
 				return pipeline;
 			});
 			server.Register(pipelineId, new InputHandler<InputItem>());
+			
 
 
 			var client = new EventDispatcher(server);
@@ -93,7 +94,7 @@ namespace Gaucho.Integration.Tests
 					}
 
 					// to some heavy work
-					Thread.Sleep(500);
+					Thread.Sleep(100);
 				}));
 
 				return pipeline;
