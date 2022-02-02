@@ -26,11 +26,11 @@ namespace Gaucho.Test.LoadTests
         [Test]
         public void LoadTesting()
         {
-            //GlobalConfiguration.Setup(s => s.UseOptions(new Options
-            //{
-            //    MaxItemsInQueue = 10,
-            //    MaxProcessors = 50
-            //}));
+            GlobalConfiguration.Setup(s => s.UseOptions(new Options
+            {
+                MaxItemsInQueue = 10,
+                MaxProcessors = 50
+            }));
 
             var pipelineId = Guid.NewGuid().ToString();
             var config = new PipelineConfiguration

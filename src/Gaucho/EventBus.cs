@@ -24,7 +24,7 @@ namespace Gaucho
         private readonly EventProcessorList _processors = new EventProcessorList();
         private int _minThreads = 1;
         private readonly MetricService _metricService;
-        private EventBusPorcessDispatcher _dispatcher;
+        private readonly EventBusPorcessDispatcher _dispatcher;
         private readonly DispatcherLock _cleanupLock;
 
         /// <summary>
@@ -101,18 +101,22 @@ namespace Gaucho
             var cnt = 0;
             while (_queue.Count > 0)
             {
-                System.Diagnostics.Trace.WriteLine("Wait for queue to be processed");
+                var queueSize = _queue.Count;
+                System.Diagnostics.Trace.WriteLine($"Wait for {queueSize} Events in the queue to be processed");
                 WaitOne(500);
                 if (cnt > 5)
                 {
                     break;
                 }
 
-                cnt += 1;
+                // we only wait for max 5 turns if the queue size does not change
+                // that could mean that there are no porcessors that are working on the queue
+                cnt = _queue.Count == queueSize ? cnt + 1 : 0;
             }
 
             while (tasks.Any())
             {
+                System.Diagnostics.Trace.WriteLine($"Wait for {_queue.Count} Events to be processed");
                 Task.WaitAll(tasks, 1000, CancellationToken.None);
                 tasks = _processors.GetTasks();
             }
@@ -205,6 +209,7 @@ namespace Gaucho
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
