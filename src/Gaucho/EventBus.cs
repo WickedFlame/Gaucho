@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gaucho.BackgroundTasks;
+using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Server.Monitoring;
@@ -26,6 +27,7 @@ namespace Gaucho
         private readonly MetricService _metricService;
         private readonly EventBusPorcessDispatcher _dispatcher;
         private readonly DispatcherLock _cleanupLock;
+        private readonly Options _options;
 
         /// <summary>
 		/// Creates a new instance of the eventbus
@@ -55,6 +57,9 @@ namespace Gaucho
             var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
             _metricService = new MetricService(storage, pipelineId);
 
+            _options = GlobalConfiguration.Configuration.GetOptions();
+            _minThreads = _options.MinProcessors;
+
 			_queue = new EventQueue();
             _logger = LoggerConfiguration.Setup
             (
@@ -71,7 +76,7 @@ namespace Gaucho
             _metricService.SetPipelineHeartbeat();
 
             _cleanupLock = new DispatcherLock();
-            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger), _logger, _metricService, _minThreads);
+            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger), _logger, _metricService, _options);
             RunDispatcher();
         }
 

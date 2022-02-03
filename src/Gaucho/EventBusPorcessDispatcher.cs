@@ -29,7 +29,7 @@ namespace Gaucho
         /// <param name="logger"></param>
         /// <param name="metricService"></param>
         /// <param name="initialThreads"></param>
-        public EventBusPorcessDispatcher(EventProcessorList processors, EventQueue queue, Func<EventProcessor> threadFactory, ILogger logger, MetricService metricService, int initialThreads)
+        public EventBusPorcessDispatcher(EventProcessorList processors, EventQueue queue, Func<EventProcessor> threadFactory, ILogger logger, MetricService metricService, Options options)
         {
             WaitHandle = new ManualResetEvent(false);
             _processors = processors;
@@ -38,9 +38,9 @@ namespace Gaucho
             _logger = logger;
             _metricService = metricService;
 
-            _options = GlobalConfiguration.Configuration.GetOptions();
+            _options = options;
 
-            SetupProcessors(initialThreads);
+            SetupProcessors(options.MinProcessors);
         }
 
         /// <summary>

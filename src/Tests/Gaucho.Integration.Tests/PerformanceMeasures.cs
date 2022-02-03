@@ -69,10 +69,11 @@ namespace Gaucho.Integration.Tests
             Assert.Less(time2, TimeSpan.FromMilliseconds(600));
         }
 
-        [TestCase("default", 20, 20, 540)]
-        [TestCase("faster", 10, 30, 560)]
-        [TestCase("slow", 30, 1, 530)]
-        public void PerformanceMeasures_WorkersCount(string id, int maxitems, int maxprocessors, int ticks)
+        [TestCase("default", 20, 20, 1, 540)]
+        [TestCase("faster", 10, 30, 1, 560)]
+        [TestCase("slow", 30, 1, 1, 530)]
+        [TestCase("tmp", 30, 20, 10, 520)]
+        public void PerformanceMeasures_WorkersCount(string id, int maxitems, int maxprocessors, int workers, int ticks)
         {
             var server = new ProcessingServer();
             server.Register(id, () =>
@@ -87,6 +88,7 @@ namespace Gaucho.Integration.Tests
             var client = new EventDispatcher(server);
             GlobalConfiguration.Setup(s => s.UseOptions(new Options
             {
+                MinProcessors = workers,
                 MaxItemsInQueue = maxitems,
                 MaxProcessors = maxprocessors
             }));

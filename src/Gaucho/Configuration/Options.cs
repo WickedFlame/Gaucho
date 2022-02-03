@@ -41,6 +41,17 @@ namespace Gaucho.Configuration
         /// Gets the maximum amount of <see cref="EventProcessor"/> that are created to work on the queue
         /// </summary>
         public int MaxProcessors { get; set; } = 20;
+
+        private int _minProcessors = 1;
+
+        /// <summary>
+        /// Gets the minimal amount of default workers. Workers are added as the queue size gets bigger.
+        /// </summary>
+        public int MinProcessors
+        {
+            get => _minProcessors;
+            set => _minProcessors = value < 1 ? 1 : value;
+        }
     }
 	
 	/// <summary>
@@ -88,6 +99,11 @@ namespace Gaucho.Configuration
             if (defaultOptions.MaxProcessors == 10)
             {
 				defaultOptions.MaxProcessors = merge.MaxProcessors;
+            }
+
+            if (defaultOptions.MinProcessors == 1)
+            {
+                defaultOptions.MinProcessors = merge.MinProcessors;
             }
 		}
 	}
