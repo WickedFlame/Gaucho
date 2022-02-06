@@ -68,6 +68,8 @@ namespace Gaucho.Test.LoadTests
 
             ProcessingServer.Server.WaitAll(pipelineId);
 
+            System.Threading.Tasks.Task.Delay(1000);
+
 			var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
 			Assert.GreaterOrEqual(100 * 10, storage.Get<long>(new StorageKey(pipelineId, "ProcessedEventsMetric")));
 
@@ -121,6 +123,9 @@ namespace Gaucho.Test.LoadTests
                 .RunSession();
 
             ProcessingServer.Server.WaitAll(pipelineId);
+
+            // delay to ensure all threads are ended
+            System.Threading.Tasks.Task.Delay(3000);
 
             var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
             Assert.GreaterOrEqual(100 * 10, storage.Get<long>(new StorageKey(pipelineId, "ProcessedEventsMetric")));

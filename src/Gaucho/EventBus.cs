@@ -23,11 +23,10 @@ namespace Gaucho
         private bool _isDisposed;
 
         private readonly EventProcessorList _processors = new EventProcessorList();
-        private int _minThreads = 1;
         private readonly MetricService _metricService;
         private readonly EventBusPorcessDispatcher _dispatcher;
         private readonly DispatcherLock _cleanupLock;
-        private readonly Options _options;
+        private int _minProcessors;
 
         /// <summary>
 		/// Creates a new instance of the eventbus
@@ -35,7 +34,7 @@ namespace Gaucho
 		/// <param name="factory"></param>
 		/// <param name="pipelineId"></param>
 		public EventBus(Func<IEventPipeline> factory, string pipelineId)
-            : this(new PipelineFactory(factory), pipelineId)
+            : this(new PipelineFactory(factory, new PipelineOptions()), pipelineId)
         {
         }
 
@@ -45,20 +44,12 @@ namespace Gaucho
 		/// <param name="pipelineFactory"></param>
 		/// <param name="pipelineId"></param>
         public EventBus(IPipelineFactory pipelineFactory, string pipelineId)
-            : this(pipelineId)
         {
             _pipelineFactory = pipelineFactory;
-        }
-
-        private EventBus(string pipelineId)
-        {
             PipelineId = pipelineId;
 
             var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
             _metricService = new MetricService(storage, pipelineId);
-
-            _options = GlobalConfiguration.Configuration.GetOptions();
-            _minThreads = _options.MinProcessors;
 
 			_queue = new EventQueue();
             _logger = LoggerConfiguration.Setup
@@ -75,8 +66,11 @@ namespace Gaucho
             _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
             _metricService.SetPipelineHeartbeat();
 
+            var options = _pipelineFactory.Options.Merge(GlobalConfiguration.Configuration.GetOptions());
+            _minProcessors = options.MinProcessors;
+
             _cleanupLock = new DispatcherLock();
-            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger), _logger, _metricService, _options);
+            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger), _logger, _metricService, options);
             RunDispatcher();
         }
 
@@ -101,8 +95,6 @@ namespace Gaucho
                 WaitOne(50);
             }
 
-            var tasks = _processors.GetTasks();
-
             var cnt = 0;
             while (_queue.Count > 0)
             {
@@ -119,6 +111,7 @@ namespace Gaucho
                 cnt = _queue.Count == queueSize ? cnt + 1 : 0;
             }
 
+            var tasks = _processors.GetTasks();
             while (tasks.Any())
             {
                 System.Diagnostics.Trace.WriteLine($"Wait for {_queue.Count} Events to be processed");
@@ -134,7 +127,7 @@ namespace Gaucho
 		/// </summary>
         public void Close()
         {
-	        _minThreads = 0;
+            _minProcessors = 0;
         }
 
 		/// <summary>
@@ -184,7 +177,7 @@ namespace Gaucho
                     continue;
                 }
 
-                if (_processors.Count == _minThreads)
+                if (_processors.Count == _minProcessors)
                 {
                     break;
                 }

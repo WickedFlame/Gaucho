@@ -82,7 +82,8 @@ namespace Gaucho.Server.Test
 	            .UseOptions(new Options
 	            {
 		            LogLevel = Diagnostics.LogLevel.Debug,
-					ServerName = "Testserver"
+					ServerName = "Testserver",
+                    MinProcessors = 10
 				}));
 
             

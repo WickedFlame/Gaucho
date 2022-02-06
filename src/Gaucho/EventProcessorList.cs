@@ -59,8 +59,11 @@ namespace Gaucho
         {
             lock (_lock)
             {
-                return _eventProcessors.Select(t => t.Task)
-                    .Where(t => t != null && t.Status == TaskStatus.Running)
+                //return _eventProcessors.Select(t => t.Task)
+                //    .Where(t => t != null && t.Status == TaskStatus.Running)
+                //    .ToArray();
+                return _eventProcessors.Where(p => p.IsWorking).Select(t => t.Task)
+                    .Where(t => t != null)
                     .ToArray();
             }
         }

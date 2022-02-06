@@ -11,5 +11,10 @@ namespace Gaucho
 		/// </summary>
 		/// <returns></returns>
 		IEventPipeline Setup();
+
+        /// <summary>
+        /// Gets or sets the <see cref="PipelineOptions"/> that contain configurations for each pipeline
+        /// </summary>
+		PipelineOptions Options { get; }
 	}
 }

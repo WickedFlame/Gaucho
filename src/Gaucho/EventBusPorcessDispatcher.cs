@@ -18,7 +18,7 @@ namespace Gaucho
         private readonly Func<EventProcessor> _threadFactory;
         private readonly ILogger _logger;
         private readonly MetricService _metricService;
-        private readonly Options _options;
+        private readonly PipelineOptions _options;
 
         /// <summary>
         /// 
@@ -28,8 +28,8 @@ namespace Gaucho
         /// <param name="threadFactory"></param>
         /// <param name="logger"></param>
         /// <param name="metricService"></param>
-        /// <param name="initialThreads"></param>
-        public EventBusPorcessDispatcher(EventProcessorList processors, EventQueue queue, Func<EventProcessor> threadFactory, ILogger logger, MetricService metricService, Options options)
+        /// <param name="options"></param>
+        public EventBusPorcessDispatcher(EventProcessorList processors, EventQueue queue, Func<EventProcessor> threadFactory, ILogger logger, MetricService metricService, PipelineOptions options)
         {
             WaitHandle = new ManualResetEvent(false);
             _processors = processors;

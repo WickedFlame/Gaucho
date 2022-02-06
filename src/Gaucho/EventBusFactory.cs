@@ -33,11 +33,12 @@ namespace Gaucho
 		/// </summary>
 		/// <param name="pipelineId"></param>
 		/// <param name="factory"></param>
-        public void Register(string pipelineId, Func<IEventPipeline> factory)
+		/// <param name="options"></param>
+        public void Register(string pipelineId, Func<IEventPipeline> factory, PipelineOptions options)
         {
 			lock(_lock)
 			{
-				_pipelineRegistrations[pipelineId] = new PipelineFactory(factory);
+				_pipelineRegistrations[pipelineId] = new PipelineFactory(factory, options);
 
 				if (_activeEventBus.ContainsKey(pipelineId))
 				{

@@ -24,7 +24,12 @@ namespace Gaucho.Configuration
 		/// </summary>
 		public List<HandlerNode> OutputHandlers { get; set; }
 
-		/// <inheritdoc/>
+		/// <summary>
+		/// Gets or sets the <see cref="PipelineOptions"/> that contain configurations for each pipeline
+		/// </summary>
+        public PipelineOptions Options { get; set; } = new PipelineOptions();
+
+        /// <inheritdoc/>
 		public override string ToString()
 		{
 			var sb = new StringBuilder();

@@ -1,0 +1,4 @@
+---data
+MaxItemsInQueue: 10
+MaxProcessors: 10
+MinProcessors: 10
