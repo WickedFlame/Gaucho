@@ -78,7 +78,7 @@ namespace Gaucho
 						
                         _worker.Execute();
 
-                        _waitHandle.WaitOne(100);
+                        _waitHandle.WaitOne(10000);
                     }
 				}
 				catch (Exception e)
