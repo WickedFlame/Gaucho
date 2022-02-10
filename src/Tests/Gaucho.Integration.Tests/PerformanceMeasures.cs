@@ -72,7 +72,7 @@ namespace Gaucho.Integration.Tests
         [TestCase("default", 20, 20, 1, 550)]
         [TestCase("faster", 10, 30, 1, 560)]
         [TestCase("slow", 30, 1, 1, 530)]
-        [TestCase("tmp", 30, 20, 10, 520)]
+        [TestCase("tmp", 30, 20, 10, 530)]
         public void PerformanceMeasures_WorkersCount(string id, int maxitems, int maxprocessors, int workers, int ticks)
         {
             var server = new ProcessingServer();
