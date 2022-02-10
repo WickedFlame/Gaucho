@@ -10,17 +10,14 @@ namespace Gaucho.Diagnostics.MetricCounters
     /// </summary>
     public class ActiveWorkersLogCleanupTask : IBackgroundTask<StorageContext>
     {
-        private readonly DispatcherLock _dispatcherLock;
         private readonly StorageKey _key;
 
         /// <summary>
         /// Creates a new instance of a BackgroundTaskDispatcher
         /// </summary>
-        /// <param name="dispatcherLock"></param>
         /// <param name="key"></param>
-        public ActiveWorkersLogCleanupTask(DispatcherLock dispatcherLock, StorageKey key)
+        public ActiveWorkersLogCleanupTask(StorageKey key)
         {
-            _dispatcherLock = dispatcherLock ?? throw new ArgumentNullException(nameof(dispatcherLock));
             _key = key;
         }
 
@@ -36,7 +33,7 @@ namespace Gaucho.Diagnostics.MetricCounters
                 context.Storage.RemoveRangeFromList(_key, items.Count() - 10);
             }
 
-            _dispatcherLock.Unlock();
+            context.DispatcherLock.Unlock();
         }
     }
 }

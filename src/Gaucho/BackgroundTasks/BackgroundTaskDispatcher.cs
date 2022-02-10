@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace Gaucho.BackgroundTasks
     public class BackgroundTaskDispatcher : IBackgroundTaskDispatcher<StorageContext>
     {
         private readonly StorageContext _context;
+        private readonly List<Task> _threads;
 
         /// <summary>
         /// Creates a new instance of a BackgroundTaskDispatcher
@@ -18,6 +20,7 @@ namespace Gaucho.BackgroundTasks
         public BackgroundTaskDispatcher(StorageContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _threads = new List<Task>();
         }
 
         /// <summary>
@@ -26,10 +29,27 @@ namespace Gaucho.BackgroundTasks
         /// <param name="dispatcher"></param>
         public void StartNew(IBackgroundTask<StorageContext> dispatcher)
         {
-            Task.Factory.StartNew(() => dispatcher.Execute(_context),
+            var thread = Task.Factory.StartNew(() => dispatcher.Execute(_context),
                 CancellationToken.None,
                 TaskCreationOptions.None,
                 TaskScheduler.Default);
+
+            _threads.Add(thread);
+            thread.ContinueWith(t =>
+            {
+                if (_threads.Contains(t))
+                {
+                    _threads.Remove(t);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Wait for all the tasks to complete
+        /// </summary>
+        public void WaitAll()
+        {
+            Task.WaitAll(_threads.ToArray(), -1, CancellationToken.None);
         }
     }
 }

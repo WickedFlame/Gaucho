@@ -1,5 +1,4 @@
 ﻿using Gaucho.Server.Monitoring;
-using Gaucho.Storage;
 
 namespace Gaucho.Diagnostics.MetricCounters
 {
@@ -56,6 +55,8 @@ namespace Gaucho.Diagnostics.MetricCounters
 	        {
 		        return;
 	        }
+
+			// count the amount of events that have been processed
 
 	        lock (_pipelineId)
 	        {

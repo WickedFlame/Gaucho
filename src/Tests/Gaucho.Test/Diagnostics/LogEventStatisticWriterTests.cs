@@ -87,6 +87,9 @@ namespace Gaucho.Test.Diagnostics
 
             writer.Write(new LogEvent { Level = LogLevel.Info });
 
+            // wait for the async task to complete
+            writer.WaitAll();
+
             Assert.AreEqual(5, writer.Logs.Count());
         }
 

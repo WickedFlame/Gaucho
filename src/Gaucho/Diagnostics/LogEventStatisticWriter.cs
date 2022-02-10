@@ -2,6 +2,7 @@
 using Gaucho.Configuration;
 using Gaucho.Server.Monitoring;
 using System.Collections.Generic;
+using Gaucho.BackgroundTasks;
 using Gaucho.Storage;
 
 namespace Gaucho.Diagnostics
@@ -16,6 +17,8 @@ namespace Gaucho.Diagnostics
 		private readonly Lazy<IStorage> _storage;
 		private readonly string _pipelineId;
         private readonly Lazy<Options> _options;
+        private readonly DispatcherLock _dispatcherLock;
+        private BackgroundTaskDispatcher _taskDispatcher;
 
         /// <summary>
 		/// Creates a new instance of LogEventStatisticWriter
@@ -24,6 +27,7 @@ namespace Gaucho.Diagnostics
 		public LogEventStatisticWriter(string pipelineId)
 		{
 			_pipelineId = pipelineId;
+            _dispatcherLock = new DispatcherLock();
 
 			_minLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel;
 			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.GetStorage());
@@ -39,8 +43,9 @@ namespace Gaucho.Diagnostics
         public LogEventStatisticWriter(string pipelineId, IGlobalConfiguration configuration)
         {
             _pipelineId = pipelineId;
+            _dispatcherLock = new DispatcherLock();
 
-            _minLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel;
+			_minLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel;
             _storage = new Lazy<IStorage>(() => configuration.GetStorage());
 
             _options = new Lazy<Options>(() => configuration.GetOptions());
@@ -84,12 +89,36 @@ namespace Gaucho.Diagnostics
 				_logQueue.Add(@event);
 				_storage.Value.AddToList(new StorageKey(_pipelineId, "logs"), @event);
 
-				if (_logQueue.Count > _options.Value.MaxLogSize)
-				{
-					ShrinkLog();
-				}
+                if (_dispatcherLock.IsLocked())
+                {
+                    // only start the cleanup-thread when it is not already running
+                    return;
+                }
+
+                if (_logQueue.Count <= _options.Value.MaxLogSize)
+                {
+					// only cleanup if size is larger
+                    return;
+                }
+
+				_dispatcherLock.Lock();
+
+				if (_taskDispatcher == null)
+                {
+                    _taskDispatcher = new BackgroundTaskDispatcher(new StorageContext(_storage.Value, _dispatcherLock));
+                }
+
+                _taskDispatcher.StartNew(new LogEventLogCleanupTask(_logQueue, new StorageKey(_pipelineId, "logs"), _logQueue.Count - _options.Value.LogShrinkSize));
 			}
 		}
+
+		/// <summary>
+		/// Wait for all cleanup tasks to complete
+		/// </summary>
+        public void WaitAll()
+        {
+            _taskDispatcher.WaitAll();
+        }
 
 		private void InitLogQueue()
 		{
@@ -104,13 +133,6 @@ namespace Gaucho.Diagnostics
 			{
 				_logQueue.AddRange(logs);
 			}
-		}
-
-		private void ShrinkLog()
-        {
-            var size = _logQueue.Count - _options.Value.LogShrinkSize;
-			_logQueue.RemoveRange(0, size);
-			_storage.Value.RemoveRangeFromList(new StorageKey(_pipelineId, "logs"), size);
 		}
 	}
 }

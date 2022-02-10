@@ -11,14 +11,20 @@ namespace Gaucho.BackgroundTasks
         /// Create a new StorageContext
         /// </summary>
         /// <param name="storage"></param>
-        public StorageContext(IStorage storage)
+        public StorageContext(IStorage storage, DispatcherLock dispatcherLock)
         {
             Storage = storage;
+            DispatcherLock = dispatcherLock;
         }
 
         /// <summary>
         /// Gets the <see cref="IStorage"/>
         /// </summary>
         public IStorage Storage { get; }
+
+        /// <summary>
+        /// Gets the <see cref="DispatcherLock"/> associated with the Processor
+        /// </summary>
+        public DispatcherLock DispatcherLock { get; }
     }
 }
