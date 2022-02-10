@@ -37,7 +37,8 @@ namespace Gaucho
         public void Register(string pipelineId, Func<IEventPipeline> factory, PipelineOptions options)
         {
 			lock(_lock)
-			{
+            {
+                options.PipelineId = pipelineId;
 				_pipelineRegistrations[pipelineId] = new PipelineFactory(factory, options);
 
 				if (_activeEventBus.ContainsKey(pipelineId))

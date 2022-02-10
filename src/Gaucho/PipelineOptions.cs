@@ -22,6 +22,16 @@ namespace Gaucho
         /// Gets the maximum amount of <see cref="EventProcessor"/> that are created to work on the queue
         /// </summary>
         public int MaxProcessors { get; set; } = -1;
+
+        /// <summary>
+        /// Gets the Servername that the pipeline is running in
+        /// </summary>
+        public string ServerName { get; set; }
+
+        /// <summary>
+        /// Gets the PipelineId
+        /// </summary>
+        public string PipelineId { get; set; }
     }
 
     public static class PipelineOptionsExtensions
@@ -42,6 +52,8 @@ namespace Gaucho
             {
                 po.MaxItemsInQueue = opt.MaxItemsInQueue;
             }
+
+            po.ServerName = opt.ServerName;
 
             return po;
         }

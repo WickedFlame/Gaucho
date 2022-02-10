@@ -29,16 +29,16 @@ namespace Gaucho
         private int _minProcessors;
 
         /// <summary>
-		/// Creates a new instance of the eventbus
-		/// </summary>
-		/// <param name="factory"></param>
-		/// <param name="pipelineId"></param>
-		public EventBus(Func<IEventPipeline> factory, string pipelineId)
-            : this(new PipelineFactory(factory, new PipelineOptions()), pipelineId)
+        /// Creates a new instance of the eventbus
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="pipelineId"></param>
+        public EventBus(Func<IEventPipeline> factory, string pipelineId)
+            : this(new PipelineFactory(factory, new PipelineOptions { PipelineId = pipelineId }), pipelineId)
         {
         }
 
-		/// <summary>
+        /// <summary>
 		/// Creates a new instance of the eventbus
 		/// </summary>
 		/// <param name="pipelineFactory"></param>

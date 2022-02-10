@@ -68,7 +68,7 @@ namespace Gaucho
                 {
                     if (_processors.Count == 0 || (_queue.Count / _processors.Count > _options.MaxItemsInQueue && _processors.Count < _options.MaxProcessors))
                     {
-                        _logger.Write($"Items in Queue count: {_queue.Count}", Category.Log, source: "EventBus");
+                        _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Items in Queue count: {_queue.Count}", Category.Log, source: "EventBus");
                         SetupProcessors(_processors.Count + 1);
                     }
 
@@ -97,7 +97,7 @@ namespace Gaucho
                 _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
 
 
-                _logger.Write($"Add Worker to EventBus. Active Workers: {i + 1}", Category.Log, source: "EventBus");
+                _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Add Worker to EventBus. Active Workers: {i + 1}", Category.Log, source: "EventBus");
                 _logger.WriteMetric(i + 1, StatisticType.WorkersLog);
             }
 
