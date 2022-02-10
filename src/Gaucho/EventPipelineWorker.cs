@@ -10,7 +10,6 @@ namespace Gaucho
 	public class EventPipelineWorker : IWorker
 	{
 		private readonly ILogger _logger;
-		private readonly IMetricService _metrics;
 		private readonly EventQueue _queue;
 		private readonly Lazy<IEventPipeline> _pipeline;
 
@@ -20,12 +19,10 @@ namespace Gaucho
 		/// <param name="queue"></param>
 		///<param name="factory"></param>
 		/// <param name="logger"></param>
-		/// <param name="metrics"></param>
-		public EventPipelineWorker(EventQueue queue, Func<IEventPipeline> factory,  ILogger logger,  IMetricService metrics)
+		public EventPipelineWorker(EventQueue queue, Func<IEventPipeline> factory,  ILogger logger)
 		{
 			_logger = logger ?? throw new ArgumentException(nameof(logger));
 			_queue = queue ?? throw new ArgumentException(nameof(queue));
-			_metrics = metrics ?? throw new ArgumentException(nameof(metrics));
 
 			_pipeline = new Lazy<IEventPipeline>(factory);
 		}
@@ -47,7 +44,6 @@ namespace Gaucho
 				try
 				{
 					_logger.WriteMetric(@event.Id, StatisticType.ProcessedEvent);
-					_metrics.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 
 					_pipeline.Value.Run(@event);
 				}

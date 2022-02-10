@@ -23,6 +23,7 @@ namespace Gaucho
         private bool _isDisposed;
 
         private readonly EventProcessorList _processors = new EventProcessorList();
+        private readonly EventQueueContext _eventQueueContext;
         private readonly MetricService _metricService;
         private readonly EventBusPorcessDispatcher _dispatcher;
         private readonly DispatcherLock _cleanupLock;
@@ -70,8 +71,12 @@ namespace Gaucho
             _minProcessors = options.MinProcessors;
 
             _cleanupLock = new DispatcherLock();
-            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger), _logger, _metricService, options);
+            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger), CleanupProcessors, _logger), _logger, _metricService, options);
             RunDispatcher();
+
+            _eventQueueContext = new EventQueueContext(_queue, _metricService, _logger);
+            var taskDispatcher = new BackgroundTaskDispatcher<EventQueueContext>(_eventQueueContext);
+            taskDispatcher.StartNew(new EventQueueMetricCounterTask(options.ServerName, options.PipelineId));
         }
 
 		/// <summary>
@@ -146,7 +151,6 @@ namespace Gaucho
         public void Publish(Event @event)
         {
             _queue.Enqueue(@event);
-            _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 
             if (!_dispatcher.IsRunning)
             {
@@ -226,6 +230,10 @@ namespace Gaucho
                 }
 
                 _metricService.Dispose();
+
+                // signal the EventQueueMetricCounter to end
+                _eventQueueContext.IsRunning = false;
+                _eventQueueContext.WaitHandle.Set();
             }
 
             _isDisposed = true;

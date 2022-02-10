@@ -8,16 +8,16 @@ namespace Gaucho.BackgroundTasks
     /// <summary>
     /// Dispatch tasks to background threads
     /// </summary>
-    public class BackgroundTaskDispatcher : IBackgroundTaskDispatcher<StorageContext>
+    public class BackgroundTaskDispatcher<T> : IBackgroundTaskDispatcher<T> where T : class, ITaskContext
     {
-        private readonly StorageContext _context;
+        private readonly T _context;
         private readonly List<Task> _threads;
 
         /// <summary>
         /// Creates a new instance of a BackgroundTaskDispatcher
         /// </summary>
         /// <param name="context"></param>
-        public BackgroundTaskDispatcher(StorageContext context)
+        public BackgroundTaskDispatcher(T context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _threads = new List<Task>();
@@ -27,7 +27,7 @@ namespace Gaucho.BackgroundTasks
         /// Start the task in a new thread
         /// </summary>
         /// <param name="dispatcher"></param>
-        public void StartNew(IBackgroundTask<StorageContext> dispatcher)
+        public void StartNew(IBackgroundTask<T> dispatcher)
         {
             var thread = Task.Factory.StartNew(() => dispatcher.Execute(_context),
                 CancellationToken.None,

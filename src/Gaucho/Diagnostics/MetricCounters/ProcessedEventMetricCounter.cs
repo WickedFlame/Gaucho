@@ -12,7 +12,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 		private readonly IMetricService _metrics;
 
 		/// <summary>
-		/// Creates a new instance of ProcessedEventMetricCounter
+		/// Creates a new instance of ProcessedEventMetricCounter. This counts the total amount of events that have been processed
 		/// </summary>
 		/// <param name="metrics"></param>
 		/// <param name="pipelineId"></param>

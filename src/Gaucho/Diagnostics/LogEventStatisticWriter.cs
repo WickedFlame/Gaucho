@@ -18,7 +18,7 @@ namespace Gaucho.Diagnostics
 		private readonly string _pipelineId;
         private readonly Lazy<Options> _options;
         private readonly DispatcherLock _dispatcherLock;
-        private BackgroundTaskDispatcher _taskDispatcher;
+        private BackgroundTaskDispatcher<StorageContext> _taskDispatcher;
 
         /// <summary>
 		/// Creates a new instance of LogEventStatisticWriter
@@ -105,7 +105,7 @@ namespace Gaucho.Diagnostics
 
 				if (_taskDispatcher == null)
                 {
-                    _taskDispatcher = new BackgroundTaskDispatcher(new StorageContext(_storage.Value, _dispatcherLock));
+                    _taskDispatcher = new BackgroundTaskDispatcher<StorageContext>(new StorageContext(_storage.Value, _dispatcherLock));
                 }
 
                 _taskDispatcher.StartNew(new LogEventLogCleanupTask(_logQueue, new StorageKey(_pipelineId, "logs"), _logQueue.Count - _options.Value.LogShrinkSize));

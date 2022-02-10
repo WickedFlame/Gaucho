@@ -77,7 +77,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 
                 if (_taskDispatcher == null)
                 {
-                    _taskDispatcher = new BackgroundTaskDispatcher(new StorageContext(_storage.Value, _dispatcherLock));
+                    _taskDispatcher = new BackgroundTaskDispatcher<StorageContext>(new StorageContext(_storage.Value, _dispatcherLock));
                 }
 
                 _taskDispatcher.StartNew(new ActiveWorkersLogCleanupTask(new StorageKey(_pipelineId, $"log:{@event.Metric}")));
