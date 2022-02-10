@@ -12,10 +12,11 @@ namespace Gaucho
 	public class EventProcessor : IDisposable
 	{
 		private readonly string _id = Guid.NewGuid().ToString();
-		private readonly object _syncRoot = new object();
 		private readonly Action _continuation;
 		private readonly ILogger _logger;
 		private readonly IWorker _worker;
+        private readonly ManualResetEvent _waitHandle;
+		private bool _isRunning;
 
 		private DispatcherLock _lock;
 		
@@ -29,7 +30,8 @@ namespace Gaucho
 		public EventProcessor(IWorker worker, Action continuation, ILogger logger)
 		{
 			logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
-            
+
+            _waitHandle = new ManualResetEvent(false);
             _lock = new DispatcherLock();
 			_worker = worker ?? throw new ArgumentNullException(nameof(worker));
 			_continuation = continuation ?? throw new ArgumentNullException(nameof(continuation));
@@ -44,17 +46,8 @@ namespace Gaucho
 		/// <summary>
 		/// Gets if the processor is working
 		/// </summary>
-		public bool IsWorking => _lock.IsLocked();
-
-        /// <summary>
-		/// Dispose the processor
-		/// </summary>
-		public void Dispose()
-		{
-			_lock.Unlock();
-            _logger.Write($"Disposed WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
-		}
-
+		public bool IsWorking => _lock.IsLocked() && _isRunning;
+		
 		/// <summary>
 		/// Start processing events
 		/// </summary>
@@ -62,10 +55,16 @@ namespace Gaucho
 		{
             if (_lock.IsLocked())
             {
+				//
+				// worker is still running
+				// to be sure it starts processing we signal the worker that it has some work to do
+                _waitHandle.Set();
+
                 return;
             }
 
 			_lock.Lock();
+            _isRunning = true;
 
 			_logger.Write($"Start working on Thread {_id}", Category.Log, LogLevel.Debug, "EventBus");
 
@@ -73,7 +72,14 @@ namespace Gaucho
 			{
 				try
 				{
-					_worker.Execute();
+                    while (_isRunning)
+                    {
+                        _waitHandle.Reset();
+						
+                        _worker.Execute();
+
+                        _waitHandle.WaitOne(100);
+                    }
 				}
 				catch (Exception e)
 				{
@@ -86,5 +92,32 @@ namespace Gaucho
                 }
 			}, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
-	}
+
+		/// <summary>
+		/// Stop the Executionloop when all events are processed
+		/// </summary>
+        public void Stop()
+        {
+			_isRunning = false;
+            _waitHandle.Set();
+        }
+
+        /// <summary>
+        /// Dispose the processor
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+			GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+			_lock.Unlock();
+            _logger.Write($"Disposed WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
+
+            _isRunning = false;
+            _waitHandle.Set();
+		}
+    }
 }

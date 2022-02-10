@@ -116,12 +116,22 @@ namespace Gaucho
                 cnt = _queue.Count == queueSize ? cnt + 1 : 0;
             }
 
+            foreach (var processor in _processors)
+            {
+                processor.Stop();
+            }
+
             var tasks = _processors.GetTasks();
             while (tasks.Any())
             {
                 System.Diagnostics.Trace.WriteLine($"Wait for {_queue.Count} Events to be processed");
                 Task.WaitAll(tasks, 1000, CancellationToken.None);
                 tasks = _processors.GetTasks();
+
+                if (_queue.Count == 0)
+                {
+                    break;
+                }
             }
 
             CleanupProcessors();
@@ -162,6 +172,7 @@ namespace Gaucho
 
         private void RunDispatcher()
         {
+            _logger.Write($"Starting event dispatcher for {PipelineId}", Category.Log, LogLevel.Info, "EventBus");
             Task.Factory.StartNew(() => _dispatcher.RunDispatcher(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
@@ -181,7 +192,7 @@ namespace Gaucho
                     continue;
                 }
 
-                if (_processors.Count == _minProcessors)
+                if (_processors.Count <= _minProcessors)
                 {
                     break;
                 }
@@ -193,9 +204,9 @@ namespace Gaucho
                 _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
             }
 
-            _cleanupLock.Unlock();
-
             _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
+
+            _cleanupLock.Unlock();
         }
 
         /// <summary>

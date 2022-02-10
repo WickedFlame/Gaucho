@@ -1,4 +1,6 @@
-﻿
+﻿using System;
+using System.Threading;
+
 namespace Gaucho
 {
 	/// <summary>
@@ -6,7 +8,7 @@ namespace Gaucho
 	/// </summary>
 	public interface IWorker
 	{
-		/// <summary>
+        /// <summary>
 		/// Execute the worker
 		/// </summary>
 		void Execute();

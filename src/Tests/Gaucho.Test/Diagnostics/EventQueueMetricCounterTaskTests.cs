@@ -35,7 +35,7 @@ namespace Gaucho.Test.Diagnostics
             var task = new EventQueueMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
-            Task.Delay(100).Wait();
+            Task.Delay(1000).Wait();
 
             queue.Enqueue(new Event("1", SimpleData.From("1")));
 

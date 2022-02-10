@@ -109,7 +109,7 @@ namespace Gaucho.Test
 	        var factory = new EventBusFactory();
 	        factory.Register("pipeline", () => new EventPipeline());
 	        var server = new ProcessingServer(factory);
-	        server.Register("pipeline", new EventBus(() => null, "pipeline"));
+	        server.Register("pipeline", new EventBus(() => new Mock<IEventPipeline>().Object, "pipeline"));
 
 			// give the hearbeat some time to execute
 	        Task.Delay(500).Wait();
