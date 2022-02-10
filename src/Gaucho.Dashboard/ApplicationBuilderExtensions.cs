@@ -24,6 +24,7 @@ namespace Gaucho.Dashboard
             var routes = app.ApplicationServices.GetRequiredService<RouteCollection>();
             options = options ?? app.ApplicationServices.GetService<DashboardOptions>() ?? new DashboardOptions();
             monitor = monitor ?? app.ApplicationServices.GetRequiredService<IPipelineMonitor>();
+            monitor.Options = options;
             if (monitor == null)
             {
                 throw new InvalidOperationException("Unable to find the required services. Please add all the required services by calling 'IServiceCollection.AddGaucho' inside the call to 'ConfigureServices(...)' in the application startup code.");

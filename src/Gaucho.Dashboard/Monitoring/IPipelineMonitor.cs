@@ -12,5 +12,10 @@ namespace Gaucho.Dashboard.Monitoring
 		/// </summary>
 		/// <returns></returns>
 		IEnumerable<PipelineMetric> GetMetrics();
+
+		/// <summary>
+		/// Get or set the PipelineOptions
+		/// </summary>
+		DashboardOptions Options { get; set; }
 	}
 }

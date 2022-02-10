@@ -69,7 +69,7 @@ namespace Gaucho.Integration.Tests
             Assert.Less(time2, TimeSpan.FromMilliseconds(600));
         }
 
-        [TestCase("default", 20, 20, 1, 540)]
+        [TestCase("default", 20, 20, 1, 550)]
         [TestCase("faster", 10, 30, 1, 560)]
         [TestCase("slow", 30, 1, 1, 530)]
         [TestCase("tmp", 30, 20, 10, 520)]
