@@ -16,7 +16,8 @@ namespace Gaucho.Test
             {
                 MaxProcessors = 10,
                 MinProcessors = 10,
-                MaxItemsInQueue = 10
+                MaxItemsInQueue = 10,
+                ServerName = "localhost"
             };
 
             var po = new PipelineOptions();
@@ -30,14 +31,16 @@ namespace Gaucho.Test
             {
                 MaxProcessors = 10,
                 MinProcessors = 10,
-                MaxItemsInQueue = 10
+                MaxItemsInQueue = 10,
+                ServerName = "localhost"
             };
 
             var po = new PipelineOptions
             {
                 MaxProcessors = 1,
                 MinProcessors = 1,
-                MaxItemsInQueue = 1
+                MaxItemsInQueue = 1,
+                ServerName = "tmp"
             };
 
             po.Merge(opt).MatchSnapshot();
