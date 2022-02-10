@@ -15,8 +15,9 @@ namespace Gaucho.Diagnostics
 		private readonly LogLevel _minLogLevel;
 		private readonly Lazy<IStorage> _storage;
 		private readonly string _pipelineId;
+        private readonly Lazy<Options> _options;
 
-		/// <summary>
+        /// <summary>
 		/// Creates a new instance of LogEventStatisticWriter
 		/// </summary>
 		/// <param name="pipelineId"></param>
@@ -26,12 +27,34 @@ namespace Gaucho.Diagnostics
 
 			_minLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel;
 			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.GetStorage());
-		}
+
+            _options = new Lazy<Options>(() => GlobalConfiguration.Configuration.GetOptions());
+        }
+
+        /// <summary>
+        /// Creates a new instance of LogEventStatisticWriter
+        /// </summary>
+        /// <param name="pipelineId"></param>
+        /// <param name="configuration"></param>
+        public LogEventStatisticWriter(string pipelineId, IGlobalConfiguration configuration)
+        {
+            _pipelineId = pipelineId;
+
+            _minLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel;
+            _storage = new Lazy<IStorage>(() => configuration.GetStorage());
+
+            _options = new Lazy<Options>(() => configuration.GetOptions());
+        }
 
 		/// <summary>
 		/// The loggercategory
 		/// </summary>
 		public Category Category => Category.Log;
+
+		/// <summary>
+		/// Gets the list of logs
+		/// </summary>
+        public IEnumerable<ILogMessage> Logs => _logQueue;
 
 		/// <summary>
 		/// Write the ILogEvent to the Logs
@@ -61,7 +84,7 @@ namespace Gaucho.Diagnostics
 				_logQueue.Add(@event);
 				_storage.Value.AddToList(new StorageKey(_pipelineId, "logs"), @event);
 
-				if (_logQueue.Count > 500)
+				if (_logQueue.Count > _options.Value.MaxLogSize)
 				{
 					ShrinkLog();
 				}
@@ -84,9 +107,10 @@ namespace Gaucho.Diagnostics
 		}
 
 		private void ShrinkLog()
-		{
-			_logQueue.RemoveRange(0, 500);
-			_storage.Value.RemoveRangeFromList(new StorageKey(_pipelineId, "logs"), 250);
+        {
+            var size = _logQueue.Count - _options.Value.LogShrinkSize;
+			_logQueue.RemoveRange(0, size);
+			_storage.Value.RemoveRangeFromList(new StorageKey(_pipelineId, "logs"), size);
 		}
 	}
 }

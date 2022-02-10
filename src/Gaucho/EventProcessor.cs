@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Gaucho.BackgroundTasks;
 
 namespace Gaucho
 {
@@ -16,7 +17,7 @@ namespace Gaucho
 		private readonly ILogger _logger;
 		private readonly IWorker _worker;
 
-		private bool _isWorking;
+		private DispatcherLock _lock;
 		
 
 		/// <summary>
@@ -28,7 +29,8 @@ namespace Gaucho
 		public EventProcessor(IWorker worker, Action continuation, ILogger logger)
 		{
 			logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
-
+            
+            _lock = new DispatcherLock();
 			_worker = worker ?? throw new ArgumentNullException(nameof(worker));
 			_continuation = continuation ?? throw new ArgumentNullException(nameof(continuation));
 			_logger = logger;
@@ -42,27 +44,15 @@ namespace Gaucho
 		/// <summary>
 		/// Gets if the processor is working
 		/// </summary>
-		public bool IsWorking
-		{
-			get
-			{
-				lock (_syncRoot)
-				{
-					return _isWorking;
-				}
-			}
-		}
+		public bool IsWorking => _lock.IsLocked();
 
-		/// <summary>
+        /// <summary>
 		/// Dispose the processor
 		/// </summary>
 		public void Dispose()
 		{
-			lock (_syncRoot)
-			{
-				_isWorking = false;
-				_logger.Write($"Disposed WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
-			}
+			_lock.Unlock();
+            _logger.Write($"Disposed WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
 		}
 
 		/// <summary>
@@ -70,15 +60,12 @@ namespace Gaucho
 		/// </summary>
 		public void Start()
 		{
-			lock (_syncRoot)
-			{
-				if (_isWorking)
-				{
-					return;
-				}
+            if (_lock.IsLocked())
+            {
+                return;
+            }
 
-				_isWorking = true;
-			}
+			_lock.Lock();
 
 			_logger.Write($"Start working on Thread {_id}", Category.Log, LogLevel.Debug, "EventBus");
 
@@ -93,14 +80,10 @@ namespace Gaucho
 					_logger.Write(e.Message, Category.Log, LogLevel.Error, "EventProcessor");
 				}
 				finally
-				{
-					lock (_syncRoot)
-					{
-						_isWorking = false;
-					}
-
-					_continuation();
-				}
+                {
+                    _continuation();
+					_lock.Unlock();
+                }
 			}, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
 	}

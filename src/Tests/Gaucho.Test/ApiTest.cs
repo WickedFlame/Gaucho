@@ -230,7 +230,6 @@ namespace Gaucho.Test
                     var pipeline = new EventPipeline();
                     pipeline.AddHandler(new ConsoleOutputHandler());
                     pipeline.AddHandler(logHandler);
-                    //pipeline.AddHandler(new ThreadWaitHandler());
 
                     return pipeline;
                 });
@@ -245,14 +244,14 @@ namespace Gaucho.Test
 
             ProcessingServer.Server.WaitAll(pipelineId);
 
-            Assert.That(logHandler.Log.Count() == 2);
+            Assert.AreEqual(2, logHandler.Log.Count());
 
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent3" });
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent4" });
 
             ProcessingServer.Server.WaitAll(pipelineId);
 
-            Assert.That(logHandler.Log.Count() == 4);
+            Assert.AreEqual(4, logHandler.Log.Count());
         }
 
         public class ThreadWaitHandler : IOutputHandler

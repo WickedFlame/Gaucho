@@ -21,13 +21,21 @@ namespace Gaucho.Server
             _server = server;
         }
 
+        /// <summary>
+        /// Register a <see cref="EventPipeline"/> Factory to the Server
+        /// </summary>
+        /// <param name="factory"></param>
+        public void Register(Func<EventPipeline> factory) 
+            => Register(factory, new PipelineOptions());
+
 		/// <summary>
 		/// Register a <see cref="EventPipeline"/> Factory to the Server
 		/// </summary>
 		/// <param name="factory"></param>
-		public void Register(Func<EventPipeline> factory)
+		/// <param name="options"></param>
+		public void Register(Func<EventPipeline> factory, PipelineOptions options)
         {
-            _server.Register(_pipelineId, factory);
+            _server.Register(_pipelineId, factory, options);
         }
 
 		/// <summary>

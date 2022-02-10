@@ -15,7 +15,7 @@ namespace Gaucho.Dashboard.Monitoring
     {
         private readonly IProcessingServer _server;
 
-		/// <summary>
+        /// <summary>
 		/// Creates a new instance of the PipelineMonitor
 		/// </summary>
 		/// <param name="server"></param>
@@ -23,6 +23,11 @@ namespace Gaucho.Dashboard.Monitoring
         {
             _server = server;
         }
+
+		/// <summary>
+		/// Get or set the <see cref="DashboardOptions"/>
+		/// </summary>
+		public DashboardOptions Options { get; set; } = new DashboardOptions();
 
 		/// <summary>
 		/// Gets all Metrics
@@ -84,7 +89,7 @@ namespace Gaucho.Dashboard.Monitoring
 						//LogEventStatisticWriter.cs
 						if (metric.Value is IEnumerable<LogEvent> logs)
 						{
-							foreach (var log in logs.OrderByDescending(l => l.Timestamp).Take(20).OrderBy(l => l.Timestamp))
+							foreach (var log in logs.OrderByDescending(l => l.Timestamp).Take(Options.LogCount))
 							{
 								metrics.AddElement(metric.Key.ToString(), metric.Title, new DashboardLog
 								{
@@ -101,7 +106,7 @@ namespace Gaucho.Dashboard.Monitoring
 						//WorkersLogMetricCounter.cs
 						if (metric.Value is IEnumerable<ActiveWorkersLogMessage> workers)
 						{
-							foreach (var worker in workers.OrderByDescending(w => w.Timestamp).Take(50))
+							foreach (var worker in workers.OrderByDescending(w => w.Timestamp).Take(Options.WorkersLogCount))
 							{
 								metrics.AddElement(metric.Key.ToString(), metric.Title, new TimelineLog<int>
 								{

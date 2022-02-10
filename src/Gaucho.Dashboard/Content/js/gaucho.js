@@ -60,7 +60,7 @@ export class Gaucho {
 					};
 					return new Promise(fn);
 				},
-				1000)
+			    config.pollInterval)
 			.then(function () {
 				// Polling done, now do something else!
 			}).catch(function () {
@@ -96,34 +96,19 @@ export class Gaucho {
 	updateElements(serverName, pipelineId, elements) {
 		for (var prop in elements) {
 			if (prop.toLowerCase() === "eventlog") {
-				var element = elements[prop];
-				var pipelineLog = `${serverName}-${pipelineId}-${element.key.toLowerCase()}`;
-				let elem = document.getElementById(pipelineLog);
-
-
+                let element = elements[prop];
+                let id = `${serverName}-${pipelineId}-${element.key.toLowerCase()}`;
+				let elem = document.getElementById(id);
+				
 				if (elem === undefined || elem === null) {
-					var div = document.createElement('div');
-					div.innerHTML = `<div><div class="toggler-section">
-					    <span class="toggler-button"></span>
-					    <div class="label" id="logs-label">Logs</div>
-				    </div>
-
-				    <div id="${pipelineLog}" class="pipeline-item-log-list toggle-wrapper">
-				    </div></div>`;
-					var section = document.querySelector(`#${serverName}-${pipelineId}`).querySelector('.pipeline-item-log-container')
-						.appendChild(div.firstChild);
-
-					this.bindTogglers(section);
-
-					elem = document.querySelector(`#${pipelineLog}`);
-				}
-
-
+                    elem = this.createLogSection(id, pipelineId, serverName);
+                }
+				
 				elem.innerHTML = '';
 
 				element.elements.forEach(e => {
-					var cls = `pipeline-log-${e.level.toLowerCase()}`;
-					var div = document.createElement('div');
+                    let cls = `pipeline-log-${e.level.toLowerCase()}`;
+                    let div = document.createElement('div');
 					div.innerHTML = `<div class="pipeline-item-log-item">
                                 <span class="pipeline-item-log-element ${cls}">${e.timestamp
 						}</span><span class="pipeline-item-log-element">[${e.source
@@ -135,9 +120,46 @@ export class Gaucho {
 					elem.appendChild(div.firstChild);
 				});
 
-			}
+			} else if (prop.toLowerCase() === "workerslog") {
+                let element = elements[prop];
+                let id = `${serverName}-${pipelineId}-${element.key.toLowerCase()}`;
+				let elem = document.getElementById(id);
+
+                if (elem === undefined || elem === null) {
+                    elem = this.createLogSection(id, pipelineId, serverName);
+				}
+
+                elem.innerHTML = '';
+
+                element.elements.forEach(e => {
+                    let div = document.createElement('div');
+					div.innerHTML = `<div class="pipeline-item-log-item">
+								<span class="pipeline-item-log-element pipeline-log-debug">${e.timestamp}</span><span class="pipeline-item-log-element">${e.value}</span>
+							</div>`.trim();
+
+                    // Change this to div.childNodes to support multiple top-level nodes
+                    elem.appendChild(div.firstChild);
+                });
+            }
 		}
 	}
+
+	createLogSection(id, pipelineId, serverName) {
+        var div = document.createElement('div');
+        div.innerHTML = `<div><div class="toggler-section">
+					    <span class="toggler-button"></span>
+					    <div class="label" id="logs-label">Logs</div>
+				    </div>
+
+				    <div id="${id}" class="pipeline-item-log-list toggle-wrapper">
+				    </div></div>`;
+        var section = document.querySelector(`#${serverName}-${pipelineId}`).querySelector('.pipeline-item-log-container')
+            .appendChild(div.firstChild);
+
+        this.bindTogglers(section);
+
+		return document.querySelector(`#${id}`);
+    }
 }
 
 if (gauchoConfig === undefined) {

@@ -66,9 +66,10 @@ namespace Gaucho
 		/// </summary>
 		/// <param name="pipelineId"></param>
 		/// <param name="factory"></param>
-		public void Register(string pipelineId, Func<EventPipeline> factory)
+		/// <param name="options"></param>
+		public void Register(string pipelineId, Func<EventPipeline> factory, PipelineOptions options)
         {
-	        _eventBusFactory.Register(pipelineId, factory);
+	        _eventBusFactory.Register(pipelineId, factory, options);
 
 	        InitializeServer();
         }

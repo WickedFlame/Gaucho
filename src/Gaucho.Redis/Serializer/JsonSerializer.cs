@@ -24,7 +24,7 @@ namespace Gaucho.Redis.Serializer
 			var nodes = item.GetType().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance).Select(propInfo => new JsonNode
 			{
 				Name = propInfo.Name,
-				Value = propInfo.GetValue(item, null)?.ToString()
+				Value = ConvertToString(propInfo, item)
 			});
 
 			var value = $"{{{string.Join(", ", nodes.Where(n => !string.IsNullOrEmpty(n.Value)).Select(n => $"{n.Name}: '{n.Value}'"))}}}";
@@ -59,6 +59,22 @@ namespace Gaucho.Redis.Serializer
 
 			return item;
 		}
+
+        private string ConvertToString(PropertyInfo propInfo, object item)
+        {
+            var value = propInfo.GetValue(item, null);
+            if (value == null)
+            {
+				return null;
+            }
+
+            if (propInfo.PropertyType == typeof(DateTime))
+            {
+                return ((DateTime)value).ToString("o");
+            }
+
+            return value.ToString();
+        }
 
         private JsonNode StringToJsonNode(string v)
         {

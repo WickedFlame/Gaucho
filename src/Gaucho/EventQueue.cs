@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Gaucho
 {
@@ -8,15 +9,14 @@ namespace Gaucho
 	/// </summary>
     public class EventQueue
     {
-        private readonly object _syncRoot = new object();
-        private readonly Queue<Event> _queue;
+        private readonly ConcurrentQueue<Event> _queue;
 
 		/// <summary>
 		/// creates a new queue
 		/// </summary>
         public EventQueue()
         {
-            _queue = new Queue<Event>();
+            _queue = new ConcurrentQueue<Event>();
         }
 
 		/// <summary>
@@ -26,11 +26,8 @@ namespace Gaucho
         {
 	        get
 	        {
-				lock(_syncRoot)
-				{
-					return _queue.Count;
-				}
-	        }
+                return _queue.Count;
+            }
         }
 
 		/// <summary>
@@ -39,10 +36,7 @@ namespace Gaucho
 		/// <param name="event"></param>
         public void Enqueue(Event @event)
         {
-            lock (_syncRoot)
-            {
-                _queue.Enqueue(@event);
-            }
+            _queue.Enqueue(@event);
         }
 
 		/// <summary>
@@ -52,19 +46,14 @@ namespace Gaucho
 		/// <returns></returns>
         public bool TryDequeue(out Event value)
         {
-            lock (_syncRoot)
+            if (_queue.TryDequeue(out value))
             {
-                if (_queue.Count > 0)
-                {
-                    value = _queue.Dequeue();
-
-                    return true;
-                }
-
-                value = default(Event);
-
-                return false;
+                return true;
             }
+
+            value = default(Event);
+
+            return false;
         }
     }
 }

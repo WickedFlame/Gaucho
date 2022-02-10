@@ -23,7 +23,8 @@ namespace Gaucho
 		/// </summary>
 		/// <param name="pipelineId"></param>
 		/// <param name="factory"></param>
-		void Register(string pipelineId, Func<EventPipeline> factory);
+		/// <param name="options"></param>
+		void Register(string pipelineId, Func<EventPipeline> factory, PipelineOptions options);
 
 		/// <summary>
 		/// Register an EventBus to the pipeline

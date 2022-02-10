@@ -78,9 +78,16 @@ namespace Gaucho.Redis
 		/// <inheritdoc/>
 		public IEnumerable<string> GetKeys(StorageKey key)
 		{
-			var keys = _server.Keys(_options.Db, $"*{CreateKey(key)}*").ToList();
-			return keys.Select(k => k.ToString());
-		}
+            try
+            {
+                var keys = _server.Keys(_options.Db, $"*{CreateKey(key)}*").ToList();
+                return keys.Select(k => k.ToString());
+            }
+            catch (Exception)
+            {
+				return Enumerable.Empty<string>();
+            }
+        }
 
 
 		private string CreateKey(StorageKey key) => key.Key.StartsWith(_options.Prefix) ? key.ToString() : $"{_options.Prefix}:{key}".ToLower();

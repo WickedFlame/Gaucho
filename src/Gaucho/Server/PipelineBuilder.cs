@@ -53,7 +53,7 @@ namespace Gaucho.Server
                     }
 
                     return pipeline;
-                });
+                }, config.Options);
 
                 var inputHandler = BuildHandler<IInputHandler>(rootCtx.ChildContext(), config.InputHandler);
                 s.Register(inputHandler);
