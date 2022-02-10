@@ -2,3 +2,5 @@
 MaxItemsInQueue: 10
 MaxProcessors: 10
 MinProcessors: 10
+PipelineId: null
+ServerName: localhost
