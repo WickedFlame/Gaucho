@@ -7,17 +7,19 @@ namespace Gaucho.Diagnostics.MetricCounters
     /// <summary>
     /// Context for <see cref="IBackgroundTask{T}"/> that use the <see cref="EventQueue"/>
     /// </summary>
-    public class EventQueueContext : ITaskContext
+    public class EventBusContext : ITaskContext
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="queue"></param>
+        /// <param name="processors"></param>
         /// <param name="metricService"></param>
         /// <param name="logger"></param>
-        public EventQueueContext(EventQueue queue, MetricService metricService, ILogger logger)
+        public EventBusContext(EventQueue queue, EventProcessorList processors, MetricService metricService, ILogger logger)
         {
             Queue = queue;
+            Processors = processors;
             MetricService = metricService;
             Logger = logger;
 
@@ -39,6 +41,11 @@ namespace Gaucho.Diagnostics.MetricCounters
         /// Gets the EventQueue
         /// </summary>
         public EventQueue Queue { get; }
+
+        /// <summary>
+        /// Gets the EventProcessorList
+        /// </summary>
+        public EventProcessorList Processors { get; }
 
         /// <summary>
         /// Gets the <see cref="MetricService"/>

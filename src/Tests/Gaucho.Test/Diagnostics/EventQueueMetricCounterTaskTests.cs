@@ -14,25 +14,25 @@ namespace Gaucho.Test.Diagnostics
     public class EventQueueMetricCounterTaskTests
     {
         [Test]
-        public void EventQueueMetricCounterTask_Execute_Log()
+        public void EventBusMetricCounterTask_Execute_EventQueue_Log()
         {
             var logger = new Mock<ILogger>();
-            var context = new EventQueueContext(new EventQueue(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
-            var task = new EventQueueMetricCounterTask("server", "1");
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
+            var task = new EventBusMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
             Task.Delay(100).Wait();
 
-            logger.Verify(x => x.Write<LogEvent>(It.IsAny<LogEvent>(), It.IsAny<Category>()), Times.Once);
+            logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventQueue"), It.IsAny<Category>()), Times.Once);
         }
 
         [Test]
-        public void EventQueueMetricCounterTask_Execute_Log_MultipleTimes()
+        public void EventBusMetricCounterTask_Execute_EventQueue_Log_MultipleTimes()
         {
             var logger = new Mock<ILogger>();
             var queue = new EventQueue();
-            var context = new EventQueueContext(queue, new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
-            var task = new EventQueueMetricCounterTask("server", "1");
+            var context = new EventBusContext(queue, new EventProcessorList(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
+            var task = new EventBusMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
             Task.Delay(1000).Wait();
@@ -41,62 +41,62 @@ namespace Gaucho.Test.Diagnostics
 
             context.WaitHandle.Set();
 
-            logger.Verify(x => x.Write<LogEvent>(It.IsAny<LogEvent>(), It.IsAny<Category>()), Times.Exactly(2));
+            logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventQueue"), It.IsAny<Category>()), Times.Exactly(2));
         }
 
         [Test]
-        public void EventQueueMetricCounterTask_Execute_Log_MultipleTimes_QueNotChanged()
+        public void EventBusMetricCounterTask_Execute_Log_MultipleTimes_NotChanged()
         {
             var logger = new Mock<ILogger>();
-            var context = new EventQueueContext(new EventQueue(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
-            var task = new EventQueueMetricCounterTask("server", "1");
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
+            var task = new EventBusMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
             Task.Delay(100).Wait();
 
             context.WaitHandle.Set();
 
-            logger.Verify(x => x.Write<LogEvent>(It.IsAny<LogEvent>(), It.IsAny<Category>()), Times.Once);
+            logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventQueue"), It.IsAny<Category>()), Times.Once);
         }
 
         [Test]
-        public void EventQueueMetricCounterTask_Execute_StopThread()
+        public void EventBusMetricCounterTask_Execute_EventQueue_StopThread()
         {
             var logger = new Mock<ILogger>();
-            var context = new EventQueueContext(new EventQueue(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object)
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object)
             {
                 IsRunning = false
             };
-            var task = new EventQueueMetricCounterTask("server", "1");
+            var task = new EventBusMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
             Task.Delay(100).Wait();
 
             context.WaitHandle.Set();
 
-            logger.Verify(x => x.Write<LogEvent>(It.IsAny<LogEvent>(), It.IsAny<Category>()), Times.Never);
+            logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventQueue"), It.IsAny<Category>()), Times.Never);
         }
 
         [Test]
-        public void EventQueueMetricCounterTask_Execute_SetMetric()
+        public void EventBusMetricCounterTask_Execute_EventQueue_SetMetric()
         {
             var storage = new Mock<IStorage>();
-            var context = new EventQueueContext(new EventQueue(), new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
-            var task = new EventQueueMetricCounterTask("server", "1");
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
+            var task = new EventBusMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
             Task.Delay(100).Wait();
 
-            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.IsAny<IMetric>()), Times.Once);
+            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.Is<IMetric>(m => m.Key == MetricType.QueueSize)), Times.Once);
         }
 
         [Test]
-        public void EventQueueMetricCounterTask_Execute_SetMetric_MultipleTimes()
+        public void EventBusMetricCounterTask_Execute_EventQueue_SetMetric_MultipleTimes()
         {
             var storage = new Mock<IStorage>();
             var queue = new EventQueue();
-            var context = new EventQueueContext(queue, new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
-            var task = new EventQueueMetricCounterTask("server", "1");
+            var context = new EventBusContext(queue, new EventProcessorList(), new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
+            var task = new EventBusMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
             Task.Delay(100).Wait();
@@ -105,22 +105,155 @@ namespace Gaucho.Test.Diagnostics
 
             context.WaitHandle.Set();
 
-            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.IsAny<IMetric>()), Times.Exactly(2));
+            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.Is<IMetric>(m => m.Key == MetricType.QueueSize)), Times.Exactly(2));
         }
 
         [Test]
-        public void EventQueueMetricCounterTask_Execute_SetMetric_MultipleTimes_QueNotChanged()
+        public void EventBusMetricCounterTask_Execute_EventQueue_SetMetric_MultipleTimes_QueueNotChanged()
         {
             var storage = new Mock<IStorage>();
-            var context = new EventQueueContext(new EventQueue(), new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
-            var task = new EventQueueMetricCounterTask("server", "1");
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
+            var task = new EventBusMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
             Task.Delay(100).Wait();
 
             context.WaitHandle.Set();
 
-            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.IsAny<IMetric>()), Times.Once);
+            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.Is<IMetric>(m => m.Key == MetricType.QueueSize)), Times.Once);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [Test]
+        public void EventBusMetricCounterTask_Execute_Processors_Log()
+        {
+            var logger = new Mock<ILogger>();
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
+            var task = new EventBusMetricCounterTask("server", "1");
+            Task.Factory.StartNew(() => task.Execute(context));
+
+            Task.Delay(100).Wait();
+
+            logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventProcessor"), It.IsAny<Category>()), Times.Once);
+        }
+
+        [Test]
+        public void EventBusMetricCounterTask_Execute_Processors_Log_MultipleTimes()
+        {
+            var logger = new Mock<ILogger>();
+            var processors = new EventProcessorList();
+            var context = new EventBusContext(new EventQueue(), processors, new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
+            var task = new EventBusMetricCounterTask("server", "1");
+            Task.Factory.StartNew(() => task.Execute(context));
+
+            Task.Delay(1000).Wait();
+
+            processors.Add(new EventProcessor(new Mock<IWorker>().Object, () => { }, new Mock<ILogger>().Object));
+
+            context.WaitHandle.Set();
+
+            logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventProcessor"), It.IsAny<Category>()), Times.Exactly(2));
+        }
+
+        [Test]
+        public void EventBusMetricCounterTask_Processors_Log_MultipleTimes_NotChanged()
+        {
+            var logger = new Mock<ILogger>();
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object);
+            var task = new EventBusMetricCounterTask("server", "1");
+            Task.Factory.StartNew(() => task.Execute(context));
+
+            Task.Delay(100).Wait();
+
+            context.WaitHandle.Set();
+
+            logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventProcessor"), It.IsAny<Category>()), Times.Once);
+        }
+
+        [Test]
+        public void EventBusMetricCounterTask_Execute_Processors_StopThread()
+        {
+            var logger = new Mock<ILogger>();
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(new Mock<IStorage>().Object, "1"), logger.Object)
+            {
+                IsRunning = false
+            };
+            var task = new EventBusMetricCounterTask("server", "1");
+            Task.Factory.StartNew(() => task.Execute(context));
+
+            Task.Delay(100).Wait();
+
+            context.WaitHandle.Set();
+
+            logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventProcessor"), It.IsAny<Category>()), Times.Never);
+        }
+
+        [Test]
+        public void EventBusMetricCounterTask_Execute_Processors_SetMetric()
+        {
+            var storage = new Mock<IStorage>();
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
+            var task = new EventBusMetricCounterTask("server", "1");
+            Task.Factory.StartNew(() => task.Execute(context));
+
+            Task.Delay(100).Wait();
+
+            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.Is<IMetric>(m => m.Key == MetricType.ThreadCount)), Times.Once);
+        }
+
+        [Test]
+        public void EventBusMetricCounterTask_Execute_Processors_SetMetric_MultipleTimes()
+        {
+            var storage = new Mock<IStorage>();
+            var processors = new EventProcessorList();
+            var context = new EventBusContext(new EventQueue(), processors, new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
+            var task = new EventBusMetricCounterTask("server", "1");
+            Task.Factory.StartNew(() => task.Execute(context));
+
+            Task.Delay(100).Wait();
+
+            processors.Add(new EventProcessor(new Mock<IWorker>().Object, () => { }, new Mock<ILogger>().Object));
+
+            context.WaitHandle.Set();
+
+            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.Is<IMetric>(m => m.Key == MetricType.ThreadCount)), Times.Exactly(2));
+        }
+
+        [Test]
+        public void EventBusMetricCounterTask_Execute_Processors_SetMetric_MultipleTimes_QueueNotChanged()
+        {
+            var storage = new Mock<IStorage>();
+            var context = new EventBusContext(new EventQueue(), new EventProcessorList(), new MetricService(storage.Object, "1"), new Mock<ILogger>().Object);
+            var task = new EventBusMetricCounterTask("server", "1");
+            Task.Factory.StartNew(() => task.Execute(context));
+
+            Task.Delay(100).Wait();
+
+            context.WaitHandle.Set();
+
+            storage.Verify(x => x.Set(It.IsAny<StorageKey>(), It.Is<IMetric>(m => m.Key == MetricType.ThreadCount)), Times.Once);
         }
     }
 }

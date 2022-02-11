@@ -23,7 +23,7 @@ namespace Gaucho
         private bool _isDisposed;
 
         private readonly EventProcessorList _processors = new EventProcessorList();
-        private readonly EventQueueContext _eventQueueContext;
+        private readonly EventBusContext _eventQueueContext;
         private readonly MetricService _metricService;
         private readonly EventBusPorcessDispatcher _dispatcher;
         private readonly DispatcherLock _cleanupLock;
@@ -74,9 +74,9 @@ namespace Gaucho
             _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger), CleanupProcessors, _logger), _logger, _metricService, options);
             RunDispatcher();
 
-            _eventQueueContext = new EventQueueContext(_queue, _metricService, _logger);
-            var taskDispatcher = new BackgroundTaskDispatcher<EventQueueContext>(_eventQueueContext);
-            taskDispatcher.StartNew(new EventQueueMetricCounterTask(options.ServerName, options.PipelineId));
+            _eventQueueContext = new EventBusContext(_queue, _processors, _metricService, _logger);
+            var taskDispatcher = new BackgroundTaskDispatcher();
+            taskDispatcher.StartNew(new EventBusMetricCounterTask(options.ServerName, options.PipelineId), _eventQueueContext);
         }
 
 		/// <summary>
