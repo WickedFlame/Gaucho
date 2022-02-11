@@ -1,0 +1,20 @@
+---data
+Key: Index
+Value:
+  1
+ValueType: System.Int32
+Key: MessageData.Message
+Value:
+  test
+ValueType: System.String
+Key: Inner.Index
+Value:
+  2
+ValueType: System.Int32
+Key: Inner.MessageData.Message
+Value:
+  inner
+ValueType: System.String
+Key: Inner.Inner
+Value:
+ValueType: 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using Gaucho.Diagnostics.MetricCounters;
@@ -48,7 +49,7 @@ namespace Gaucho.Server.Monitoring
 
 			_metrics = new MetricCollection();
 
-			var keys = storage.GetKeys(new StorageKey(PipelineId, $"metric:", serverName));
+			var keys = storage.GetKeys(new StorageKey(PipelineId, $"metric:", serverName)).ToList();
 			foreach (var key in keys)
 			{
 				var metric = storage.Get<Metric>(new StorageKey(key));

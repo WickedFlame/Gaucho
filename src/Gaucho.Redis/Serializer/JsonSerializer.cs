@@ -24,7 +24,7 @@ namespace Gaucho.Redis.Serializer
 			var nodes = item.GetType().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance).Select(propInfo => new JsonNode
 			{
 				Name = propInfo.Name,
-				Value = propInfo.GetValue(item, null)?.ToString()
+				Value = ConvertToString(propInfo, item)
 			});
 
 			var value = $"{{{string.Join(", ", nodes.Where(n => !string.IsNullOrEmpty(n.Value)).Select(n => $"{n.Name}: '{n.Value}'"))}}}";
@@ -40,20 +40,7 @@ namespace Gaucho.Redis.Serializer
 		public T Deserialize<T>(string json) where T : class, new()
 		{
 			json = json.Substring(1, json.Length - 2);
-			var nodes = json.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries).Select(v =>
-			{
-				var split = v.IndexOf(':');
-				var key = v.Substring(0, split);
-
-				var value = v.Substring(v.IndexOf("'", split + 1, StringComparison.OrdinalIgnoreCase) + 1).Trim();
-				value = value.Substring(0, value.LastIndexOf("'", StringComparison.OrdinalIgnoreCase));
-
-				return new JsonNode
-				{
-					Name = key.Trim(),
-					Value = value.Trim()
-				};
-			});
+			var nodes = json.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries).Select(v => StringToJsonNode(v));
 
 			var item = new T();
 			var someObjectType = item.GetType();
@@ -72,5 +59,58 @@ namespace Gaucho.Redis.Serializer
 
 			return item;
 		}
+
+        private string ConvertToString(PropertyInfo propInfo, object item)
+        {
+            var value = propInfo.GetValue(item, null);
+            if (value == null)
+            {
+				return null;
+            }
+
+            if (propInfo.PropertyType == typeof(DateTime))
+            {
+                return ((DateTime)value).ToString("o");
+            }
+
+            return value.ToString();
+        }
+
+        private JsonNode StringToJsonNode(string v)
+        {
+            try
+            {
+                var split = v.IndexOf(':');
+                if (split < 0)
+                {
+                    return new JsonNode
+                    {
+                        Name = string.Empty,
+                        Value = v
+                    };
+                }
+
+                var key = v.Substring(0, split);
+
+                var value = v.Substring(v.IndexOf("'", split + 1, StringComparison.OrdinalIgnoreCase) + 1).Trim();
+
+                var index = value.LastIndexOf("'", StringComparison.OrdinalIgnoreCase);
+                value = index > 0 ? value.Substring(0, index) : value;
+
+                return new JsonNode
+                {
+                    Name = key.Trim(),
+                    Value = value.Trim()
+                };
+            }
+            catch (Exception ex)
+            {
+                return new JsonNode
+                {
+                    Name = "Error",
+                    Value = v
+                };
+            }
+        }
 	}
 }

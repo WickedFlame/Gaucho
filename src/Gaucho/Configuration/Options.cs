@@ -21,7 +21,38 @@ namespace Gaucho.Configuration
 		/// Gets or sets the interval for publishing the Hearbeat to the storage in milliseconds. Defaults to 2 minuts or 120000 milliseconds
 		/// </summary>
 		public int HeartbeatInterval { get; set; } = 120000;
-	}
+
+		/// <summary>
+		/// Gets or sets the maximum log size. The log will be shrinked to the size of <see cref="LogShrinkSize"/>
+		/// </summary>
+        public int MaxLogSize { get; set; } = 100;
+
+		/// <summary>
+		/// The size that the log gets shrinked to. This should be about half of <see cref="MaxLogSize"/>
+		/// </summary>
+        public int LogShrinkSize { get; set; } = 50;
+
+        /// <summary>
+        /// Gets the maximum items that are allowed per thread in the queue
+        /// </summary>
+        public int MaxItemsInQueue { get; set; } = 20;
+
+        /// <summary>
+        /// Gets the maximum amount of <see cref="EventProcessor"/> that are created to work on the queue
+        /// </summary>
+        public int MaxProcessors { get; set; } = 20;
+
+        private int _minProcessors = 1;
+
+        /// <summary>
+        /// Gets the minimal amount of default workers. Workers are added as the queue size gets bigger.
+        /// </summary>
+        public int MinProcessors
+        {
+            get => _minProcessors;
+            set => _minProcessors = value < 1 ? 1 : value;
+        }
+    }
 	
 	/// <summary>
 	/// Extensions and Logic for the options
@@ -49,6 +80,31 @@ namespace Gaucho.Configuration
 			{
 				defaultOptions.HeartbeatInterval = merge.HeartbeatInterval;
 			}
+
+            if (defaultOptions.MaxLogSize == 100)
+            {
+				defaultOptions.MaxLogSize = merge.MaxLogSize;
+            }
+
+            if (defaultOptions.LogShrinkSize == 50)
+            {
+                defaultOptions.LogShrinkSize = merge.LogShrinkSize;
+            }
+
+            if (defaultOptions.MaxItemsInQueue == 20)
+            {
+				defaultOptions.MaxItemsInQueue = merge.MaxItemsInQueue;
+            }
+
+            if (defaultOptions.MaxProcessors == 10)
+            {
+				defaultOptions.MaxProcessors = merge.MaxProcessors;
+            }
+
+            if (defaultOptions.MinProcessors == 1)
+            {
+                defaultOptions.MinProcessors = merge.MinProcessors;
+            }
 		}
 	}
 }

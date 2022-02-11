@@ -109,7 +109,7 @@ namespace Gaucho.Test
 	        var factory = new EventBusFactory();
 	        factory.Register("pipeline", () => new EventPipeline());
 	        var server = new ProcessingServer(factory);
-	        server.Register("pipeline", new EventBus(() => null, "pipeline"));
+	        server.Register("pipeline", new EventBus(() => new Mock<IEventPipeline>().Object, "pipeline"));
 
 			// give the hearbeat some time to execute
 	        Task.Delay(500).Wait();
@@ -195,6 +195,43 @@ namespace Gaucho.Test
 	        var server = new ProcessingServer(factory.Object);
 
 	        Assert.DoesNotThrow(() => server.Publish(new Event("pipeline", new EventData())));
+        }
+
+
+        [Test]
+        public void ProcessingServer_PipelineOptions()
+        {
+            var factory = new EventBusFactory();
+            var server = new ProcessingServer(factory);
+
+
+            var config = new PipelineConfiguration
+            {
+                Id = "test",
+                InputHandler = new HandlerNode
+                {
+                    Type = typeof(LogInputHandler)
+                },
+                OutputHandlers = new List<HandlerNode>
+                {
+                    new HandlerNode
+                    {
+                        Type = typeof(ConsoleOutputHandler)
+                    }
+                },
+				Options = new PipelineOptions
+                {
+                    MinProcessors = 1,
+					MaxItemsInQueue = 100,
+					MaxProcessors = 1
+                }
+            };
+
+
+            server.SetupPipeline("test", config);
+
+            var bus = factory.GetEventBus("test");
+            Assert.AreSame(bus.PipelineFactory.Options, config.Options);
         }
 	}
 }

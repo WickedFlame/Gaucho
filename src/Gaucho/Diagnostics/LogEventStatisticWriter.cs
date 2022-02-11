@@ -2,6 +2,7 @@
 using Gaucho.Configuration;
 using Gaucho.Server.Monitoring;
 using System.Collections.Generic;
+using Gaucho.BackgroundTasks;
 using Gaucho.Storage;
 
 namespace Gaucho.Diagnostics
@@ -15,23 +16,50 @@ namespace Gaucho.Diagnostics
 		private readonly LogLevel _minLogLevel;
 		private readonly Lazy<IStorage> _storage;
 		private readonly string _pipelineId;
+        private readonly Lazy<Options> _options;
+        private readonly DispatcherLock _dispatcherLock;
+        private BackgroundTaskDispatcher _taskDispatcher;
 
-		/// <summary>
+        /// <summary>
 		/// Creates a new instance of LogEventStatisticWriter
 		/// </summary>
 		/// <param name="pipelineId"></param>
 		public LogEventStatisticWriter(string pipelineId)
 		{
 			_pipelineId = pipelineId;
+            _dispatcherLock = new DispatcherLock();
 
 			_minLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel;
 			_storage = new Lazy<IStorage>(() => GlobalConfiguration.Configuration.GetStorage());
-		}
+
+            _options = new Lazy<Options>(() => GlobalConfiguration.Configuration.GetOptions());
+        }
+
+        /// <summary>
+        /// Creates a new instance of LogEventStatisticWriter
+        /// </summary>
+        /// <param name="pipelineId"></param>
+        /// <param name="configuration"></param>
+        public LogEventStatisticWriter(string pipelineId, IGlobalConfiguration configuration)
+        {
+            _pipelineId = pipelineId;
+            _dispatcherLock = new DispatcherLock();
+
+			_minLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel;
+            _storage = new Lazy<IStorage>(() => configuration.GetStorage());
+
+            _options = new Lazy<Options>(() => configuration.GetOptions());
+        }
 
 		/// <summary>
 		/// The loggercategory
 		/// </summary>
 		public Category Category => Category.Log;
+
+		/// <summary>
+		/// Gets the list of logs
+		/// </summary>
+        public IEnumerable<ILogMessage> Logs => _logQueue;
 
 		/// <summary>
 		/// Write the ILogEvent to the Logs
@@ -61,12 +89,36 @@ namespace Gaucho.Diagnostics
 				_logQueue.Add(@event);
 				_storage.Value.AddToList(new StorageKey(_pipelineId, "logs"), @event);
 
-				if (_logQueue.Count > 500)
-				{
-					ShrinkLog();
-				}
+                if (_dispatcherLock.IsLocked())
+                {
+                    // only start the cleanup-thread when it is not already running
+                    return;
+                }
+
+                if (_logQueue.Count <= _options.Value.MaxLogSize)
+                {
+					// only cleanup if size is larger
+                    return;
+                }
+
+				_dispatcherLock.Lock();
+
+				if (_taskDispatcher == null)
+                {
+                    _taskDispatcher = new BackgroundTaskDispatcher();
+                }
+
+                _taskDispatcher.StartNew(new LogEventLogCleanupTask(_logQueue, new StorageKey(_pipelineId, "logs"), _logQueue.Count - _options.Value.LogShrinkSize), new StorageContext(_storage.Value, _dispatcherLock));
 			}
 		}
+
+		/// <summary>
+		/// Wait for all cleanup tasks to complete
+		/// </summary>
+        public void WaitAll()
+        {
+            _taskDispatcher.WaitAll();
+        }
 
 		private void InitLogQueue()
 		{
@@ -81,12 +133,6 @@ namespace Gaucho.Diagnostics
 			{
 				_logQueue.AddRange(logs);
 			}
-		}
-
-		private void ShrinkLog()
-		{
-			_logQueue.RemoveRange(0, 500);
-			_storage.Value.RemoveRangeFromList(new StorageKey(_pipelineId, "logs"), 250);
 		}
 	}
 }

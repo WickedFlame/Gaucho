@@ -11,14 +11,14 @@ namespace Gaucho.Test
 		[Test]
 		public void PipelineFactory()
 		{
-			Assert.IsNotNull(new PipelineFactory(() => null));
+			Assert.IsNotNull(new PipelineFactory(() => null, new PipelineOptions()));
 		}
 
 		[Test]
 		public void PipelineFactory_()
 		{
 			var pipeline = new Mock<IEventPipeline>();
-			var factory = new PipelineFactory(() => pipeline.Object);
+			var factory = new PipelineFactory(() => pipeline.Object, new PipelineOptions());
 
 			Assert.IsNotNull(factory.Setup());
 		}

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29409.12
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho", "src\Gaucho\Gaucho.csproj", "{3C4A15C3-497F-4D52-9339-9A02A7498EA3}"
 EndProject
@@ -25,7 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Integration.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Redis", "src\Gaucho.Redis\Gaucho.Redis.csproj", "{129DADFD-03BD-497B-AD9F-CE4DC833BF66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaucho.Redis.Test", "src\Tests\Gaucho.Redis.Test\Gaucho.Redis.Test.csproj", "{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaucho.Redis.Test", "src\Tests\Gaucho.Redis.Test\Gaucho.Redis.Test.csproj", "{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{10679ACE-EEE9-4F2A-BBFE-01C193E9C5E7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{BF8AA2B7-57E9-45CF-9750-4673931D36E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +65,8 @@ Global
 		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10679ACE-EEE9-4F2A-BBFE-01C193E9C5E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10679ACE-EEE9-4F2A-BBFE-01C193E9C5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +76,7 @@ Global
 		{ECE36AC8-C1D7-4154-BCFA-B06DD7F656C7} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
 		{94DD4233-26A8-405C-AD55-4F8710085B2C} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
 		{ECFA3BCF-062C-43AC-977F-CF5A955D42A0} = {09CF3F3A-2736-48E1-8145-49B5A51891BC}
+		{10679ACE-EEE9-4F2A-BBFE-01C193E9C5E7} = {BF8AA2B7-57E9-45CF-9750-4673931D36E2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {90DDCE53-82D7-45F2-926D-909108DB6B8A}

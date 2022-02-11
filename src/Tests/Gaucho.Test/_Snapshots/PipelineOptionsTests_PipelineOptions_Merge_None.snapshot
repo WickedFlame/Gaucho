@@ -1,0 +1,6 @@
+---data
+MaxItemsInQueue: 1
+MaxProcessors: 1
+MinProcessors: 1
+PipelineId: null
+ServerName: localhost

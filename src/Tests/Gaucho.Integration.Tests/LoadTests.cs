@@ -28,19 +28,21 @@ namespace Gaucho.Integration.Tests
 			var pipelineId = Guid.NewGuid().ToString();
 
 			var server = new ProcessingServer();
-			server.Register(pipelineId, () =>
-			{
-				var pipeline = new EventPipeline();
-				pipeline.AddHandler(new LoadTestOuptuHandler(e =>
-				{
-					proc += 1;
-					// to some heavy work
-					Thread.Sleep(500);
-				}));
+            server.Register(pipelineId, () =>
+            {
+                var pipeline = new EventPipeline();
+                pipeline.AddHandler(new LoadTestOuptuHandler(e =>
+                {
+                    proc += 1;
+                    // do some heavy work
+                    Trace.WriteLine($"WORK TASK {proc}");
+                    Thread.Sleep(10);
+                }));
 
-				return pipeline;
-			});
+                return pipeline;
+            }, new PipelineOptions { MinProcessors = 10 });
 			server.Register(pipelineId, new InputHandler<InputItem>());
+			
 
 
 			var client = new EventDispatcher(server);
@@ -55,6 +57,7 @@ namespace Gaucho.Integration.Tests
 						cnt += 1;
 					}
 
+                    Trace.WriteLine($"SEND {cnt}");
 					client.Process(pipelineId, new InputItem
 					{
 						Value = "StaticServer",
@@ -93,7 +96,7 @@ namespace Gaucho.Integration.Tests
 					}
 
 					// to some heavy work
-					Thread.Sleep(500);
+					Thread.Sleep(100);
 				}));
 
 				return pipeline;

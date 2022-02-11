@@ -36,5 +36,14 @@ namespace Gaucho
 
 	        return server;
 		}
-    }
+
+        /// <summary>
+        /// Register an EventPipeline to the pipeline
+        /// </summary>
+        /// <param name="pipelineId"></param>
+        /// <param name="factory"></param>
+        public static void Register(this IProcessingServer server, string pipelineId, Func<EventPipeline> factory) 
+            => server.Register(pipelineId, factory, new PipelineOptions());
+
+	}
 }

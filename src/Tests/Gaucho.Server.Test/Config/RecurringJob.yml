@@ -18,4 +18,6 @@ OutputHandlers:
 #    Filters:
 #      - Message -> msg
 #      - Level -> lvl
+Options:
+  MinProcessors: 2
 

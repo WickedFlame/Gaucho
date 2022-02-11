@@ -57,6 +57,12 @@ namespace Gaucho.Server.Test
 
             app.UseAuthorization();
 
+            app.UseGauchoDashboard(pathMatch: "/gaucho", options: new DashboardOptions
+            {
+                //Title = "Gaucho Testapp" 
+                LogCount = 50,
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -65,7 +71,7 @@ namespace Gaucho.Server.Test
 
             GlobalConfiguration.Setup(c => c.UseProcessingServer(p =>
 	            {
-		            var reader = new WickedFlame.Yaml.YamlReader();
+		            var reader = new YamlMap.YamlFileReader();
 		            var config = reader.Read<PipelineConfiguration>("APILogMessage.yml");
 		            p.BuildPipeline(config);
 
@@ -77,13 +83,11 @@ namespace Gaucho.Server.Test
 	            .UseOptions(new Options
 	            {
 		            LogLevel = Diagnostics.LogLevel.Debug,
-					ServerName = "Testserver"
+					ServerName = "Testserver",
+                    MinProcessors = 10
 				}));
 
-            app.UseGauchoDashboard(pathMatch:"/gaucho", options: new DashboardOptions
-            {
-				//Title = "Gaucho Testapp" 
-            });
+            
 
 
 
