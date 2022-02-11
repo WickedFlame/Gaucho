@@ -119,6 +119,16 @@ WriteLiteral("</h3>\r\n\t\t\t</div>\r\n\t\t\t<i class=\"trash-button\" data-pipe
             
             #line default
             #line hidden
+WriteLiteral("\" data-server=\"");
+
+
+            
+            #line 21 "..\..\Pages\PipelinePartial.cshtml"
+                                                                        Write(Pipeline.ServerName);
+
+            
+            #line default
+            #line hidden
 WriteLiteral("\"></i>\r\n\t\t</div>\r\n\t\t<div class=\"toggle-wrapper pipeline-item-content\">\r\n\t\t\t<div c" +
 "lass=\"pipeline-metric-content\">\r\n");
 

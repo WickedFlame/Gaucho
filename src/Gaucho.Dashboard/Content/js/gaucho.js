@@ -1,6 +1,8 @@
 ﻿
 export class Gaucho {
 	constructor(config) {
+		this.configuration = config;
+
 		this.bindTogglers(document);
 		this.togglePipelines(document);
 		setTimeout(() => {
@@ -16,7 +18,7 @@ export class Gaucho {
                     elem.classList.toggle('is-open');
                 });
         };
-		for (const button of elem.querySelectorAll('.pipeline-item-header')) {
+		for (const button of elem.querySelectorAll('.pipeline-title-button')) {
 			button.addEventListener('click', e => {
                 let elem = e.target.closest('.toggler-section');
 				elem.classList.toggle('is-open');
@@ -24,10 +26,18 @@ export class Gaucho {
                 localStorage.setItem(`is-open-${id}`, elem.classList.contains('is-open'));
             });
 		};
+
+        var config = this.configuration;
 		for (const button of elem.querySelectorAll('.trash-button')) {
-			button.addEventListener('click', e => {
-				
-			});
+            button.addEventListener('click', e => {
+				/*e.preventDefault();*/
+				var url = `${config.clearUrl}/${e.target.dataset.server}/${e.target.dataset.pipeline}`;
+                fetch(url,
+                    {
+                        method: "POST",
+                        headers: { 'content-type': 'application/json;  charset=utf-8' }
+                    });
+            });
 		};
 	}
 
@@ -181,6 +191,7 @@ export class Gaucho {
 if (gauchoConfig === undefined) {
 	gauchoConfig = {
 		pollUrl: "/gaucho/metrics",
+		clearUrl: "/gaucho/metrics/clear",
 		pollInterval: 2000
 	};
 }
