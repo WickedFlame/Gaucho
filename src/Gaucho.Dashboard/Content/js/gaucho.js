@@ -2,7 +2,7 @@
 export class Gaucho {
 	constructor(config) {
 		this.bindTogglers(document);
-
+		this.togglePipelines(document);
 		setTimeout(() => {
 			this.startPolling(config, (data) => this.updateStatus(data, this));
 		}, 3000);
@@ -10,18 +10,29 @@ export class Gaucho {
 
 	bindTogglers(elem) {
 		for(const button of elem.querySelectorAll('.toggler-button')) {
-			button.addEventListener('click', e => {
-					var elem = e.target.closest('.toggler-section');
-					elem.classList.toggle('is-open');
-				});
-		};
+            button.addEventListener('click',
+                e => {
+                    let elem = e.target.closest('.toggler-section');
+                    elem.classList.toggle('is-open');
+                });
+        };
 		for (const button of elem.querySelectorAll('.pipeline-item-header')) {
 			button.addEventListener('click', e => {
-					var elem = e.target.closest('.toggler-section');
-					elem.classList.toggle('is-open');
-				});
+                let elem = e.target.closest('.toggler-section');
+				elem.classList.toggle('is-open');
+				let id = e.target.closest('.pipeline-item').id;
+                localStorage.setItem(`is-open-${id}`, elem.classList.contains('is-open'));
+            });
 		};
 	}
+
+	togglePipelines(elem) {
+		for (const button of elem.querySelectorAll('.pipeline-item')) {
+			if (localStorage.getItem(`is-open-${button.id}`) == 'false') {
+				button.querySelector('.toggler-section').classList.toggle('is-open');
+            }
+        }
+    }
 
 	poll(fn, interval) {
 		interval = interval || 1000;
