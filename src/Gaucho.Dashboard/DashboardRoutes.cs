@@ -34,6 +34,7 @@ namespace Gaucho.Dashboard
             Routes = new RouteCollection();
             Routes.AddRazorPage("/", x => new DashboardPage());
             Routes.Add("/metrics", new MetricsDispatcher());
+            Routes.Add("/metrics/clear/[a-zA-Z]+/[a-zA-Z]+", new ClearMetricsDispatcher());
 
             Routes.Add("/js[0-9]+", new CombinedResourceDispatcher(
                 "application/javascript",
