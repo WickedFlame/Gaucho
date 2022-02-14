@@ -42,6 +42,8 @@ namespace Gaucho.Test.Diagnostics
 
             context.WaitHandle.Set();
 
+            Task.Delay(1000).Wait();
+
             logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventQueue"), It.IsAny<Category>()), Times.Exactly(2));
         }
 
@@ -53,9 +55,11 @@ namespace Gaucho.Test.Diagnostics
             var task = new EventBusMetricCounterTask("server", "1");
             Task.Factory.StartNew(() => task.Execute(context));
 
-            Task.Delay(100).Wait();
+            Task.Delay(1000).Wait();
 
             context.WaitHandle.Set();
+
+            Task.Delay(1000).Wait();
 
             logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventQueue"), It.IsAny<Category>()), Times.Once);
         }
@@ -156,6 +160,8 @@ namespace Gaucho.Test.Diagnostics
 
             context.WaitHandle.Set();
 
+            Task.Delay(1000).Wait();
+
             logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventProcessor"), It.IsAny<Category>()), Times.Exactly(2));
         }
 
@@ -170,6 +176,8 @@ namespace Gaucho.Test.Diagnostics
             Task.Delay(100).Wait();
 
             context.WaitHandle.Set();
+
+            Task.Delay(1000).Wait();
 
             logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventProcessor"), It.IsAny<Category>()), Times.Once);
         }
