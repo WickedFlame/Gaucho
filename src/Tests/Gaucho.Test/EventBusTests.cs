@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Gaucho.Server.Monitoring;
 using NUnit.Framework;
 
@@ -22,9 +23,11 @@ namespace Gaucho.Test
 
 			eventBus.WaitAll();
 
+            Task.Delay(1000).Wait();
+
 			// event was not processed
 			var stats = new StatisticsApi("EventBus_2");
-			Assert.IsTrue((int)stats.GetMetricValue(MetricType.QueueSize) == 0);
+			Assert.AreEqual(0, (int)stats.GetMetricValue(MetricType.QueueSize));
 		}
 
 		[Test]
@@ -34,16 +37,18 @@ namespace Gaucho.Test
 			eventBus.Publish(new Event("EventBus_3", "data"));
 
 			eventBus.WaitAll();
+            
+            Task.Delay(1000).Wait();
 
 			// event was not processed
 			var stats = new StatisticsApi("EventBus_3");
-			Assert.IsTrue((int)stats.GetMetricValue(MetricType.QueueSize) == 1);
+			Assert.AreEqual(1, (int)stats.GetMetricValue(MetricType.QueueSize));
 		}
 
 		[Test]
 		public void EventBus_DefaultThread()
 		{
-			var eventBus = new EventBus(() => null, "EventBus_4");
+			new EventBus(() => null, "EventBus_4");
 
 			var stats = new StatisticsApi("EventBus_4");
 			Assert.AreEqual(stats.GetMetricValue(MetricType.ThreadCount), 1);
