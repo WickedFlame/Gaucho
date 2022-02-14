@@ -71,7 +71,7 @@ namespace Gaucho
             _minProcessors = options.MinProcessors;
 
             _cleanupLock = new DispatcherLock();
-            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger), CleanupProcessors, _logger), _logger, _metricService, options);
+            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger), CleanupProcessors, EndProcessor, _logger), _logger, _metricService, options);
             RunDispatcher();
 
             _eventQueueContext = new EventBusContext(_queue, _processors, _metricService, _logger);
@@ -174,6 +174,20 @@ namespace Gaucho
         {
             _logger.Write($"Starting event dispatcher for {PipelineId}", Category.Log, LogLevel.Info, "EventBus");
             Task.Factory.StartNew(() => _dispatcher.RunDispatcher(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        private void EndProcessor(EventProcessor processor)
+        {
+            if (_queue.Count > 0)
+            {
+                return;
+            }
+
+            if (_processors.Count(p => !p.IsEnded) > _minProcessors)
+            {
+                // only stop the thread if there are more processors than are configured
+                processor.Stop();
+            }
         }
 
         private void CleanupProcessors()

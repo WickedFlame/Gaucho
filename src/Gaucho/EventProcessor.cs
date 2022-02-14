@@ -6,35 +6,42 @@ using Gaucho.BackgroundTasks;
 
 namespace Gaucho
 {
+    public delegate void OnEndProcessing(EventProcessor processor);
+
+    public delegate void OnEndTask();
+
 	/// <summary>
 	/// EventProcessor
 	/// </summary>
 	public class EventProcessor : IDisposable
 	{
 		private readonly string _id = Guid.NewGuid().ToString();
-		private readonly Action _continuation;
+        private readonly OnEndProcessing _onEndProcessing;
+		private readonly OnEndTask _onEndTask;
 		private readonly ILogger _logger;
 		private readonly IWorker _worker;
         private readonly ManualResetEvent _waitHandle;
 		private bool _isRunning;
 
 		private DispatcherLock _lock;
-		
+
 
 		/// <summary>
 		/// Creates a new instance of EventProcessor
 		/// </summary>
 		/// <param name="worker"></param>
-		/// <param name="continuation">Task to continue with after the worker is done</param>
+		/// <param name="onEndTask">Task to continue with after the worker is done</param>
+		/// <param name="onEndProcessing"></param>
 		/// <param name="logger"></param>
-		public EventProcessor(IWorker worker, Action continuation, ILogger logger)
+		public EventProcessor(IWorker worker, OnEndTask onEndTask, OnEndProcessing onEndProcessing, ILogger logger)
 		{
 			logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
 
             _waitHandle = new ManualResetEvent(false);
             _lock = new DispatcherLock();
 			_worker = worker ?? throw new ArgumentNullException(nameof(worker));
-			_continuation = continuation ?? throw new ArgumentNullException(nameof(continuation));
+            _onEndTask = onEndTask ?? throw new ArgumentNullException(nameof(onEndTask));
+			_onEndProcessing = onEndProcessing ?? throw new ArgumentNullException(nameof(onEndProcessing));
 			_logger = logger;
 		}
 
@@ -44,10 +51,15 @@ namespace Gaucho
 		public Task Task { get; private set; }
 
 		/// <summary>
-		/// Gets if the processor is working
+		/// Gets if the processor has a thread that is working
 		/// </summary>
-		public bool IsWorking => _lock.IsLocked() && _isRunning;
-		
+		public bool IsWorking => _lock.IsLocked();
+
+		/// <summary>
+		/// Gets if the threadloop is ended and the process is in wait state
+		/// </summary>
+        public bool IsEnded => !_isRunning;
+
 		/// <summary>
 		/// Start processing events
 		/// </summary>
@@ -78,7 +90,10 @@ namespace Gaucho
 						
                         _worker.Execute();
 
-                        _waitHandle.WaitOne(10000);
+						// end process if there are too many running
+						_onEndProcessing(this);
+
+						_waitHandle.WaitOne(10000);
                     }
 				}
 				catch (Exception e)
@@ -87,8 +102,9 @@ namespace Gaucho
 				}
 				finally
                 {
-                    _continuation();
-					_lock.Unlock();
+                    _lock.Unlock();
+
+					_onEndTask();
                 }
 			}, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}

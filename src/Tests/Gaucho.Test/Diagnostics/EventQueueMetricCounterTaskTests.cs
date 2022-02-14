@@ -156,7 +156,7 @@ namespace Gaucho.Test.Diagnostics
 
             Task.Delay(1000).Wait();
 
-            processors.Add(new EventProcessor(new Mock<IWorker>().Object, () => { }, new Mock<ILogger>().Object));
+            processors.Add(new EventProcessor(new Mock<IWorker>().Object, () => { }, p => { }, new Mock<ILogger>().Object));
 
             context.WaitHandle.Set();
 
@@ -224,7 +224,7 @@ namespace Gaucho.Test.Diagnostics
 
             Task.Delay(100).Wait();
 
-            processors.Add(new EventProcessor(new Mock<IWorker>().Object, () => { }, new Mock<ILogger>().Object));
+            processors.Add(new EventProcessor(new Mock<IWorker>().Object, () => { }, p => { }, new Mock<ILogger>().Object));
 
             context.WaitHandle.Set();
 

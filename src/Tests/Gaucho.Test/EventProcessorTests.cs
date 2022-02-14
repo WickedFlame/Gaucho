@@ -20,7 +20,7 @@ namespace Gaucho.Test
 		[Test]
 		public void EventProcessor_Ctor()
 		{
-			var processor = new EventProcessor(_worker.Object, () => { }, new Logger());
+			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
 		}
 
 		[Test]
@@ -28,7 +28,7 @@ namespace Gaucho.Test
 		{
 			var called = false;
 			_worker.Setup(exp => exp.Execute()).Callback(() => called = true);
-			var processor = new EventProcessor(_worker.Object, () => { }, new Logger());
+			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
 			processor.Start();
 
 			System.Threading.Tasks.Task.Delay(1000).Wait();
@@ -43,7 +43,7 @@ namespace Gaucho.Test
 		[Test]
 		public void EventProcessor_Thread()
 		{
-			var processor = new EventProcessor(_worker.Object, () => { }, new Logger());
+			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
 			processor.Start();
 
 			Assert.IsNotNull(processor.Task);
@@ -52,7 +52,7 @@ namespace Gaucho.Test
 		[Test]
 		public void EventProcessor_NoThread()
 		{
-			var processor = new EventProcessor(_worker.Object, () => { }, new Logger());
+			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
 			Assert.IsNull(processor.Task);
 		}
 
@@ -60,7 +60,7 @@ namespace Gaucho.Test
 		public void EventProcessor_IsWorking()
 		{
 			_worker.Setup(exp => exp.Execute()).Callback(() => { });
-			var processor = new EventProcessor(_worker.Object, () => { }, new Logger());
+			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
 			processor.Start();
 
 			Assert.IsTrue(processor.IsWorking);
@@ -73,9 +73,9 @@ namespace Gaucho.Test
 		}
 
 		[Test]
-		public void EventProcessor_EndWork()
+		public void EventProcessor_Stop()
 		{
-			var processor = new EventProcessor( _worker.Object, () => { }, new Logger());
+			var processor = new EventProcessor( _worker.Object, () => { }, p => { }, new Logger());
 			processor.Start();
             processor.Stop();
 
@@ -84,11 +84,22 @@ namespace Gaucho.Test
 			Assert.IsFalse(processor.IsWorking);
 		}
 
+        [Test]
+        public void EventProcessor_OnEndProcessing()
+        {
+            var processor = new EventProcessor(_worker.Object, () => { }, p => p.Stop(), new Logger());
+            processor.Start();
+
+            processor.Task.Wait();
+
+            Assert.IsFalse(processor.IsWorking);
+        }
+
 		[Test]
 		public void EventProcessor_Continuation()
 		{
 			var called = false;
-			var processor = new EventProcessor(_worker.Object, () => called = true, new Logger());
+			var processor = new EventProcessor(_worker.Object, () => called = true, p => { }, new Logger());
 			processor.Start();
             processor.Stop();
 
@@ -96,5 +107,18 @@ namespace Gaucho.Test
 
 			Assert.IsTrue(called);
 		}
+
+        [Test]
+        public void EventProcessor_OnEndTask()
+        {
+			var ended = false;
+
+            var processor = new EventProcessor(_worker.Object, () => ended = true, p => p.Stop(), new Logger());
+            processor.Start();
+
+            processor.Task.Wait();
+
+            Assert.IsTrue(ended);
+        }
 	}
 }
