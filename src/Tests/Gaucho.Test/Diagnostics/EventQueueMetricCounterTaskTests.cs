@@ -127,25 +127,6 @@ namespace Gaucho.Test.Diagnostics
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         [Test]
         public void EventBusMetricCounterTask_Execute_Processors_Log()
         {
