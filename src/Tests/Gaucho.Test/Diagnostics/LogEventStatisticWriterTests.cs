@@ -110,6 +110,8 @@ namespace Gaucho.Test.Diagnostics
                 writer.Write(new LogEvent { Level = LogLevel.Info });
             }
 
+            writer.WaitAll();
+
             storage.Verify(x => x.RemoveRangeFromList(It.Is<StorageKey>(k => k.ToString().EndsWith(":pipeline:logs")), 6), Times.Once);
         }
     }
