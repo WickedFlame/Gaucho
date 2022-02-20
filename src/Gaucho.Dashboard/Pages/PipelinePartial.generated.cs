@@ -109,12 +109,13 @@ WriteLiteral("\">\r\n\t\t\t<div class=\"pipeline-title-button\">\r\n\t\t\t\t<h3>
             
             #line default
             #line hidden
-WriteLiteral("</h3>\r\n\t\t\t</div>\r\n\t\t\t<i class=\"trash-button\" data-pipeline=\"");
+WriteLiteral("</h3>\r\n\t\t\t</div>\r\n\t\t\t<i class=\"trash-button\" title=\"Clear logs and metrics\" data-" +
+"pipeline=\"");
 
 
             
             #line 21 "..\..\Pages\PipelinePartial.cshtml"
-                                     Write(Pipeline.PipelineId);
+                                                                    Write(Pipeline.PipelineId);
 
             
             #line default
@@ -124,7 +125,7 @@ WriteLiteral("\" data-server=\"");
 
             
             #line 21 "..\..\Pages\PipelinePartial.cshtml"
-                                                                        Write(Pipeline.ServerName);
+                                                                                                       Write(Pipeline.ServerName);
 
             
             #line default
