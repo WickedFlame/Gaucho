@@ -36,9 +36,14 @@ class Build : NukeBuild
     AbsolutePath TestsDirectory => RootDirectory / "tests";
     AbsolutePath OutputDirectory => RootDirectory / "output";
 
-    string Version = "1.0.3";
-    int BuildNo = 2;
-    string PackageVersion => BuildNo < 10 ? $"{Version}-RC0{BuildNo}" : $"{Version}-RC{BuildNo}";
+    [Parameter("Version to be injected in the Build")]
+    public string Version { get; set; } = $"1.0.6";
+
+    [Parameter("The Buildnumber provided by the CI")]
+    public string BuildNo = "2";
+
+    [Parameter("Is RC Version")]
+    public bool IsRc = false;
 
     Target Clean => _ => _
         .Before(Restore)
@@ -63,12 +68,27 @@ class Build : NukeBuild
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
+                .SetVersion($"{Version}.{BuildNo}")
                 .SetAssemblyVersion($"{Version}.{BuildNo}")
                 .SetFileVersion(Version)
                 .SetInformationalVersion($"{Version}.{BuildNo}")
                 .AddProperty("PackageVersion", PackageVersion)
                 .EnableNoRestore());
         });
+
+    Target Test => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            DotNetTest(s => s
+                .SetProjectFile(Solution)
+                .SetConfiguration(Configuration)
+                .SetNoBuild(true)
+                .EnableNoRestore());
+        });
+
+    Target FullBuild => _ => _
+        .DependsOn(Test);
 
     Target Deploy => _ => _
         .DependsOn(Compile)
@@ -78,4 +98,7 @@ class Build : NukeBuild
             CopyFileToDirectory($"{SourceDirectory}/Gaucho.Dashboard/bin/{Configuration}/Gaucho.Dashboard.{PackageVersion}.nupkg", "C:\\Projects\\NuGet Store", FileExistsPolicy.Overwrite, false);
             CopyFileToDirectory($"{SourceDirectory}/Gaucho.Redis/bin/{Configuration}/Gaucho.Redis.{PackageVersion}.nupkg", "C:\\Projects\\NuGet Store", FileExistsPolicy.Overwrite, false);
         });
+
+    string PackageVersion
+        => IsRc ? int.Parse(BuildNo) < 10 ? $"{Version}-RC0{BuildNo}" : $"{Version}-RC{BuildNo}" : Version;
 }
