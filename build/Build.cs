@@ -84,6 +84,7 @@ class Build : NukeBuild
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
                 .SetNoBuild(true)
+                .SetFilter("FullyQualifiedName!~Integration.Tests")
                 .EnableNoRestore());
         });
 
