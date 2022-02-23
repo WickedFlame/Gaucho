@@ -31,7 +31,7 @@ for:
       - dotnet restore ./build/_build.csproj
 
     build_script:
-      - nuke Release --isrc true --version "%base_version%" --buildno "%APPVEYOR_BUILD_NUMBER%"
+      - nuke FullBuild --isrc true --version "%base_version%" --buildno "%APPVEYOR_BUILD_NUMBER%"
 
   - 
     # branches to build
@@ -50,7 +50,7 @@ for:
       - dotnet restore ./build/_build.csproj
 
     build_script:
-      - nuke Release --isrc false --version "%base_version%" --buildno "%APPVEYOR_BUILD_NUMBER%"
+      - nuke FullBuild --isrc false --version "%base_version%" --buildno "%APPVEYOR_BUILD_NUMBER%"
 
 #---------------------------------#
 #      artifacts configuration    #
