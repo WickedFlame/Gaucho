@@ -13,7 +13,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 	{
 		private readonly string _pipelineId;
 		private readonly Lazy<IStorage> _storage;
-		private IBackgroundTaskDispatcher<StorageContext> _taskDispatcher;
+		private IBackgroundTaskDispatcher _taskDispatcher;
         private readonly DispatcherLock _dispatcherLock;
 
         /// <summary>
@@ -69,6 +69,7 @@ namespace Gaucho.Diagnostics.MetricCounters
 
                 if (_dispatcherLock.IsLocked())
                 {
+					// only start the cleanup-thread when it is not already running
                     return;
                 }
 
@@ -76,10 +77,10 @@ namespace Gaucho.Diagnostics.MetricCounters
 
                 if (_taskDispatcher == null)
                 {
-                    _taskDispatcher = new BackgroundTaskDispatcher(new StorageContext(_storage.Value));
+                    _taskDispatcher = new BackgroundTaskDispatcher();
                 }
 
-                _taskDispatcher.StartNew(new ActiveWorkersLogCleanupTask(_dispatcherLock, new StorageKey(_pipelineId, $"log:{@event.Metric}")));
+                _taskDispatcher.StartNew(new ActiveWorkersLogCleanupTask(new StorageKey(_pipelineId, $"log:{@event.Metric}")), new StorageContext(_storage.Value, _dispatcherLock));
             }
 		}
 	}

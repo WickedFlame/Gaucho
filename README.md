@@ -14,3 +14,11 @@ A .NET Message Broker Middleware for handling, converting and delegating events
 ## Documentation
 Visit [https://wickedflame.github.io/Gaucho/](https://wickedflame.github.io/Gaucho/) for the full documentation.
 
+### Compiling RazorPages
+
+CustomTool: RazorGenerator
+- Go to Extensions -> Manage Extensions
+- Search for RazorGenerator
+- Click the Download button
+- Restart Visual Studio to start the installation
+

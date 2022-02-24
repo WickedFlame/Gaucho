@@ -66,15 +66,16 @@ namespace Gaucho
 
                 if (_queue.Count > 0)
                 {
-                    if (_processors.Count == 0 || (_queue.Count / _processors.Count > _options.MaxItemsInQueue && _processors.Count < _options.MaxProcessors))
-                    {
-                        _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Items in Queue count: {_queue.Count}", Category.Log, source: "EventBus");
-                        SetupProcessors(_processors.Count + 1);
-                    }
-
                     foreach (var process in _processors.ToList())
                     {
                         process.Start();
+                    }
+
+                    if (_processors.Count == 0 || _processors.Count < _options.MinProcessors || (_queue.Count / _processors.Count > _options.MaxItemsInQueue && _processors.Count < _options.MaxProcessors))
+                    {
+                        _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Items in Queue count: {_queue.Count}", Category.Log, source: "EventBus");
+                        var cnt = _processors.Count < _options.MinProcessors ? _options.MinProcessors : _processors.Count + 1;
+                        SetupProcessors(cnt);
                     }
                 }
 
@@ -92,11 +93,11 @@ namespace Gaucho
             for (var i = _processors.Count; i < threadCount; i++)
             {
                 var thread = _threadFactory.Invoke();
+                thread.Start();
 
                 _processors.Add(thread);
                 _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
-
-
+                
                 _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Add Worker to EventBus. Active Workers: {i + 1}", Category.Log, source: "EventBus");
                 _logger.WriteMetric(i + 1, StatisticType.WorkersLog);
             }

@@ -23,6 +23,7 @@ namespace Gaucho
         private bool _isDisposed;
 
         private readonly EventProcessorList _processors = new EventProcessorList();
+        private readonly EventBusContext _eventQueueContext;
         private readonly MetricService _metricService;
         private readonly EventBusPorcessDispatcher _dispatcher;
         private readonly DispatcherLock _cleanupLock;
@@ -70,8 +71,12 @@ namespace Gaucho
             _minProcessors = options.MinProcessors;
 
             _cleanupLock = new DispatcherLock();
-            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger, _metricService), CleanupProcessors, _logger), _logger, _metricService, options);
+            _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger), CleanupProcessors, EndProcessor, _logger), _logger, _metricService, options);
             RunDispatcher();
+
+            _eventQueueContext = new EventBusContext(_queue, _processors, _metricService, _logger);
+            var taskDispatcher = new BackgroundTaskDispatcher();
+            taskDispatcher.StartNew(new EventBusMetricCounterTask(options.ServerName, options.PipelineId), _eventQueueContext);
         }
 
 		/// <summary>
@@ -111,12 +116,22 @@ namespace Gaucho
                 cnt = _queue.Count == queueSize ? cnt + 1 : 0;
             }
 
+            foreach (var processor in _processors)
+            {
+                processor.Stop();
+            }
+
             var tasks = _processors.GetTasks();
             while (tasks.Any())
             {
                 System.Diagnostics.Trace.WriteLine($"Wait for {_queue.Count} Events to be processed");
                 Task.WaitAll(tasks, 1000, CancellationToken.None);
                 tasks = _processors.GetTasks();
+
+                if (_queue.Count == 0)
+                {
+                    break;
+                }
             }
 
             CleanupProcessors();
@@ -146,7 +161,6 @@ namespace Gaucho
         public void Publish(Event @event)
         {
             _queue.Enqueue(@event);
-            _metricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _queue.Count));
 
             if (!_dispatcher.IsRunning)
             {
@@ -158,7 +172,22 @@ namespace Gaucho
 
         private void RunDispatcher()
         {
+            _logger.Write($"Starting event dispatcher for {PipelineId}", Category.Log, LogLevel.Info, "EventBus");
             Task.Factory.StartNew(() => _dispatcher.RunDispatcher(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        private void EndProcessor(EventProcessor processor)
+        {
+            if (_queue.Count > 0)
+            {
+                return;
+            }
+
+            if (_processors.Count(p => !p.IsEnded) > _minProcessors)
+            {
+                // only stop the thread if there are more processors than are configured
+                processor.Stop();
+            }
         }
 
         private void CleanupProcessors()
@@ -177,7 +206,7 @@ namespace Gaucho
                     continue;
                 }
 
-                if (_processors.Count == _minProcessors)
+                if (_processors.Count <= _minProcessors)
                 {
                     break;
                 }
@@ -189,9 +218,9 @@ namespace Gaucho
                 _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
             }
 
-            _cleanupLock.Unlock();
-
             _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
+
+            _cleanupLock.Unlock();
         }
 
         /// <summary>
@@ -226,6 +255,10 @@ namespace Gaucho
                 }
 
                 _metricService.Dispose();
+
+                // signal the EventQueueMetricCounter to end
+                _eventQueueContext.IsRunning = false;
+                _eventQueueContext.WaitHandle.Set();
             }
 
             _isDisposed = true;

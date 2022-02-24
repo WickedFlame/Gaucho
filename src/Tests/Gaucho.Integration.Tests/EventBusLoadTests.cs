@@ -10,7 +10,7 @@ using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
 using NUnit.Framework;
 
-namespace Gaucho.Test.LoadTests
+namespace Gaucho.Integration.Tests
 {
     [Explicit]
 	//[Ignore("")]

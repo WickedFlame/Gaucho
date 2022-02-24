@@ -1,8 +1,10 @@
 ﻿
 export class Gaucho {
 	constructor(config) {
-		this.bindTogglers(document);
+		this.configuration = config;
 
+		this.bindTogglers(document);
+		this.togglePipelines(document);
 		setTimeout(() => {
 			this.startPolling(config, (data) => this.updateStatus(data, this));
 		}, 3000);
@@ -10,18 +12,42 @@ export class Gaucho {
 
 	bindTogglers(elem) {
 		for(const button of elem.querySelectorAll('.toggler-button')) {
+            button.addEventListener('click',
+                e => {
+                    let elem = e.target.closest('.toggler-section');
+                    elem.classList.toggle('is-open');
+                });
+        };
+		for (const button of elem.querySelectorAll('.pipeline-title-button')) {
 			button.addEventListener('click', e => {
-					var elem = e.target.closest('.toggler-section');
-					elem.classList.toggle('is-open');
-				});
+                let elem = e.target.closest('.toggler-section');
+				elem.classList.toggle('is-open');
+				let id = e.target.closest('.pipeline-item').id;
+                localStorage.setItem(`is-open-${id}`, elem.classList.contains('is-open'));
+            });
 		};
-		for (const button of elem.querySelectorAll('.pipeline-item-header')) {
-			button.addEventListener('click', e => {
-					var elem = e.target.closest('.toggler-section');
-					elem.classList.toggle('is-open');
-				});
+
+        var config = this.configuration;
+		for (const button of elem.querySelectorAll('.trash-button')) {
+            button.addEventListener('click', e => {
+				/*e.preventDefault();*/
+				var url = `${config.clearUrl}/${e.target.dataset.server}/${e.target.dataset.pipeline}`;
+                fetch(url,
+                    {
+                        method: "POST",
+                        headers: { 'content-type': 'application/json;  charset=utf-8' }
+                    });
+            });
 		};
 	}
+
+	togglePipelines(elem) {
+		for (const button of elem.querySelectorAll('.pipeline-item')) {
+			if (localStorage.getItem(`is-open-${button.id}`) == 'false') {
+				button.querySelector('.toggler-section').classList.toggle('is-open');
+            }
+        }
+    }
 
 	poll(fn, interval) {
 		interval = interval || 1000;
@@ -165,6 +191,7 @@ export class Gaucho {
 if (gauchoConfig === undefined) {
 	gauchoConfig = {
 		pollUrl: "/gaucho/metrics",
+		clearUrl: "/gaucho/metrics/clear",
 		pollInterval: 2000
 	};
 }

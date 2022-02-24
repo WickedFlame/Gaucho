@@ -14,13 +14,7 @@ namespace Gaucho.Test.Diagnostics
         [Test]
         public void ActiveWorkersLogCleanupTask_ctor()
         {
-            Assert.DoesNotThrow(() => new ActiveWorkersLogCleanupTask(new DispatcherLock(), new StorageKey("test")));
-        }
-
-        [Test]
-        public void ActiveWorkersLogCleanupTask_ctor_NoLock()
-        {
-            Assert.Throws<ArgumentNullException>(() => new ActiveWorkersLogCleanupTask(null, new StorageKey("test")));
+            Assert.DoesNotThrow(() => new ActiveWorkersLogCleanupTask(new StorageKey("test")));
         }
 
         [Test]
@@ -28,8 +22,8 @@ namespace Gaucho.Test.Diagnostics
         {
             var locker = new DispatcherLock();
             locker.Lock();
-            var task = new ActiveWorkersLogCleanupTask(locker, new StorageKey("test"));
-            task.Execute(new StorageContext(new Mock<IStorage>().Object));
+            var task = new ActiveWorkersLogCleanupTask(new StorageKey("test"));
+            task.Execute(new StorageContext(new Mock<IStorage>().Object, locker));
 
             Assert.IsFalse(locker.IsLocked());
         }
@@ -45,8 +39,8 @@ namespace Gaucho.Test.Diagnostics
             var storage = new Mock<IStorage>();
             storage.Setup(x => x.GetList<ActiveWorkersLogMessage>(It.IsAny<StorageKey>())).Returns(() => lst);
 
-            var task = new ActiveWorkersLogCleanupTask(new DispatcherLock(), new StorageKey("test"));
-            task.Execute(new StorageContext(storage.Object));
+            var task = new ActiveWorkersLogCleanupTask(new StorageKey("test"));
+            task.Execute(new StorageContext(storage.Object, new DispatcherLock()));
 
             storage.Verify(x => x.RemoveRangeFromList(It.IsAny<StorageKey>(), 15), Times.Once);
         }

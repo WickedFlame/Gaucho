@@ -115,12 +115,21 @@ namespace Gaucho.Redis.Test
 			});
 
 			var storage = new RedisStorage(_multiplexer.Object);
-			//storage.Set(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
 
 			storage.Get<StorageModel>(new StorageKey("storage", "key", "server"));
 
 			_db.Verify();
 		}
+
+        [Test]
+        public void RedisStorage_Delete()
+        {
+            var storage = new RedisStorage(_multiplexer.Object);
+
+            storage.Delete(new StorageKey("storage", "key", "server"));
+
+            _db.Verify(x => x.KeyDelete(It.Is<RedisKey>(k => k == "{gaucho}:server:storage:key"), It.IsAny<CommandFlags>()));
+        }
 
 		public class StorageModel
 		{

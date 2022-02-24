@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFramework>netstandard2.0</TargetFramework>
+	  <TargetFramework>netstandard2.1</TargetFramework>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <Description>Redis Storage for Gaucho</Description>
 	  <Company>WickedFlame</Company>

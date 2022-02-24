@@ -9,9 +9,6 @@ namespace Gaucho.Dashboard.Dispatchers
     {
         public async Task Dispatch(DashboardContext context)
         {
-            var page = new StubPage();
-            page.Assign(context);
-
             var monitor = context.Monitor;
             var pipelines = monitor.GetMetrics();
             
@@ -24,13 +21,6 @@ namespace Gaucho.Dashboard.Dispatchers
 
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(serialized);
-        }
-
-        private class StubPage : RazorPage
-        {
-            public override void Execute()
-            {
-            }
         }
     }
 }

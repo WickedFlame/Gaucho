@@ -133,11 +133,21 @@ WriteLiteral("\r\n        </div>\r\n    </div>\r\n    <div></div>\r\n</div>\r\n<
             
             #line default
             #line hidden
+WriteLiteral("\",\r\n        clearUrl: \"");
+
+
+            
+            #line 42 "..\..\Pages\LayoutPage.cshtml"
+               Write(Url.To("/metrics/clear"));
+
+            
+            #line default
+            #line hidden
 WriteLiteral("\",\r\n\t\tpollInterval: 2000\r\n\t}\r\n\r\n</script>\r\n<script src=\"");
 
 
             
-            #line 46 "..\..\Pages\LayoutPage.cshtml"
+            #line 47 "..\..\Pages\LayoutPage.cshtml"
         Write(Url.To($"/js{version.Major}{version.Minor}{version.Build}"));
 
             

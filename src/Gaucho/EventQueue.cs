@@ -9,14 +9,15 @@ namespace Gaucho
 	/// </summary>
     public class EventQueue
     {
-        private readonly ConcurrentQueue<Event> _queue;
+        private readonly Queue<Event> _queue;
+        private readonly object _lock = new object();
 
 		/// <summary>
 		/// creates a new queue
 		/// </summary>
         public EventQueue()
         {
-            _queue = new ConcurrentQueue<Event>();
+            _queue = new Queue<Event>();
         }
 
 		/// <summary>
@@ -36,7 +37,10 @@ namespace Gaucho
 		/// <param name="event"></param>
         public void Enqueue(Event @event)
         {
-            _queue.Enqueue(@event);
+            lock(_lock)
+            {
+                _queue.Enqueue(@event);
+            }
         }
 
 		/// <summary>
@@ -46,14 +50,30 @@ namespace Gaucho
 		/// <returns></returns>
         public bool TryDequeue(out Event value)
         {
-            if (_queue.TryDequeue(out value))
+            //if (_queue.TryDequeue(out value))
+            //{
+            //    return true;
+            //}
+
+            lock(_lock)
             {
-                return true;
+                if (_queue.Count == 0)
+                {
+                    value = null;
+                    return false;
+                }
+
+                var item = _queue.Dequeue();
+                if (item != null)
+                {
+                    value = item;
+                    return true;
+                }
+
+                value = default(Event);
+
+                return false;
             }
-
-            value = default(Event);
-
-            return false;
         }
     }
 }

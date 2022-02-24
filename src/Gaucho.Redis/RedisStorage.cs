@@ -89,6 +89,11 @@ namespace Gaucho.Redis
             }
         }
 
+        /// <inheritdoc/>
+		public void Delete(StorageKey key)
+        {
+            _database.KeyDelete(CreateKey(key));
+        }
 
 		private string CreateKey(StorageKey key) => key.Key.StartsWith(_options.Prefix) ? key.ToString() : $"{_options.Prefix}:{key}".ToLower();
 	}

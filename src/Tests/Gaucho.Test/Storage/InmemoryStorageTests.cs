@@ -110,6 +110,17 @@ namespace Gaucho.Test.Storage
 			Assert.IsEmpty(storage.GetList<StorageModel>(new StorageKey("storage", "key")));
 		}
 
+        [Test]
+        public void InmemoryStorage_Delete()
+        {
+            var storage = new InmemoryStorage();
+			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+
+            storage.Delete(new StorageKey("storage", "key"));
+
+			Assert.IsEmpty(storage.GetList<StorageModel>(new StorageKey("storage", "key")));
+        }
+
 		public class StorageModel
 		{
 			public int Id { get; set; }

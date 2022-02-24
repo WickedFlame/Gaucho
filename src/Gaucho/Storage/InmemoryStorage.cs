@@ -87,5 +87,14 @@ namespace Gaucho.Storage
 		{
 			return _store.Keys.Where(k => k.StartsWith(key.ToString()));
 		}
+
+		/// <inheritdoc/>
+		public void Delete(StorageKey key)
+        {
+            if (_store.ContainsKey(key.ToString()))
+            {
+                _store.Remove(key.ToString());
+            }
+		}
 	}
 }
