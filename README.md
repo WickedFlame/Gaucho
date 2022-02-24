@@ -1,6 +1,7 @@
 # Gaucho
 
-Convert and broadcast events to standardized data
+Convert and broadcast events to standardized data  
+  
 [![Build status](https://img.shields.io/appveyor/build/chriswalpen/gaucho/master?label=Master&logo=appveyor&style=for-the-badge)](https://ci.appveyor.com/project/chriswalpen/gaucho/branch/master)
 [![Build status](https://img.shields.io/appveyor/build/chriswalpen/gaucho/dev?label=Dev&logo=appveyor&style=for-the-badge)](https://ci.appveyor.com/project/chriswalpen/gaucho/branch/dev)
   
