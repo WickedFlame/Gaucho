@@ -62,7 +62,7 @@ artifacts:
   - path: src\Gaucho\bin\Release\netstandard2.1\Gaucho.xml
     name: Gaucho.xml
   # pushing all *.nupkg files in directory
-  - path: '.\*.nupkg'
+  - path: '**\*.nupkg'
   
 # providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
 # provider names are case-sensitive!
