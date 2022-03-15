@@ -1,5 +1,6 @@
 ﻿
 using Gaucho.Configuration;
+using Gaucho.Diagnostics.MetricCounters;
 
 namespace Gaucho
 {
@@ -32,6 +33,11 @@ namespace Gaucho
         /// Gets the PipelineId
         /// </summary>
         public string PipelineId { get; set; }
+
+        /// <summary>
+        /// Gets the interval in seconds that the <see cref="EventBusMetricCounterTask"/> uses to write the metrics to the storage. 
+        /// </summary>
+        public int MetricsPollingInterval { get; set; } = 5;
     }
 
     public static class PipelineOptionsExtensions
@@ -51,6 +57,11 @@ namespace Gaucho
             if (po.MaxItemsInQueue == -1)
             {
                 po.MaxItemsInQueue = opt.MaxItemsInQueue;
+            }
+
+            if (po.MetricsPollingInterval == 5 && opt.MetricsPollingInterval > 0)
+            {
+                po.MetricsPollingInterval = opt.MetricsPollingInterval;
             }
 
             po.ServerName = opt.ServerName;

@@ -6,6 +6,9 @@ namespace Gaucho.Diagnostics.MetricCounters
 {
     /// <summary>
     /// BackgroundTask for writing Metrics and logs on the state of the <see cref="EventQueue"/>
+    /// Included Metrics:
+    /// - QueueSize
+    /// - Count of processors
     /// </summary>
     public class EventBusMetricCounterTask : IBackgroundTask<EventBusContext>
     {
@@ -62,7 +65,7 @@ namespace Gaucho.Diagnostics.MetricCounters
                         context.Logger.Write($"[{_serverName}] [{_pipelineId}] Active Workers in EventBus: {_lastProcessorCount}", Category.Log, LogLevel.Info, source: "EventProcessor");
                     }
 
-                    context.WaitHandle.WaitOne(TimeSpan.FromSeconds(5));
+                    context.WaitHandle.WaitOne(TimeSpan.FromSeconds(context.MetricsPollingInterval));
                 }
                 catch
                 {

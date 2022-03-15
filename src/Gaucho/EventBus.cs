@@ -74,7 +74,10 @@ namespace Gaucho
             _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger), CleanupProcessors, EndProcessor, _logger), _logger, _metricService, options);
             RunDispatcher();
 
-            _eventQueueContext = new EventBusContext(_queue, _processors, _metricService, _logger);
+            _eventQueueContext = new EventBusContext(_queue, _processors, _metricService, _logger)
+            {
+                MetricsPollingInterval = options.MetricsPollingInterval
+            };
             var taskDispatcher = new BackgroundTaskDispatcher();
             taskDispatcher.StartNew(new EventBusMetricCounterTask(options.ServerName, options.PipelineId), _eventQueueContext);
         }
