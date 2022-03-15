@@ -6,8 +6,19 @@ using StackExchange.Redis;
 
 namespace Gaucho
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class ServerSetupExtensions
 	{
+		/// <summary>
+		/// Use redis as a storage for metrics
+		/// </summary>
+		/// <param name="setup"></param>
+		/// <param name="connectionMultiplexer"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static ServerSetup UseRedisStorage(this ServerSetup setup, ConnectionMultiplexer connectionMultiplexer, RedisStorageOptions options = null)
 		{
 			if (setup == null)
@@ -27,6 +38,14 @@ namespace Gaucho
 			return setup;
 		}
 
+		/// <summary>
+		/// Use redis as a storage for metrics
+		/// </summary>
+		/// <param name="setup"></param>
+		/// <param name="connectionString"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static ServerSetup UseRedisStorage(this ServerSetup setup, string connectionString, RedisStorageOptions options = null)
 		{
 			if (setup == null)

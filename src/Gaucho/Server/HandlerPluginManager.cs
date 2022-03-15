@@ -9,6 +9,9 @@ using Gaucho.Diagnostics;
 
 namespace Gaucho.Server
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class HandlerPluginManager
     {
         internal static IEnumerable<HandlerPlugin> _plugins;
@@ -88,6 +91,11 @@ namespace Gaucho.Server
             return _assemblies;
         }
 
+        /// <summary>
+        /// Gets a list of registered <see cref="HandlerPlugin"/> for the type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public IEnumerable<HandlerPlugin> GetPlugins(Type type)
         {
             var plugins = GetPlugins(GetAssemblies()).Where(p => p.Type.Name == type.Name || p.Type.GetInterfaces().Any(y => y.Name == type.Name) && !p.Type.IsInterface).ToList();
@@ -95,6 +103,12 @@ namespace Gaucho.Server
             return plugins;
         }
 
+        /// <summary>
+        /// Gets a list of registered <see cref="HandlerPlugin"/> for the type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public HandlerPlugin GetPlugin(Type type, string name)
         {
             var plugin = GetPlugins(type).FirstOrDefault(p => p.Name == name);
@@ -106,6 +120,12 @@ namespace Gaucho.Server
             return plugin;
         }
 
+        /// <summary>
+        /// Gets a list of registered <see cref="HandlerPlugin"/> for the type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="node"></param>
+        /// <returns></returns>
         public HandlerPlugin GetPlugin(Type type, HandlerNode node)
         {
             var plugin = GetPlugins(type).FirstOrDefault(p => p.Name == node.Name || (string.IsNullOrEmpty(node.Name) && p.Type == node.Type));
