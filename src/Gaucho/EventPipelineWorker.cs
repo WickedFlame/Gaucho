@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using Gaucho.Diagnostics;
 using Gaucho.Server.Monitoring;
@@ -13,6 +14,7 @@ namespace Gaucho
 		private readonly ILogger _logger;
 		private readonly EventQueue _queue;
 		private readonly Lazy<IEventPipeline> _pipeline;
+        private readonly Stopwatch _stopwatch;
 
         /// <summary>
 		/// Creates a new instance of the EventBusWorker
@@ -26,6 +28,8 @@ namespace Gaucho
 			_queue = queue ?? throw new ArgumentException(nameof(queue));
 
 			_pipeline = new Lazy<IEventPipeline>(factory);
+
+            _stopwatch = Stopwatch.StartNew();
 		}
 
         /// <summary>
@@ -42,9 +46,12 @@ namespace Gaucho
             {
                 try
                 {
+                    _stopwatch.Restart();
                     _logger.WriteMetric(@event.Id, StatisticType.ProcessedEvent);
 
                     _pipeline.Value.Run(@event);
+
+                    _logger.Write($"Running event {@event.Id} took {_stopwatch.Elapsed.TotalMilliseconds} ms", Category.Log, LogLevel.Debug, "EventPipelineWorker");
                 }
                 catch (Exception e)
                 {

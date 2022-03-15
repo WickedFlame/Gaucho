@@ -163,6 +163,7 @@ namespace Gaucho
 		/// <param name="event"></param>
         public void Publish(Event @event)
         {
+            _logger.Write($"Add event {@event.Id} to queue of Pipeline {PipelineId}", Category.Log, LogLevel.Debug, "EventBus");
             _queue.Enqueue(@event);
 
             if (!_dispatcher.IsRunning)
