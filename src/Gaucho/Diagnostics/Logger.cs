@@ -30,6 +30,15 @@ namespace Gaucho.Diagnostics
         public LogLevel MinLogLevel { get; set; } = LogLevel.Info;
 
         /// <summary>
+        /// Add a logwriter
+        /// </summary>
+        /// <param name="writer"></param>
+        public void AddWriter(ILogWriter writer)
+        {
+            Writers.Add(writer);
+        }
+
+        /// <summary>
         /// Write the event to the logwriters
         /// </summary>
         /// <typeparam name="T"></typeparam>
