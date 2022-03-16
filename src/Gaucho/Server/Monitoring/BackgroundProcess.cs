@@ -38,7 +38,7 @@ namespace Gaucho.Server.Monitoring
 			catch (Exception e)
 			{
 				var logger = LoggerConfiguration.Setup();
-				logger.Write(e, Category.Log, LogLevel.Error, "BackgroundProcess");
+				logger.Write(e.Message, Category.Log, LogLevel.Error, "BackgroundProcess");
 			}
 		}
 

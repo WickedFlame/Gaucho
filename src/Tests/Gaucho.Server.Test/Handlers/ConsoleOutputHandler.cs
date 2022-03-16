@@ -17,7 +17,7 @@ namespace Gaucho.Server.Test.Handlers
 		{
 			_converter.AppendFormated(@event.Data);
 
-			System.Diagnostics.Debug.WriteLine(@event.Data);
+			//System.Diagnostics.Debug.WriteLine(@event.Data);
         }
     }
 }

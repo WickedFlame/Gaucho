@@ -35,7 +35,7 @@ namespace Gaucho
 		/// <param name="logger"></param>
 		public EventProcessor(IWorker worker, OnEndTask onEndTask, OnEndProcessing onEndProcessing, ILogger logger)
 		{
-			logger.Write($"Created new WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
+			logger.Write($"Created new WorkerThread with Id {_id}", LogLevel.Debug, "EventBus");
 
             _waitHandle = new ManualResetEvent(false);
             _lock = new DispatcherLock();
@@ -78,7 +78,7 @@ namespace Gaucho
 			_lock.Lock();
             _isRunning = true;
 
-			_logger.Write($"Start working on Thread {_id}", Category.Log, LogLevel.Debug, "EventBus");
+			_logger.Write($"Start working on Thread {_id}", LogLevel.Debug, "EventBus");
 
 			Task = Task.Factory.StartNew(() =>
 			{
@@ -98,7 +98,7 @@ namespace Gaucho
 				}
 				catch (Exception e)
 				{
-					_logger.Write(e.Message, Category.Log, LogLevel.Error, "EventProcessor");
+					_logger.Write(e.Message, LogLevel.Error, "EventProcessor");
 				}
 				finally
                 {
@@ -130,7 +130,7 @@ namespace Gaucho
         protected virtual void Dispose(bool disposing)
         {
 			_lock.Unlock();
-            _logger.Write($"Disposed WorkerThread with Id {_id}", Category.Log, LogLevel.Debug, "EventBus");
+            _logger.Write($"Disposed WorkerThread with Id {_id}", LogLevel.Debug, "EventBus");
 
             _isRunning = false;
             _waitHandle.Set();

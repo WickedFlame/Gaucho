@@ -50,12 +50,19 @@ namespace Gaucho
                     _logger.WriteMetric(@event.Id, StatisticType.ProcessedEvent);
 
                     _pipeline.Value.Run(@event);
-
-                    _logger.Write($"Running event {@event.Id} took {_stopwatch.Elapsed.TotalMilliseconds} ms", Category.Log, LogLevel.Debug, "EventPipelineWorker");
+                    var elapsed = _stopwatch.Elapsed.TotalMilliseconds;
+                    _logger.Write($"Running event {@event.Id} took {elapsed} ms", LogLevel.Debug, "EventPipelineWorker", metaData: () => new
+                    {
+                        Event = @event.Id,
+                        Duration = elapsed
+                    });
                 }
                 catch (Exception e)
                 {
-                    _logger.Write($"Error processing eveng{Environment.NewLine}EventId: {@event.Id}{Environment.NewLine}{e.Message}", Category.Log, LogLevel.Error, "EventBus");
+                    _logger.Write($"Error processing event{Environment.NewLine}EventId: {@event.Id}{Environment.NewLine}{e.Message}", LogLevel.Error, "EventPipelineWorker", metaData: () => new
+                    {
+                        Event = @event.Id
+                    });
                 }
             }
         }

@@ -73,7 +73,13 @@ namespace Gaucho
 
                     if (_processors.Count == 0 || _processors.Count < _options.MinProcessors || (_queue.Count / _processors.Count > _options.MaxItemsInQueue && _processors.Count < _options.MaxProcessors))
                     {
-                        _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Items in Queue count: {_queue.Count}", Category.Log, source: "EventBus");
+                        _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Items in Queue count: {_queue.Count}", source: "EventBus", metaData: () => new
+                        {
+                            PipelineId = _options.PipelineId,
+                            ServerName = _options.ServerName,
+                            ProcessorCount = _processors.Count,
+                            QueueQueueSize = _queue.Count
+                        });
                         var cnt = _processors.Count < _options.MinProcessors ? _options.MinProcessors : _processors.Count + 1;
                         SetupProcessors(cnt);
                     }
@@ -98,7 +104,13 @@ namespace Gaucho
                 _processors.Add(thread);
                 _metricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _processors.Count));
                 
-                _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Add Worker to EventBus. Active Workers: {i + 1}", Category.Log, source: "EventBus");
+                _logger.Write($"[{_options.ServerName}] [{_options.PipelineId}] Add Worker to EventBus. Active Workers: {i + 1}", source: "EventBus", metaData: () => new
+                {
+                    PipelineId = _options.PipelineId,
+                    ServerName = _options.ServerName,
+                    ProcessorCount = _processors.Count,
+                    QueueQueueSize = _queue.Count
+                });
                 _logger.WriteMetric(i + 1, StatisticType.WorkersLog);
             }
 
@@ -115,7 +127,13 @@ namespace Gaucho
 
                     toRemove--;
 
-                    _logger.Write($"Removed Worker from EventBus. Active Workers: {toRemove}", Category.Log, source: "EventBus");
+                    _logger.Write($"Removed Worker from EventBus. Active Workers: {toRemove}", source: "EventBus", metaData: () => new
+                    {
+                        PipelineId = _options.PipelineId,
+                        ServerName = _options.ServerName,
+                        ProcessorCount = _processors.Count,
+                        QueueQueueSize = _queue.Count
+                    });
                     _logger.WriteMetric(toRemove, StatisticType.WorkersLog);
                 }
 

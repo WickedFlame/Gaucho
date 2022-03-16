@@ -79,11 +79,11 @@ namespace Gaucho.Server.Test
 		            p.BuildPipeline(config);
 	            })
 	            .UseRedisStorage("localhost:6379", new Redis.RedisStorageOptions {Db = 15, Prefix = "gaucho"})
-	            .AddLogWriter(new ConsoleLogWriter())
+	            //.AddLogWriter(new ConsoleLogWriter())
 	            .UseOptions(new Options
 	            {
-		            LogLevel = Diagnostics.LogLevel.Debug,
-					ServerName = "Testserver",
+                    LogLevel = Diagnostics.LogLevel.Debug,
+                    ServerName = "Testserver",
                     MinProcessors = 10,
                     MetricsPollingInterval = 3
 				}));

@@ -51,7 +51,12 @@ namespace Gaucho.Diagnostics.MetricCounters
                         _lastQueueSize = cnt;
 
                         context.MetricService.SetMetric(new Metric(MetricType.QueueSize, "Events in Queue", _lastQueueSize));
-                        context.Logger.Write($"[{_serverName}] [{_pipelineId}] Items in Queue count: {_lastQueueSize}", Category.Log, LogLevel.Info, source: "EventQueue");
+                        context.Logger.Write($"[{_serverName}] [{_pipelineId}] Items in Queue count: {_lastQueueSize}", LogLevel.Info, source: "EventQueue", () => new
+                        {
+                            PipelineId = _pipelineId,
+                            ServerName = _serverName,
+                            QueueSize = _lastQueueSize
+                        });
                     }
 
 
@@ -62,7 +67,12 @@ namespace Gaucho.Diagnostics.MetricCounters
                         _lastProcessorCount = cnt;
 
                         context.MetricService.SetMetric(new Metric(MetricType.ThreadCount, "Active Workers", _lastProcessorCount));
-                        context.Logger.Write($"[{_serverName}] [{_pipelineId}] Active Workers in EventBus: {_lastProcessorCount}", Category.Log, LogLevel.Info, source: "EventProcessor");
+                        context.Logger.Write($"[{_serverName}] [{_pipelineId}] Active Workers in EventBus: {_lastProcessorCount}", LogLevel.Info, source: "EventProcessor", () => new
+                        {
+                            PipelineId = _pipelineId,
+                            ServerName = _serverName,
+                            ProcessorCount = _lastProcessorCount
+                        });
                     }
 
                     context.WaitHandle.WaitOne(TimeSpan.FromSeconds(context.MetricsPollingInterval));

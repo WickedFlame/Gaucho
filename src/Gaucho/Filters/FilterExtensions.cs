@@ -24,7 +24,7 @@ namespace Gaucho.Filters
 				if (filter == null)
 				{
 					var logger = LoggerConfiguration.Setup();
-					logger.Write($"Could not convert '{filterString}' to a Filter", Category.Log, LogLevel.Warning, source: "FilterFactory");
+					logger.Write($"Could not convert '{filterString}' to a Filter", LogLevel.Warning, source: "FilterFactory");
 					continue;
 				}
 

@@ -54,12 +54,14 @@ namespace Gaucho.Diagnostics
 		/// <param name="message"></param>
 		/// <param name="level"></param>
 		/// <param name="source"></param>
-		public LogEvent(string message, LogLevel level, string source)
+		/// <param name="metaData"></param>
+		public LogEvent(string message, LogLevel level, string source, object metaData)
         {
 	        Timestamp = DateTime.Now;
             Message = message;
             Level = level;
             Source = source;
+			MetaData = metaData;
         }
 
 		/// <summary>
@@ -81,6 +83,8 @@ namespace Gaucho.Diagnostics
 		/// Gets or sets the Source
 		/// </summary>
         public string Source { get; set; }
+
+		public object MetaData { get; set; }
     }
 
     public class StatisticEvent<T> : ILogEvent

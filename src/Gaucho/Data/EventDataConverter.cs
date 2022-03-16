@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Gaucho.Diagnostics;
@@ -38,6 +39,7 @@ namespace Gaucho
 	public class EventDataConverter : System.Collections.IEnumerable, IEventDataConverter
     {
         private readonly List<IFilter> _filters;
+        private readonly Stopwatch _stopwatch;
         private readonly ILogger _logger;
 
 		/// <summary>
@@ -47,7 +49,8 @@ namespace Gaucho
         {
 			_logger = LoggerConfiguration.Setup();
 			_filters = new List<IFilter>();
-        }
+            _stopwatch = Stopwatch.StartNew();
+		}
 
 		internal ILogger Logger => _logger;
 
@@ -72,10 +75,14 @@ namespace Gaucho
 		/// <returns></returns>
 		public EventData Convert(EventData data)
         {
-	        var filers = _filters.Where(f => f.FilterType == FilterType.Property).ToList();
+            _stopwatch.Restart();
+			var filers = _filters.Where(f => f.FilterType == FilterType.Property).ToList();
             if (!filers.Any())
             {
-	            _logger.Write(data.ToString(), Category.Log, LogLevel.Debug, "EventDataConverter");
+	            _logger.Write($"Converted object to EventData{Environment.NewLine}{data}", LogLevel.Debug, "EventDataConverter", () => new
+                {
+                    Duration = _stopwatch.Elapsed.TotalMilliseconds
+                });
 
 				return data;
             }
@@ -88,7 +95,10 @@ namespace Gaucho
 	            result.Add(property);
             }
 
-            _logger.Write(result.ToString(), Category.Log, LogLevel.Debug, "EventDataConverter");
+            _logger.Write($"Converted object to EventData{Environment.NewLine}{result}", LogLevel.Debug, "EventDataConverter", () => new
+            {
+                Duration = _stopwatch.Elapsed.TotalMilliseconds
+			});
 
             return result;
         }
@@ -172,7 +182,7 @@ namespace Gaucho
 				    }
 			    }
 
-			    logger.Write(msg.ToString(), Category.Log, LogLevel.Error, "EventData");
+			    logger.Write(msg.ToString(), LogLevel.Error, "EventData");
 
 				return data.ToString();
 		    }

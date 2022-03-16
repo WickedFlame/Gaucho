@@ -52,7 +52,7 @@ namespace Gaucho.Server
             var logger = LoggerConfiguration.Setup();
             foreach (var plugin in _plugins)
             {
-                logger.Write($"Loaded HandlerPlugin: {plugin.Name}", Category.Log, LogLevel.Info, "HandlerPluginManager");
+                logger.Write($"Loaded HandlerPlugin: {plugin.Name}", LogLevel.Info, "HandlerPluginManager");
             }
 
             return _plugins;

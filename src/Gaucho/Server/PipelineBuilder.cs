@@ -29,7 +29,7 @@ namespace Gaucho.Server
 		/// <param name="config"></param>
         public void BuildPipeline(IProcessingServer server, PipelineConfiguration config)
         {
-			_logger.Write($"Setup Pipeline:{config}", Category.Log, LogLevel.Debug, "PipelineBuilder");
+			_logger.Write($"Setup Pipeline:{config}", LogLevel.Debug, "PipelineBuilder");
 
 			server.SetupPipeline(config.Id, s =>
             {
