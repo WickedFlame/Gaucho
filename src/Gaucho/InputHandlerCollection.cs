@@ -38,6 +38,11 @@ namespace Gaucho
         /// <returns></returns>
         public IInputHandler<T> GetHandler<T>(string pipelineId)
         {
+            if (!_plugins.ContainsKey(pipelineId))
+            {
+                return null;
+            }
+
             return _plugins[pipelineId] as IInputHandler<T>;
         }
 
