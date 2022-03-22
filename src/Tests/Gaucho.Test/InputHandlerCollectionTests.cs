@@ -41,12 +41,12 @@ namespace Gaucho.Test
         [Test]
         public void InputHandlerCollection_Gethandler()
         {
-            var handler = new Mock<IInputHandler>();
+            var handler = new Mock<IInputHandler<TestObject>>();
 
             var collection = new InputHandlerCollection();
             collection.Register("pipeline", handler.Object);
 
-            Assert.AreSame(handler.Object, collection.GetHandler<IInputHandler>("pipeline"));
+            Assert.AreSame(handler.Object, collection.GetHandler<TestObject>("pipeline"));
         }
 
         [Test]
@@ -66,6 +66,10 @@ namespace Gaucho.Test
             var collection = new InputHandlerCollection();
 
             Assert.IsNull(collection.GetHandler<IInputHandler>("pipeline"));
+        }
+
+        public class TestObject
+        {
         }
     }
 }

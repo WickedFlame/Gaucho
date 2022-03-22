@@ -32,6 +32,11 @@ namespace Gaucho.Diagnostics
 		/// Gets or sets the LogLevel
 		/// </summary>
 		LogLevel Level { get; }
+
+        /// <summary>
+        /// Object containing some metrics to log
+        /// </summary>
+        object MetaData { get; set; }
 	}
 
 	/// <summary>
