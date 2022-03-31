@@ -99,7 +99,89 @@ namespace Gaucho.Test
 
 			Assert.AreEqual(data.ToString(), "{\r\n   dst_lvl -> Info\r\n   msg -> The message\r\n}");
         }
-	}
+
+        [Test]
+        public void Gaucho_Filter_MapComplexToSimple()
+        {
+            var converter = new EventDataConverter();
+            var filters = new List<string>
+            {
+                "Level -> dst_lvl",
+                "Sub.Message -> msg"
+            };
+
+            foreach (var filter in filters)
+            {
+                converter.Add(FilterFactory.BuildFilter(filter));
+            }
+
+            var input = new
+            {
+                Level = "Info",
+                Sub = new
+                {
+                    Message = "The message",
+                }
+            };
+            var factory = new EventDataFactory();
+            var data = factory.BuildFrom(input);
+
+            data = converter.Convert(data);
+
+            Assert.IsNotNull(data.FirstOrDefault(p => p.Key == "msg"));
+            Assert.AreEqual(input.Sub.Message, data["msg"]);
+        }
+
+        [Test]
+        public void Gaucho_Filter_MapComplexToSimple_NoObject()
+        {
+            var converter = new EventDataConverter();
+            var filters = new List<string>
+            {
+                "Level -> dst_lvl",
+                "Sub.Message -> msg"
+            };
+
+            foreach (var filter in filters)
+            {
+                converter.Add(FilterFactory.BuildFilter(filter));
+            }
+
+            var input = new
+            {
+                Level = "Info"
+            };
+            var factory = new EventDataFactory();
+            var data = factory.BuildFrom(input);
+
+            Assert.IsNull(data["msg"]);
+        }
+
+        [Test]
+        public void Gaucho_Filter_MapComplexToSimple_Ignore()
+        {
+            var converter = new EventDataConverter();
+            var filters = new List<string>
+            {
+                "Level -> dst_lvl",
+                "Sub.Message -> msg"
+            };
+
+            foreach (var filter in filters)
+            {
+                converter.Add(FilterFactory.BuildFilter(filter));
+            }
+
+            var input = new
+            {
+                Level = "Info"
+            };
+            var factory = new EventDataFactory();
+            var data = factory.BuildFrom(input);
+
+            Assert.IsNull(data.FirstOrDefault(d => d.Key == "msg"));
+        }
+    }
 
     public class FilterOutputHandler : IOutputHandler
     {
