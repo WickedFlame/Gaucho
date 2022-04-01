@@ -9,7 +9,7 @@ using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
 
-namespace Gaucho.Test.Diagnostics
+namespace Gaucho.Integration.Test.Diagnostics
 {
     [SingleThreaded]
     public class EventQueueMetricCounterTaskTests
