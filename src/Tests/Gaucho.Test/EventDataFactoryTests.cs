@@ -80,7 +80,7 @@ namespace Gaucho.Test
 			Assert.That(eventData["Message"].Equals("this is a test"));
 		}
 
-		[Test]
+        [Test]
 		public void EventDataFactory_Complex()
 		{
 			var data = new ComplexData
@@ -105,6 +105,25 @@ namespace Gaucho.Test
 
 			eventData.MatchSnapshot();
 		}
+
+        [Test]
+        public void EventDataFactory_Array()
+        {
+            var data = new 
+            {
+                Index = 1,
+                Data = new []
+                {
+                    new { test = "one"},
+                    new { test = "two"}
+				}
+            };
+
+            var factory = new EventDataFactory();
+            var eventData = factory.BuildFrom(data);
+
+            eventData.MatchSnapshot();
+        }
 
 		public class MessageData
 		{

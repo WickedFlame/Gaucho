@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Gaucho
 {
@@ -43,7 +44,12 @@ namespace Gaucho
                 return;
             }
 
-	        foreach (var property in input.GetType().GetProperties())
+            if (AppendArray(data, input, parentName))
+            {
+                return;
+            }
+
+            foreach (var property in input.GetType().GetProperties())
 	        {
 		        var name = string.IsNullOrEmpty(parentName) ? property.Name : $"{parentName}.{property.Name}";
 		        var value = property.GetValue(input);
@@ -79,7 +85,26 @@ namespace Gaucho
             }
 
             return true;
+        }
 
+        private bool AppendArray(EventData data, object input, string parentName)
+        {
+            if (!(input is IEnumerable enumerable))
+            {
+                return false;
+            }
+
+            var lst = new List<EventData>();
+            foreach (var item in enumerable)
+            {
+                var tmp = new EventData();
+                AppendObject(tmp, item, null);
+                lst.Add(tmp);
+            }
+
+            data.Add(parentName, lst.ToArray());
+
+            return true;
         }
 
         /// <summary>

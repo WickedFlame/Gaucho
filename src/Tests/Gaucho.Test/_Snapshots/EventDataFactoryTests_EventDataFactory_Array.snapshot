@@ -1,0 +1,16 @@
+---data
+Key: Index
+Value:
+  1
+ValueType: System.Int32
+Key: Data
+Value:
+  Key: test
+  Value:
+    one
+  ValueType: System.String
+  Key: test
+  Value:
+    two
+  ValueType: System.String
+ValueType: Gaucho.EventData[]
