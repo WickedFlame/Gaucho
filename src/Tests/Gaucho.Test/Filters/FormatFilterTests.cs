@@ -57,7 +57,7 @@ namespace Gaucho.Test.Filters
         [Test]
         public void FormatFilter_Format_DateTime()
         {
-            var filter = new FormatFilter("tmp", "${date:yyyy-MM-ddTHH:mm:ss.sssZ}");
+            var filter = new FormatFilter("tmp", "${date:yyyy-MM-ddTHH:mm:ss.sssK}");
 
             var data = new EventData()
                 .Add("lvl", "Debug")
@@ -65,7 +65,7 @@ namespace Gaucho.Test.Filters
 
             var result = filter.Filter(data);
 
-            result.Value.Should().Be("2012-12-21T10:11:11.11Z");
+            result.Value.Should().Be("2012-12-21T10:11:11.11+01:00");
         }
 
         [Test]
@@ -73,13 +73,15 @@ namespace Gaucho.Test.Filters
         {
             var filter = new FormatFilter("tmp", "${date:o}");
 
+            var date = DateTime.Parse("2012-12-21T11:11:11.0000000+02:00");
+
             var data = new EventData()
                 .Add("lvl", "Debug")
-                .Add("date", DateTime.Parse("2012-12-21T11:11:11.0000000+02:00"));
+                .Add("date", date);
 
             var result = filter.Filter(data);
 
-            result.Value.Should().Be("2012-12-21T10:11:11.0000000+01:00");
+            DateTime.Parse(result.Value as string).Should().Be(date);
         }
 	}
 }
