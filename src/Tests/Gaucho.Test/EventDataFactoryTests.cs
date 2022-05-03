@@ -112,6 +112,7 @@ namespace Gaucho.Test
             var data = new 
             {
                 Index = 1,
+				Str = "test",
                 Data = new []
                 {
                     new { test = "one"},

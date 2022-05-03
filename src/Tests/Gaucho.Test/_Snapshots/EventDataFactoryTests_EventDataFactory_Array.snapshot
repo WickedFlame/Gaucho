@@ -3,6 +3,10 @@ Key: Index
 Value:
   1
 ValueType: System.Int32
+Key: Str
+Value:
+  test
+ValueType: System.String
 Key: Data
 Value:
   Key: test
