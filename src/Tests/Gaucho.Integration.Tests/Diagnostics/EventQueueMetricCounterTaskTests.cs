@@ -9,7 +9,7 @@ using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
 
-namespace Gaucho.Test.Diagnostics
+namespace Gaucho.Integration.Test.Diagnostics
 {
     [SingleThreaded]
     public class EventQueueMetricCounterTaskTests
@@ -42,7 +42,7 @@ namespace Gaucho.Test.Diagnostics
 
             context.WaitHandle.Set();
 
-            Task.Delay(1000).Wait();
+            Task.Delay(1500).Wait();
 
             logger.Verify(x => x.Write<LogEvent>(It.Is<LogEvent>(l => l.Source == "EventQueue"), It.IsAny<Category>()), Times.Exactly(2));
         }

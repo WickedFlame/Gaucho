@@ -3,18 +3,25 @@ using System.Collections.Generic;
 
 namespace Gaucho.Diagnostics
 {
-    public class LoggerConfiguration
+    /// <summary>
+    /// Configuration for the logger
+    /// </summary>
+    public static class LoggerConfiguration
     {
-        private static List<ILogWriter> _defaultWriters = new List<ILogWriter>
-        {
-            new TraceLogWriter()
-        };
+        private static List<ILogWriter> _defaultWriters = new List<ILogWriter>();
 
+        /// <summary>
+        /// Setup the logger
+        /// </summary>
+        /// <returns></returns>
         public static ILogger Setup()
         {
-            var logger = new Logger();
+            var logger = new Logger
+            {
+                MinLogLevel = GlobalConfiguration.Configuration.GetOptions().LogLevel
+            };
 
-            foreach(var writer in _defaultWriters)
+            foreach (var writer in _defaultWriters)
             {
                 logger.Writers.Add(writer);
             }
@@ -22,14 +29,14 @@ namespace Gaucho.Diagnostics
             return logger;
         }
 
+        /// <summary>
+        /// Setup the logger
+        /// </summary>
+        /// <param name="factories"></param>
+        /// <returns></returns>
         public static ILogger Setup(params Action<LoggerSetup>[] factories)
         {
-            var logger = new Logger();
-
-            foreach (var writer in _defaultWriters)
-            {
-                logger.Writers.Add(writer);
-            }
+            var logger = Setup();
 
             var setup = new LoggerSetup(logger);
             foreach (var factory in factories)
@@ -40,24 +47,35 @@ namespace Gaucho.Diagnostics
             return logger;
         }
 
+        /// <summary>
+        /// Add a writer to the logger
+        /// </summary>
+        /// <param name="writer"></param>
         public static void AddLogWriter(ILogWriter writer)
         {
             _defaultWriters.Add(writer);
         }
     }
 
+    /// <summary>
+    /// Setupclass for the logger
+    /// </summary>
     public class LoggerSetup
     {
-        private Logger _logger;
+        private readonly ILogger _logger;
 
-        internal LoggerSetup(Logger logger)
+        internal LoggerSetup(ILogger logger)
         {
             _logger = logger;
         }
 
+        /// <summary>
+        /// Add a writer to the logger
+        /// </summary>
+        /// <param name="writer"></param>
         public void AddWriter(ILogWriter writer)
         {
-            _logger.Writers.Add(writer);
+            _logger.AddWriter(writer);
         }
     }
 }

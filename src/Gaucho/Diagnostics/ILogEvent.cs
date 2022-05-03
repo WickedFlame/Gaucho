@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Gaucho.Diagnostics
 {
@@ -34,6 +32,11 @@ namespace Gaucho.Diagnostics
 		/// Gets or sets the LogLevel
 		/// </summary>
 		LogLevel Level { get; }
+
+        /// <summary>
+        /// Object containing some metrics to log
+        /// </summary>
+        object MetaData { get; set; }
 	}
 
 	/// <summary>
@@ -54,12 +57,14 @@ namespace Gaucho.Diagnostics
 		/// <param name="message"></param>
 		/// <param name="level"></param>
 		/// <param name="source"></param>
-		public LogEvent(string message, LogLevel level, string source)
+		/// <param name="metaData"></param>
+		public LogEvent(string message, LogLevel level, string source, object metaData)
         {
 	        Timestamp = DateTime.Now;
             Message = message;
             Level = level;
             Source = source;
+			MetaData = metaData;
         }
 
 		/// <summary>
@@ -81,10 +86,24 @@ namespace Gaucho.Diagnostics
 		/// Gets or sets the Source
 		/// </summary>
         public string Source { get; set; }
+
+		/// <summary>
+		/// Object containing some metrics to log
+		/// </summary>
+		public object MetaData { get; set; }
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
     public class StatisticEvent<T> : ILogEvent
     {
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="metric"></param>
         public StatisticEvent(T value, StatisticType metric)
         {
 	        Timestamp = DateTime.Now;
@@ -93,14 +112,29 @@ namespace Gaucho.Diagnostics
             Metric = metric;
         }
 
+		/// <summary>
+		/// The metric type
+		/// </summary>
         public StatisticType Metric { get; set; }
 
+		/// <summary>
+		/// The timestamp
+		/// </summary>
         public DateTime Timestamp { get; }
 
+		/// <summary>
+		/// The logmessage
+		/// </summary>
 		public string Message { get; set; }
         
+		/// <summary>
+		/// The value to log
+		/// </summary>
 		public T Value { get; }
 
+		/// <summary>
+		/// The source this log originated from
+		/// </summary>
         public string Source { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Gaucho.Diagnostics
 {
 	/// <summary>
@@ -6,18 +8,16 @@ namespace Gaucho.Diagnostics
 	/// </summary>
 	public static class LoggerExtensions
 	{
-		/// <summary>
-		/// Write a message to the log
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="logger"></param>
-		/// <param name="message"></param>
-		/// <param name="category"></param>
-		/// <param name="level"></param>
-		/// <param name="source"></param>
-		public static void Write<T>(this ILogger logger, T message, Category category, LogLevel level = LogLevel.Info, string source = null)
-			=> Write(logger, message.ToString(), category, level, source);
-
+        /// <summary>
+        /// Write a message to the log
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="message"></param>
+        /// <param name="level"></param>
+        /// <param name="source"></param>
+        /// <param name="metaData"></param>
+        public static void Write(this ILogger logger, string message, LogLevel level = LogLevel.Info, string source = null, Func<object> metaData = null)
+            => Write(logger, message, Category.Log, level, source, metaData);
 
 		/// <summary>
 		/// Write a message to the log
@@ -27,12 +27,13 @@ namespace Gaucho.Diagnostics
 		/// <param name="category"></param>
 		/// <param name="level"></param>
 		/// <param name="source"></param>
-		public static void Write(this ILogger logger, string message, Category category, LogLevel level = LogLevel.Info, string source = null)
+		/// <param name="metaData"></param>
+		public static void Write(this ILogger logger, string message, Category category, LogLevel level = LogLevel.Info, string source = null, Func<object> metaData = null)
 		{
 			switch (category)
 			{
 				case Category.Log:
-					logger.Write(new LogEvent(message, level, source), category);
+					logger.Write(new LogEvent(message, level, source, metaData?.Invoke()), category);
 					break;
 			}
 		}

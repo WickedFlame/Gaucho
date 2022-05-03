@@ -56,5 +56,10 @@ namespace Gaucho.Diagnostics.MetricCounters
         /// Gets the <see cref="ILogger"/>
         /// </summary>
         public ILogger Logger { get; }
+
+        /// <summary>
+        /// Gets the interval in seconds that the <see cref="EventBusMetricCounterTask"/> uses to write the metrics to the storage. 
+        /// </summary>
+        public int MetricsPollingInterval { get; set; } = 5;
     }
 }

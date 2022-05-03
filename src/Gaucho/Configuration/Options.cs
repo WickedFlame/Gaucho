@@ -1,4 +1,5 @@
 ﻿using Gaucho.Diagnostics;
+using Gaucho.Diagnostics.MetricCounters;
 
 namespace Gaucho.Configuration
 {
@@ -52,7 +53,18 @@ namespace Gaucho.Configuration
             get => _minProcessors;
             set => _minProcessors = value < 1 ? 1 : value;
         }
-    }
+
+        private int _metricsPollingInterval = 5;
+
+        /// <summary>
+        /// Gets the interval in seconds that the <see cref="EventBusMetricCounterTask"/> uses to write the metrics to the storage. 
+        /// </summary>
+		public int MetricsPollingInterval
+        {
+            get => _metricsPollingInterval;
+            set => _metricsPollingInterval = value < 1 ? 1 : value;
+        }
+	}
 	
 	/// <summary>
 	/// Extensions and Logic for the options
@@ -104,6 +116,11 @@ namespace Gaucho.Configuration
             if (defaultOptions.MinProcessors == 1)
             {
                 defaultOptions.MinProcessors = merge.MinProcessors;
+            }
+
+            if (defaultOptions.MetricsPollingInterval == 5)
+            {
+                defaultOptions.MetricsPollingInterval = merge.MetricsPollingInterval;
             }
 		}
 	}

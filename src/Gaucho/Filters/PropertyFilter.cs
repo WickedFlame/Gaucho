@@ -73,7 +73,7 @@ namespace Gaucho.Filters
 		            }
 	            }
 
-	            _logger.Write(msg.ToString(), Category.Log, LogLevel.Error, "EventData");
+	            _logger.Write(msg.ToString(), LogLevel.Error, "EventData");
 			}
 
             return new Property(_destination, value);

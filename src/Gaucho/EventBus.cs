@@ -74,7 +74,10 @@ namespace Gaucho
             _dispatcher = new EventBusPorcessDispatcher(_processors, _queue, () => new EventProcessor(new EventPipelineWorker(_queue, () => _pipelineFactory.Setup(), _logger), CleanupProcessors, EndProcessor, _logger), _logger, _metricService, options);
             RunDispatcher();
 
-            _eventQueueContext = new EventBusContext(_queue, _processors, _metricService, _logger);
+            _eventQueueContext = new EventBusContext(_queue, _processors, _metricService, _logger)
+            {
+                MetricsPollingInterval = options.MetricsPollingInterval
+            };
             var taskDispatcher = new BackgroundTaskDispatcher();
             taskDispatcher.StartNew(new EventBusMetricCounterTask(options.ServerName, options.PipelineId), _eventQueueContext);
         }
@@ -160,6 +163,12 @@ namespace Gaucho
 		/// <param name="event"></param>
         public void Publish(Event @event)
         {
+            _logger.Write($"Add event {@event.Id} to queue of Pipeline {PipelineId}", LogLevel.Debug, "EventBus", () => new
+            {
+                PipelineId = PipelineId,
+                ServerName = _pipelineFactory.Options.ServerName,
+                Event = @event.Id
+            });
             _queue.Enqueue(@event);
 
             if (!_dispatcher.IsRunning)
@@ -172,7 +181,11 @@ namespace Gaucho
 
         private void RunDispatcher()
         {
-            _logger.Write($"Starting event dispatcher for {PipelineId}", Category.Log, LogLevel.Info, "EventBus");
+            _logger.Write($"Starting event dispatcher for {PipelineId}", LogLevel.Info, "EventBus", () => new
+            {
+                PipelineId = PipelineId,
+                ServerName = _pipelineFactory.Options.ServerName
+            });
             Task.Factory.StartNew(() => _dispatcher.RunDispatcher(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
@@ -214,7 +227,12 @@ namespace Gaucho
                 _processors.Remove(processor);
                 processor.Dispose();
 
-                _logger.Write($"Remove Worker from EventBus. Workers: {_processors.Count}", Category.Log, source: "EventBus");
+                _logger.Write($"Remove Worker from EventBus. Workers: {_processors.Count}", source: "EventBus", metaData: () => new
+                {
+                    PipelineId = PipelineId,
+                    ServerName = _pipelineFactory.Options.ServerName,
+                    ProcessorCount = _processors.Count
+                });
                 _logger.WriteMetric(_processors.Count, StatisticType.WorkersLog);
             }
 

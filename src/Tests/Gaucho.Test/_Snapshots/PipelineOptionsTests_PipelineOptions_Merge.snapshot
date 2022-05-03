@@ -1,6 +1,7 @@
 ---data
 MaxItemsInQueue: 10
 MaxProcessors: 10
+MetricsPollingInterval: 5
 MinProcessors: 10
 PipelineId: null
 ServerName: localhost

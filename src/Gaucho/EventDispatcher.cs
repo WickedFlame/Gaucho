@@ -39,6 +39,10 @@ namespace Gaucho
             }
 
             var @event = plugin.ProcessInput(item);
+            if (@event == null)
+            {
+                return;
+            }
 
             _server.Publish(@event);
         }

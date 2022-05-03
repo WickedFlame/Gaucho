@@ -89,7 +89,7 @@ namespace Gaucho.Test
 			var worker = new EventPipelineWorker(queue, () => _pipeline.Object, logger.Object);
 			worker.Execute();
 
-			logger.Verify(exp => exp.Write(It.Is<LogEvent>(l => l.Level == LogLevel.Error && l.Source == "EventBus"), Category.Log), Times.Exactly(2));
+			logger.Verify(exp => exp.Write(It.Is<LogEvent>(l => l.Level == LogLevel.Error && l.Source == "EventPipelineWorker"), Category.Log), Times.Exactly(2));
 		}
 	}
 }

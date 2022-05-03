@@ -126,7 +126,7 @@ namespace Gaucho
             var pipeline = _eventBusFactory.GetEventBus(@event.PipelineId);
             if (pipeline == null)
             {
-                _logger.Write($"Pipeline with the Id {@event.PipelineId} does not exist. Event {@event.Id} could not be sent to any Pipeline.", Category.Log, LogLevel.Error, "EventBus");
+                _logger.Write($"Pipeline with the Id {@event.PipelineId} does not exist. Event {@event.Id} could not be sent to any Pipeline.", LogLevel.Error, "EventBus");
                 return;
             }
 
@@ -160,7 +160,7 @@ namespace Gaucho
             }
 
             _heartbeat?.Dispose();
-            _logger.Write("ProcessingServer stopped", Category.Log);
+            _logger.Write("ProcessingServer stopped");
         }
 
         private void InitializeServer()

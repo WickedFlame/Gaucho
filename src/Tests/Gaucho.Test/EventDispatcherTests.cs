@@ -39,6 +39,21 @@ namespace Gaucho.Test
 			Assert.Throws<InvalidOperationException>(() => dispatcher.Process("pipeline", new Message()));
 		}
 
+        [Test]
+        public void EventDispatcher_Handler_Null_Return()
+        {
+            var handler = new Mock<IInputHandler<Message>>();
+            handler.Setup(x => x.ProcessInput(It.IsAny<Message>())).Returns(() => null);
+
+            var server = new Mock<IProcessingServer>();
+            server.Setup(exp => exp.GetHandler<Message>("pipeline")).Returns(handler.Object);
+
+            var dispatcher = new EventDispatcher(server.Object);
+            dispatcher.Process("pipeline", new Message());
+
+            server.Verify(x => x.Publish(It.IsAny<Event>()), Times.Never);
+        }
+
 		public class Message
 		{
 

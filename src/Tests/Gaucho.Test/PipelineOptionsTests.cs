@@ -40,7 +40,8 @@ namespace Gaucho.Test
                 MaxProcessors = 1,
                 MinProcessors = 1,
                 MaxItemsInQueue = 1,
-                ServerName = "tmp"
+                ServerName = "tmp",
+                MetricsPollingInterval = 1
             };
 
             po.Merge(opt).MatchSnapshot();

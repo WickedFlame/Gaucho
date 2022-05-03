@@ -2,12 +2,20 @@
 
 namespace Gaucho.Filters
 {
+	/// <summary>
+	/// Represents a filter to format values to a string
+	/// </summary>
 	public class FormatFilter : IFilter
 	{
 		private readonly string _format;
 		private readonly string _property;
 		private readonly Regex _regex;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="format"></param>
 		public FormatFilter(string property, string format)
 		{
 			_property = property;
@@ -16,10 +24,21 @@ namespace Gaucho.Filters
 			_regex = new Regex(@"\${(.*?)}", RegexOptions.Compiled);
 		}
 
+		/// <summary>
+		/// Gets the key of the filter
+		/// </summary>
 		public string Key => _property;
 
+		/// <summary>
+		/// Defaults to FilterType.Formatter
+		/// </summary>
 		public FilterType FilterType => FilterType.Formatter;
 
+		/// <summary>
+		/// Format the data
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
 		public Property Filter(EventData data)
 		{
 			var value = _regex.Replace(_format, m =>
