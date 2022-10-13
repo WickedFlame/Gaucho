@@ -58,6 +58,12 @@ body {
 .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-header .pipeline-title-button {
   cursor: pointer;
   width: 90%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+.main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-header .pipeline-title-button .pipeline-title-content {
+  font-size: 14px;
 }
 .main-wrapper .container .pipeline-item .pipeline-item-container .pipeline-item-content {
   /*display: contents;*/

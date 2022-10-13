@@ -74,6 +74,13 @@ body {
 					.pipeline-title-button{
 						cursor: pointer;
 						width: 90%;
+						display: grid;
+						grid-template-columns: 1fr auto;
+						align-items: center;
+
+						.pipeline-title-content{
+							font-size: 14px;
+						}
 					}
 				}
 

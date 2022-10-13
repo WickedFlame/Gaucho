@@ -16,7 +16,10 @@
 		}
 		<div class="toggler-section pipeline-item-header @cls">
 			<div class="pipeline-title-button">
-				<h3>@Pipeline.PipelineId</h3>
+                <h3>@Pipeline.PipelineId</h3>
+				<div class="pipeline-title-content">
+                    @Pipeline.ServerName
+                </div>
 			</div>
 			<i class="trash-button" title="Clear logs and metrics" data-pipeline="@Pipeline.PipelineId" data-server="@Pipeline.ServerName"></i>
 		</div>
