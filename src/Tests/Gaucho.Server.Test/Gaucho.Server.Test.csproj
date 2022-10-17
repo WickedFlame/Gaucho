@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Broadcast" Version="0.5.0" />
-    <PackageReference Include="MeasureMap" Version="2.0.0" />
+    <PackageReference Include="MeasureMap" Version="2.0.2-RC17" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="YamlMap" Version="1.2.4" />
   </ItemGroup>

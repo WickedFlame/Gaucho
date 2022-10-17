@@ -76,7 +76,7 @@ namespace Gaucho.Integration.Tests
 			var stats = new StatisticsApi(pipelineId);
 			Assert.AreEqual(1, stats.GetMetricValue(MetricType.ThreadCount));
 
-			result.Trace("### LoadTesting");
+			result.Trace();
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace Gaucho.Integration.Tests
             var stats = new StatisticsApi(pipelineId);
             Assert.AreEqual(10, stats.GetMetricValue(MetricType.ThreadCount));
 
-            result.Trace("### LoadTesting");
+            result.Trace();
         }
 
         public class ThreadWaitHandler : IOutputHandler
