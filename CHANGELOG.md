@@ -15,4 +15,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  
 ### Fixed
 - Set WaitHandle on disposing the EventBus
+- Get InputHandlers is now caseinsensitive
   

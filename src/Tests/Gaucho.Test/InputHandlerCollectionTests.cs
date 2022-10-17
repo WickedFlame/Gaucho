@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 
@@ -66,6 +67,15 @@ namespace Gaucho.Test
             var collection = new InputHandlerCollection();
 
             Assert.IsNull(collection.GetHandler<IInputHandler>("pipeline"));
+        }
+
+        [Test]
+        public void InputHandlerCollection_Gethandler_IgnoreCase()
+        {
+            var collection = new InputHandlerCollection();
+            collection.Register("PIPELINE", new Mock<IInputHandler<TestObject>>().Object);
+
+            collection.GetHandler<TestObject>("pipeline").Should().NotBeNull();
         }
 
         public class TestObject
