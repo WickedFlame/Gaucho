@@ -236,6 +236,7 @@ namespace Gaucho.Test
         }
 
         [TestCase("pipeline_1", true)]
+        [TestCase("PIPELINE_1", true)]
         [TestCase("pipeline_2", false)]
         public void ProcessingServer_ContainsPipeline(string pipelineId, bool expected)
         {

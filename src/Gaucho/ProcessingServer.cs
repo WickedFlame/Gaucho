@@ -125,7 +125,7 @@ namespace Gaucho
         /// <returns></returns>
         public bool ContainsPipeline(string pipelineId)
         {
-			return _eventBusFactory.Pipelines.Any(p => p == pipelineId);
+			return _eventBusFactory.Pipelines.Any(p => p.ToLower() == pipelineId.ToLower());
         }
 
         /// <summary>
