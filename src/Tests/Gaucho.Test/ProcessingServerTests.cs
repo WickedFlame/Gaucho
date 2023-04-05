@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Gaucho.Configuration;
 using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
@@ -233,5 +234,16 @@ namespace Gaucho.Test
             var bus = factory.GetEventBus("test");
             Assert.AreSame(bus.PipelineFactory.Options, config.Options);
         }
-	}
+
+        [TestCase("pipeline_1", true)]
+        [TestCase("pipeline_2", false)]
+        public void ProcessingServer_ContainsPipeline(string pipelineId, bool expected)
+        {
+            var factory = new Mock<IEventBusFactory>();
+            factory.Setup(x => x.Pipelines).Returns(() => new[] { "pipeline_1" });
+            var server = new ProcessingServer(factory.Object);
+
+            server.ContainsPipeline(pipelineId).Should().Be(expected);
+        }
+    }
 }

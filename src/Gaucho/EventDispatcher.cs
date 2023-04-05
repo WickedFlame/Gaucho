@@ -63,5 +63,15 @@ namespace Gaucho
                 Duration = elapsed
             });
         }
+
+        /// <summary>
+        /// Checks if the pipelinie is registered in the Server
+        /// </summary>
+        /// <param name="pipelineId"></param>
+        /// <returns></returns>
+        public bool ContainsPipeline(string pipelineId)
+        {
+            return _server.ContainsPipeline(pipelineId);
+        }
     }
 }

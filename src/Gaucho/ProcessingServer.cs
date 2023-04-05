@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gaucho.Configuration;
 using Gaucho.Diagnostics;
 using Gaucho.Server.Monitoring;
@@ -117,11 +118,21 @@ namespace Gaucho
             return _inputHandlers.GetHandler<T>(pipelineId);
         }
 
-		/// <summary>
-		/// Publish an envent to the Pipeline
-		/// </summary>
-		/// <param name="event"></param>
-		public void Publish(Event @event)
+        /// <summary>
+        /// Checks if the pipelinie is registered in the Server
+        /// </summary>
+        /// <param name="pipelineId"></param>
+        /// <returns></returns>
+        public bool ContainsPipeline(string pipelineId)
+        {
+			return _eventBusFactory.Pipelines.Any(p => p == pipelineId);
+        }
+
+        /// <summary>
+        /// Publish an envent to the Pipeline
+        /// </summary>
+        /// <param name="event"></param>
+        public void Publish(Event @event)
         {
             var pipeline = _eventBusFactory.GetEventBus(@event.PipelineId);
             if (pipeline == null)

@@ -49,6 +49,13 @@ namespace Gaucho
 		IInputHandler<T> GetHandler<T>(string pipelineId);
 
 		/// <summary>
+		/// Checks if the pipelinie is registered in the Server
+		/// </summary>
+		/// <param name="pipelineId"></param>
+		/// <returns></returns>
+		bool ContainsPipeline(string pipelineId);
+
+		/// <summary>
 		/// Publish an envent to the Pipeline
 		/// </summary>
 		/// <param name="event"></param>

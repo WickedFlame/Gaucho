@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  
 ## vNext
 ### Added
+- EventDispatcher and ProcessingServer can now check if a pipeline is registered in the Server
 - Added Changelog.md to document changes
-- Measure time it takes to publish a event
+- Measure and log the time it takes to publish a event
 - Show the servername in pipeline header of the dashboard
  
 ### Changed

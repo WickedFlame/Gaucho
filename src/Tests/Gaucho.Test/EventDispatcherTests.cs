@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 
@@ -54,7 +55,18 @@ namespace Gaucho.Test
             server.Verify(x => x.Publish(It.IsAny<Event>()), Times.Never);
         }
 
-		public class Message
+		[TestCase("pipeline_1", true)]
+        [TestCase("pipeline_2", false)]
+        public void EventDispatcher_ContainsPipeline(string pipelineId, bool expected)
+        {
+            var server = new Mock<IProcessingServer>();
+            server.Setup(exp => exp.ContainsPipeline("pipeline_1")).Returns(() => true);
+
+            var dispatcher = new EventDispatcher(server.Object);
+            dispatcher.ContainsPipeline(pipelineId).Should().Be(expected);
+        }
+
+        public class Message
 		{
 
 		}
