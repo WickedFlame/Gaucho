@@ -63,9 +63,13 @@ namespace Gaucho.Redis
 
 		/// <inheritdoc/>
 		public void Set<T>(StorageKey key, T value)
-		{
-			_database.HashSetAsync(CreateKey(key), value.SerializeToRedis());
-		}
+        {
+            var k = CreateKey(key);
+            _database.HashSetAsync(k, value.SerializeToRedis());
+
+			// defaults to 2 Days
+            _database.KeyExpireAsync(k, TimeSpan.FromMinutes(2880));
+        }
 
 		/// <inheritdoc/>
 		public T Get<T>(StorageKey key)

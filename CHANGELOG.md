@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show the servername in pipeline header of the dashboard
  
 ### Changed
-- 
+- Added a timeout to items that are stored in Redis
  
 ### Fixed
 - Set WaitHandle on disposing the EventBus
