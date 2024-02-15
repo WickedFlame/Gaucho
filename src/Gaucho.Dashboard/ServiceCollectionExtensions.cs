@@ -33,7 +33,7 @@ namespace Gaucho.Dashboard
 
             //services.TryAddSingletonChecked(_ => JobStorage.Current);
             //services.TryAddSingletonChecked(_ => JobActivator.Current);
-            services.TryAddSingletonChecked<IPipelineMonitor>(_ => new PipelineMonitor(server));
+            services.TryAddSingletonChecked<IPipelineMonitor>(_ => new PipelineMonitor());
             services.TryAddSingletonChecked(_ => DashboardRoutes.Routes);
 
             return services;

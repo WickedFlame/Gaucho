@@ -30,8 +30,6 @@ namespace Gaucho.Integration.Tests
             }));
 
             // start with the warmup...
-            var cnt = 0;
-
             var pipelineId = Guid.NewGuid().ToString();
 
             var server = new ProcessingServer();
