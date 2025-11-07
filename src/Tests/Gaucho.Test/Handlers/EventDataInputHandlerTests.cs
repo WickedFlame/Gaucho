@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using AwesomeAssertions; // added
 
 namespace Gaucho.Test.Handlers
 {
@@ -42,7 +43,7 @@ namespace Gaucho.Test.Handlers
 
 			ProcessingServer.Server.WaitAll(pipelineId);
 
-			Assert.AreEqual(logHandler.Log.First(), "[Title -> ] [Message -> StaticServer_NewPipelinePerEvent2] [Level -> ] [portalId -> portal] ");
+			logHandler.Log.First().Should().Be("[Title -> ] [Message -> StaticServer_NewPipelinePerEvent2] [Level -> ] [portalId -> portal] ");
 		}
 
 		[Test]
@@ -76,7 +77,7 @@ namespace Gaucho.Test.Handlers
 
 			ProcessingServer.Server.WaitAll(pipelineId);
 
-			Assert.AreEqual(logHandler.Log.First(), "[Title -> ] [Message -> StaticServer_NewPipelinePerEvent2] [Level -> ] [portalId -> portal] ");
+			logHandler.Log.First().Should().Be("[Title -> ] [Message -> StaticServer_NewPipelinePerEvent2] [Level -> ] [portalId -> portal] ");
 		}
 	}
 }

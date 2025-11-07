@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Gaucho.Filters;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -33,7 +34,7 @@ namespace Gaucho.Test
 
             handler.Handle(@event);
 
-            Assert.That(handler.Log.First() == "[dst_lvl -> Info] [Message -> The message] ");
+            (handler.Log.First() == "[dst_lvl -> Info] [Message -> The message] ").Should().BeTrue();
         }
 
         [Test]
@@ -62,7 +63,7 @@ namespace Gaucho.Test
 
 	        data = converter.Convert(data);
 
-	        Assert.AreEqual(data.ToString(), "{\r\n   dst_lvl -> Info\r\n   Message -> The message\r\n}");
+	        data.ToString().Should().Be("{\r\n   dst_lvl -> Info\r\n   Message -> The message\r\n}");
         }
 
         [Test]
@@ -90,14 +91,11 @@ namespace Gaucho.Test
 	        var data = factory.BuildFrom(input);
 
 	        data = converter.Convert(data);
-	        
-	        Assert.That(data.All(p => p.Key != "Message"));
+	        data.All(p => p.Key != "Message").Should().BeTrue();
 
-			// the property Message -> msg cannot be converted because only msg is in the datacollection
-			// still has to return the msg property if present
 	        data = converter.Convert(data);
 
-			Assert.AreEqual(data.ToString(), "{\r\n   dst_lvl -> Info\r\n   msg -> The message\r\n}");
+			data.ToString().Should().Be("{\r\n   dst_lvl -> Info\r\n   msg -> The message\r\n}");
         }
 
         [Test]
@@ -128,8 +126,8 @@ namespace Gaucho.Test
 
             data = converter.Convert(data);
 
-            Assert.IsNotNull(data.FirstOrDefault(p => p.Key == "msg"));
-            Assert.AreEqual(input.Sub.Message, data["msg"]);
+            data.FirstOrDefault(p => p.Key == "msg").Should().NotBeNull();
+            data["msg"].Should().Be(input.Sub.Message);
         }
 
         [Test]
@@ -154,7 +152,7 @@ namespace Gaucho.Test
             var factory = new EventDataFactory();
             var data = factory.BuildFrom(input);
 
-            Assert.IsNull(data["msg"]);
+            data["msg"].Should().BeNull();
         }
 
         [Test]
@@ -179,7 +177,7 @@ namespace Gaucho.Test
             var factory = new EventDataFactory();
             var data = factory.BuildFrom(input);
 
-            Assert.IsNull(data.FirstOrDefault(d => d.Key == "msg"));
+            data.FirstOrDefault(d => d.Key == "msg").Should().BeNull();
         }
     }
 

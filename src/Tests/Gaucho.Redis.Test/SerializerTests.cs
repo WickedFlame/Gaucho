@@ -7,6 +7,7 @@ using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
 using StackExchange.Redis;
+using AwesomeAssertions;
 
 namespace Gaucho.Redis.Test
 {
@@ -61,7 +62,7 @@ namespace Gaucho.Redis.Test
 			var storage = new RedisStorage(_multiplexer.Object, options);
 			var items = storage.GetList<StorageModel>(new StorageKey("storage", "key"));
 
-			Assert.AreEqual("testmodel", items.First().Value);
+			items.First().Value.Should().Be("testmodel");
 		}
 
 		public class StorageModel
@@ -75,7 +76,7 @@ namespace Gaucho.Redis.Test
 			{
 				var dict = item.GetType().GetProperties()
 					.Where(x => x.GetValue(item) != null)
-					.ToDictionary(p => p.Name, p=>  p.GetValue(item)?.ToString());
+					.ToDictionary(p => p.Name, p=> p.GetValue(item)?.ToString());
 
 				return string.Join(";", dict.Select(d => $"{d.Key}:{d.Value}"));
 			}

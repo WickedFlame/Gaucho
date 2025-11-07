@@ -66,8 +66,8 @@ namespace Gaucho.Integration.Tests
             sw.Stop();
             var time2 = sw.Elapsed;
 
-            Assert.Less(time1, TimeSpan.FromMilliseconds(30));
-            Assert.Less(time2, TimeSpan.FromMilliseconds(600));
+            time1.Should().BeLessThan(TimeSpan.FromMilliseconds(30));
+            time2.Should().BeLessThan(TimeSpan.FromMilliseconds(600));
         }
 
         [Ignore("These fail on building environments")]
@@ -122,7 +122,7 @@ namespace Gaucho.Integration.Tests
                 .RunSession();
             result.Trace();
 
-            Assert.Less(result.AverageMilliseconds, ticks);
+            result.AverageMilliseconds().Should().BeLessThan(ticks);
         }
 
         [Test]

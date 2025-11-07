@@ -7,6 +7,7 @@ using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Diagnostics
 {
@@ -15,7 +16,8 @@ namespace Gaucho.Test.Diagnostics
         [Test]
         public void LogEventLogCleanupTask_ctor()
         {
-            Assert.DoesNotThrow(() => new LogEventLogCleanupTask(new List<ILogMessage>(), new StorageKey("test"), 1));
+            Action act = () => new LogEventLogCleanupTask(new List<ILogMessage>(), new StorageKey("test"), 1);
+            act.Should().NotThrow();
         }
 
         [Test]
@@ -26,7 +28,7 @@ namespace Gaucho.Test.Diagnostics
             var task = new LogEventLogCleanupTask(new List<ILogMessage>(), new StorageKey("test"), 0);
             task.Execute(new StorageContext(new Mock<IStorage>().Object, locker));
 
-            Assert.IsFalse(locker.IsLocked());
+            locker.IsLocked().Should().BeFalse();
         }
 
         [Test]
@@ -37,7 +39,7 @@ namespace Gaucho.Test.Diagnostics
             var task = new LogEventLogCleanupTask(new List<ILogMessage>(), new StorageKey("test"), 100);
             task.Execute(new StorageContext(new Mock<IStorage>().Object, locker));
 
-            Assert.IsFalse(locker.IsLocked());
+            locker.IsLocked().Should().BeFalse();
         }
 
         [Test]
@@ -53,7 +55,7 @@ namespace Gaucho.Test.Diagnostics
             var task = new LogEventLogCleanupTask(lst, new StorageKey("test"), 20);
             task.Execute(new StorageContext(storage.Object, new DispatcherLock()));
 
-            Assert.AreEqual(5, lst.Count);
+            lst.Count.Should().Be(5);
         }
 
         [Test]
@@ -65,7 +67,6 @@ namespace Gaucho.Test.Diagnostics
                 lst.Add(new LogEvent());
             }
             var storage = new Mock<IStorage>();
-            //storage.Setup(x => x.GetList<ActiveWorkersLogMessage>(It.IsAny<StorageKey>())).Returns(() => lst);
 
             var task = new LogEventLogCleanupTask(lst, new StorageKey("test"), 20);
             task.Execute(new StorageContext(storage.Object, new DispatcherLock()));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -19,7 +20,7 @@ namespace Gaucho.Test
 			var queue = new EventQueue();
 			queue.Enqueue(new Event("id", "value"));
 
-			Assert.AreEqual(queue.Count, 1);
+			queue.Count.Should().Be(1);
 		}
 
 		[Test]
@@ -28,7 +29,7 @@ namespace Gaucho.Test
 			var queue = new EventQueue();
 			queue.Enqueue(new Event("id", "value"));
 
-			Assert.IsTrue(queue.TryDequeue(out var dequeued));
+			queue.TryDequeue(out var dequeued).Should().BeTrue();
 		}
 
 		[Test]
@@ -36,10 +37,10 @@ namespace Gaucho.Test
 		{
 			var queue = new EventQueue();
 			var @event = new Event("id", "value");
-			queue.Enqueue(@event); 
+			queue.Enqueue(@event);
 			queue.TryDequeue(out var dequeued);
 
-			Assert.AreSame(@event, dequeued);
+			dequeued.Should().BeSameAs(@event);
 		}
 
 		[Test]
@@ -49,14 +50,14 @@ namespace Gaucho.Test
 			queue.Enqueue(new Event("id", "value"));
 			queue.TryDequeue(out var dequeued);
 
-			Assert.AreEqual(queue.Count, 0);
+			queue.Count.Should().Be(0);
 		}
 
 		[Test]
 		public void EventQueue_Dequeue_Empty()
 		{
 			var queue = new EventQueue();
-			Assert.IsFalse(queue.TryDequeue(out var dequeued));
+			queue.TryDequeue(out var dequeued).Should().BeFalse();
 		}
 
 		[Test]
@@ -64,7 +65,7 @@ namespace Gaucho.Test
 		{
 			var queue = new EventQueue();
 			queue.TryDequeue(out var dequeued);
-			Assert.IsNull(dequeued);
+			dequeued.Should().BeNull();
 		}
 	}
 }

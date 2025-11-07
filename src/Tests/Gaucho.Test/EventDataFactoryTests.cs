@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using Polaroider;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -16,7 +17,7 @@ namespace Gaucho.Test
 			var factory = new EventDataFactory();
 			var eventData = factory.BuildFrom(data);
 
-			Assert.That(eventData["Message"].Equals("this is a test"));
+			eventData["Message"].Equals("this is a test").Should().BeTrue();
 		}
 
 		[Test]
@@ -26,43 +27,43 @@ namespace Gaucho.Test
 
 			var factory = new EventDataFactory();
 			var eventData = factory.BuildFrom(data)
-				.Add("two", "this is 2");
+				.Add("two", "this is2");
 
-			Assert.That(eventData["Message"].Equals("this is a test"));
-			Assert.That(eventData["two"].Equals("this is 2"));
+			eventData["Message"].Equals("this is a test").Should().BeTrue();
+			eventData["two"].Equals("this is2").Should().BeTrue();
 		}
 
 		[Test]
 		public void EventDataFactory_Add_Expression()
 		{
 			var data = new MessageData { Message = "this is a test" };
-			var three = 3;
+			var three =3;
 
 			var factory = new EventDataFactory();
 			var eventData = factory.BuildFrom(data)
-				.Add("two", "this is 2")
+				.Add("two", "this is2")
 				.Add(() => three);
 
-			Assert.That(eventData["Message"].Equals("this is a test"));
-			Assert.That(eventData["two"].Equals("this is 2"));
-			Assert.That(eventData["three"].Equals("3"));
+			eventData["Message"].Equals("this is a test").Should().BeTrue();
+			eventData["two"].Equals("this is2").Should().BeTrue();
+			eventData["three"].Equals("3").Should().BeTrue();
 		}
 
 		[Test]
 		public void EventDataFactory_Add_MultipleSame()
 		{
 			var data = new MessageData { Message = "this is a test" };
-			var three = 3;
+			var three =3;
 
 			var factory = new EventDataFactory();
 			var eventData = factory.BuildFrom(data)
-				.Add("two", "this is 2")
+				.Add("two", "this is2")
 				.Add(() => three)
-				.Add("two", "this is 4");
+				.Add("two", "this is4");
 
-			Assert.That(eventData["Message"].Equals("this is a test"));
-			Assert.That(eventData["two"].Equals("this is 2"));
-			Assert.That(eventData["three"].Equals("3"));
+			eventData["Message"].Equals("this is a test").Should().BeTrue();
+			eventData["two"].Equals("this is2").Should().BeTrue();
+			eventData["three"].Equals("3").Should().BeTrue();
 		}
 
 		[Test]
@@ -70,14 +71,14 @@ namespace Gaucho.Test
 		{
 			var data = new Dictionary<string, object>
 			{
-				["Id"] = 1,
+				["Id"] =1,
 				["Message"]= "this is a test"
 			};
 			var factory = new EventDataFactory();
 			var eventData = factory.BuildFrom(data);
 
-			Assert.That(eventData["Id"].Equals(1));
-			Assert.That(eventData["Message"].Equals("this is a test"));
+			eventData["Id"].Equals(1).Should().BeTrue();
+			eventData["Message"].Equals("this is a test").Should().BeTrue();
 		}
 
         [Test]
@@ -85,14 +86,14 @@ namespace Gaucho.Test
 		{
 			var data = new ComplexData
 			{
-				Index = 1,
+				Index =1,
 				MessageData = new MessageData
 				{
 					Message = "test"
 				},
 				Inner = new ComplexData
 				{
-					Index = 2,
+					Index =2,
 					MessageData = new MessageData
 					{
 						Message = "inner"
@@ -111,7 +112,7 @@ namespace Gaucho.Test
         {
             var data = new 
             {
-                Index = 1,
+                Index =1,
 				Str = "test",
                 Data = new []
                 {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Gaucho.Filters;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Filters
 {
@@ -14,7 +15,7 @@ namespace Gaucho.Test.Filters
 		{
 			var converter = new[] { "Level -> dst_lvl", "Message" }.BuildDataFilter();
 
-			Assert.That(converter.Filters.Count() == 2);
+			converter.Filters.Count().Should().Be(2);
 		}
 
 		[Test]
@@ -22,7 +23,7 @@ namespace Gaucho.Test.Filters
 		{
 			var converter = new[] {"Level -> dst_lvl", "Message"}.BuildDataFilter();
 
-			Assert.That(converter.Filters.All(f => f.FilterType == FilterType.Property));
+			converter.Filters.All(f => f.FilterType == FilterType.Property).Should().BeTrue();
 		}
 	}
 }

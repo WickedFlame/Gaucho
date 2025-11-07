@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Gaucho.Server;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Server.Activation
 {
@@ -17,7 +18,7 @@ namespace Gaucho.Test.Server.Activation
             var ctx = new ActivationContext();
             ctx.Register<First>(() => instance);
 
-            Assert.AreSame(ctx.Registrations[typeof(First)](), instance);
+            ctx.Registrations[typeof(First)]().Should().BeSameAs(instance);
         }
 
         public class First { }

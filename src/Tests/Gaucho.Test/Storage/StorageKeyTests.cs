@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Gaucho.Storage;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Storage
 {
@@ -11,43 +10,48 @@ namespace Gaucho.Test.Storage
 		[Test]
 		public void StorageKey_Valid()
 		{
-			Assert.DoesNotThrow(() => new StorageKey("pipelineId", "key"));
+			Action act = () => new StorageKey("pipelineId", "key");
+			act.Should().NotThrow();
 		}
 
 		[Test]
 		public void StorageKey_Servername_Valid()
 		{
-			Assert.DoesNotThrow(() => new StorageKey("pipelineId", "key", "serverName"));
+			Action act = () => new StorageKey("pipelineId", "key", "serverName");
+			act.Should().NotThrow();
 		}
 
 		[Test]
 		public void StorageKey_NUll_Key()
 		{
-			Assert.Throws<ArgumentNullException>(() => new StorageKey("pipelineId", null));
+			Action act = () => new StorageKey("pipelineId", null);
+			act.Should().Throw<ArgumentNullException>();
 		}
 
 		[Test]
 		public void StorageKey_NUll_PipelineId()
 		{
-			Assert.Throws<ArgumentNullException>(() => new StorageKey(null, "key"));
+			Action act = () => new StorageKey(null, "key");
+			act.Should().Throw<ArgumentNullException>();
 		}
 
 		[Test]
 		public void StorageKey_NUll_Server()
 		{
-			Assert.DoesNotThrow(() => new StorageKey("pipelineId", "key", null));
+			Action act = () => new StorageKey("pipelineId", "key", null);
+			act.Should().NotThrow();
 		}
 
 		[Test]
 		public void StorageKey_ToString()
 		{
-			Assert.AreEqual("server:pipelineid:key", new StorageKey("pipelineId", "key", "server").ToString());
+			new StorageKey("pipelineId", "key", "server").ToString().Should().Be("server:pipelineid:key");
 		}
 
 		[Test]
 		public void StorageKey_ToString_Case()
 		{
-			Assert.AreEqual("server:pipelineid:key", new StorageKey("pipelineId", "KEY", "Server").ToString());
+			new StorageKey("pipelineId", "KEY", "Server").ToString().Should().Be("server:pipelineid:key");
 		}
 	}
 }

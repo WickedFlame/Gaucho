@@ -13,7 +13,7 @@ namespace Gaucho.Test
 		public void EventPipeline_Ctor()
 		{
 			var pipeline = new EventPipeline();
-			Assert.IsNotNull(pipeline.Handlers);
+			pipeline.Handlers.Should().NotBeNull();
 		}
 
 		[Test]
@@ -23,7 +23,7 @@ namespace Gaucho.Test
 			var pipeline = new EventPipeline();
 			pipeline.AddHandler(handler.Object);
 
-			Assert.That(pipeline.Handlers.Any());
+			pipeline.Handlers.Any().Should().BeTrue();
 		}
 
 		[Test]

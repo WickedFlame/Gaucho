@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using AwesomeAssertions;
+using NUnit.Framework;
 
 namespace Gaucho.Test
 {
@@ -7,31 +8,29 @@ namespace Gaucho.Test
 		[Test]
 		public void EventData_ctor()
 		{
-			Assert.DoesNotThrow(() => new EventData());
+			var act = () => new EventData();
+			act.Should().NotThrow();
 		}
 
 		[Test]
 		public void EventData_Contains_true()
 		{
 			var data = new EventData {{"test", "value"}};
-
-			Assert.IsTrue(data.Contains("test"));
+			data.Contains("test").Should().BeTrue();
 		}
 
 		[Test]
 		public void EventData_Contains_false()
 		{
 			var data = new EventData {{"test", "value"}};
-
-			Assert.IsFalse(data.Contains("test2"));
+			data.Contains("test2").Should().BeFalse();
 		}
 
 		[Test]
 		public void EventData_Contains_Key_CaseSensitive()
 		{
 			var data = new EventData {{"test", "value"}};
-
-			Assert.IsFalse(data.Contains("Test"));
+			data.Contains("Test").Should().BeFalse();
 		}
 
 		[Test]
@@ -40,21 +39,16 @@ namespace Gaucho.Test
 			var variable = "value";
 			var data = new EventData();
 			data.Add(() => variable);
-
-			Assert.IsTrue(data.Contains("variable"));
+			data.Contains("variable").Should().BeTrue();
 		}
 
 		[Test]
 		public void EventData_Add_Property()
 		{
-			var model = new EventDataTestModel
-			{
-				Id = "testmodel"
-			};
+			var model = new EventDataTestModel { Id = "testmodel" };
 			var data = new EventData();
 			data.Add(() => model.Id);
-
-			Assert.IsTrue(data.Contains("Id"));
+			data.Contains("Id").Should().BeTrue();
 		}
 
 		public class EventDataTestModel

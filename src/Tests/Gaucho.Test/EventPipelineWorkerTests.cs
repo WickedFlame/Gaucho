@@ -5,6 +5,7 @@ using Gaucho.Diagnostics;
 using Gaucho.Server.Monitoring;
 using Moq;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -21,13 +22,13 @@ namespace Gaucho.Test
 		[Test]
 		public void EventPipelineWorker_Null_Logger()
 		{
-			Assert.Throws<ArgumentException>(() => new EventPipelineWorker(new EventQueue(), () => null, null));
+			((Action)(() => new EventPipelineWorker(new EventQueue(), () => null, null))).Should().Throw<ArgumentException>();
 		}
 
 		[Test]
 		public void EventPipelineWorker_Null_Queue()
 		{
-			Assert.Throws<ArgumentException>(() => new EventPipelineWorker(null, () => null, new Logger()));
+			((Action)(() => new EventPipelineWorker(null, () => null, new Logger()))).Should().Throw<ArgumentException>();
 		}
 
 		[Test]
@@ -47,7 +48,7 @@ namespace Gaucho.Test
 		public void EventPipelineWorker_Execute_Null_Pipeline()
 		{
 			var worker = new EventPipelineWorker(new EventQueue(), () => null, new Logger());
-			Assert.Throws<ArgumentException>(() => worker.Execute());
+			((Action)(() => worker.Execute())).Should().Throw<ArgumentException>();
 		}
 
 		[Test]

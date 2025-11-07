@@ -9,6 +9,7 @@ using Gaucho.Server;
 using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Integration.Tests
 {
@@ -71,10 +72,10 @@ namespace Gaucho.Integration.Tests
             System.Threading.Tasks.Task.Delay(1000);
 
 			var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-			Assert.GreaterOrEqual(100 * 10, storage.Get<long>(new StorageKey(pipelineId, "ProcessedEventsMetric")));
+			storage.Get<long>(new StorageKey(pipelineId, "ProcessedEventsMetric")).Should().BeGreaterThanOrEqualTo(100 *10);
 
 			var stats = new StatisticsApi(pipelineId);
-			Assert.AreEqual(1, stats.GetMetricValue(MetricType.ThreadCount));
+			stats.GetMetricValue(MetricType.ThreadCount).Should().Be(1);
 
 			result.Trace();
         }
@@ -128,10 +129,10 @@ namespace Gaucho.Integration.Tests
             System.Threading.Tasks.Task.Delay(3000);
 
             var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-            Assert.GreaterOrEqual(100 * 10, storage.Get<long>(new StorageKey(pipelineId, "ProcessedEventsMetric")));
+            storage.Get<long>(new StorageKey(pipelineId, "ProcessedEventsMetric")).Should().BeGreaterThanOrEqualTo(100 *10);
 
             var stats = new StatisticsApi(pipelineId);
-            Assert.AreEqual(10, stats.GetMetricValue(MetricType.ThreadCount));
+            stats.GetMetricValue(MetricType.ThreadCount).Should().Be(10);
 
             result.Trace();
         }

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FluentAssertions;
-using Gaucho.Filters;
-using NUnit.Framework;
+﻿using Gaucho.Filters;
+using System;
 
 namespace Gaucho.Test.Filters
 {

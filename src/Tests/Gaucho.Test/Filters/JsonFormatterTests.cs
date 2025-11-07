@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Gaucho.Filters;
 using System.Collections.Generic;
-using System.Text;
-using Gaucho.Filters;
-using NUnit.Framework;
 
 namespace Gaucho.Test.Filters
 {
@@ -34,7 +31,7 @@ namespace Gaucho.Test.Filters
 			data = converter.Convert(data);
 			var formatted = converter.Format("json", data);
 
-			Assert.AreEqual(formatted, "{\"dst_lvl\":\"Info\",\"msg\":\"The message\"}");
+			formatted.Should().Be("{\"dst_lvl\":\"Info\",\"msg\":\"The message\"}");
 		}
 
 		[Test]
@@ -65,7 +62,7 @@ namespace Gaucho.Test.Filters
 			data = converter.Convert(data);
 			var formatted = converter.Format("json", data);
 
-			Assert.AreEqual(formatted, "{\"dst_lvl\":\"Info\",\"msg\":\"The message\"}");
+			formatted.Should().Be("{\"dst_lvl\":\"Info\",\"msg\":\"The message\"}");
 		}
 	}
 }

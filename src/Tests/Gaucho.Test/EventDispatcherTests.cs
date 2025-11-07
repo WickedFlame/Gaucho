@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FluentAssertions;
-using Moq;
-using NUnit.Framework;
+﻿using Moq;
+using System;
 
 namespace Gaucho.Test
 {
@@ -12,7 +8,8 @@ namespace Gaucho.Test
 		[Test]
 		public void EventDispatcher()
 		{
-			Assert.IsNotNull(new EventDispatcher(new ProcessingServer()));
+			var act = () => new EventDispatcher(new ProcessingServer());
+			act.Should().NotThrow();
 		}
 
 		[Test]
@@ -37,7 +34,9 @@ namespace Gaucho.Test
 			server.Setup(exp => exp.GetHandler<Message>("pipeline")).Returns((IInputHandler<Message>)null);
 
 			var dispatcher = new EventDispatcher(server.Object);
-			Assert.Throws<InvalidOperationException>(() => dispatcher.Process("pipeline", new Message()));
+			var act = () => dispatcher.Process("pipeline", new Message());
+
+            act.Should().Throw<InvalidOperationException>();
 		}
 
         [Test]
