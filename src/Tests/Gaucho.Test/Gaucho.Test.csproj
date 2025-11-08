@@ -20,13 +20,13 @@
 		<Using Include="NUnit.Framework" />
 		<Using Include="AwesomeAssertions" />
 	</ItemGroup>
-	
-  <ItemGroup>
-    <ProjectReference Include="..\..\Gaucho\Gaucho.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Filters\_Snapshots\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Gaucho\Gaucho.csproj" />
   </ItemGroup>
 
 </Project>
