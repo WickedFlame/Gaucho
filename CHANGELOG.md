@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
  
+## vNext
+
 ## v1.1.0
 ### Added
 - EventDispatcher and ProcessingServer can now check if a pipeline is registered in the Server
