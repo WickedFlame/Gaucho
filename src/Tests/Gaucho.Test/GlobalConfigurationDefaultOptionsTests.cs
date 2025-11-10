@@ -7,6 +7,7 @@ using Gaucho.Diagnostics;
 using Gaucho.Server;
 using Gaucho.Storage;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -22,14 +23,14 @@ namespace Gaucho.Test
 		public void GlobalConfiguration_Default_Options_LogLevel()
 		{
 			var options = GlobalConfiguration.Configuration.Resolve<Options>();
-			Assert.AreEqual(options.LogLevel, LogLevel.Info);
+			options.LogLevel.Should().Be(LogLevel.Info);
 		}
 
 		[Test]
 		public void GlobalConfiguration_Default_Options_Servername()
 		{
 			var options = GlobalConfiguration.Configuration.Resolve<Options>();
-			Assert.AreEqual(options.ServerName, Environment.MachineName);
+			options.ServerName.Should().Be(Environment.MachineName);
 		}
 	}
 }

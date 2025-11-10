@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Gaucho.Configuration;
+﻿using Gaucho.Configuration;
 using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -17,20 +17,23 @@ namespace Gaucho.Test
 	    public void ProcessingServer_ctor()
 	    {
 		    var bus = new EventBus(() => null, "one");
-		    Assert.DoesNotThrow(() => new ProcessingServer());
+		    Action act = () => new ProcessingServer();
+			act.Should().NotThrow();
 	    }
 
 	    [Test]
 	    public void ProcessingServer_ctor_EventBusFactory()
 	    {
 		    var factory = new Mock<IEventBusFactory>();
-		    Assert.DoesNotThrow(() => new ProcessingServer(factory.Object));
+		    Action act = () => new ProcessingServer(factory.Object);
+			act.Should().NotThrow();
 	    }
 
 	    [Test]
 	    public void ProcessingServer_ctor_NullEventBusFactory()
 	    {
-		    Assert.Throws<ArgumentNullException>(() => new ProcessingServer(null));
+		    Action act = () => new ProcessingServer(null);
+			act.Should().Throw<ArgumentNullException>();
 	    }
 
 		[Test]
@@ -39,7 +42,8 @@ namespace Gaucho.Test
 	        var bus = new EventBus(() => null, "one");
             var server = new ProcessingServer();
 
-            Assert.Throws<Exception>(() => server.Register("two", bus));
+            Action act = () => server.Register("two", bus);
+			act.Should().Throw<Exception>();
         }
 
         [Test]
@@ -71,14 +75,14 @@ namespace Gaucho.Test
 	        var first = factory.GetEventBus("test");
 	        var second = factory.GetEventBus("test");
 
-	        Assert.AreSame(first, second);
+	        second.Should().BeSameAs(first);
 
 			// update
 	        server.SetupPipeline("test", config);
 
 			var third = factory.GetEventBus("test");
 
-	        Assert.AreNotSame(first, third);
+			third.Should().NotBeSameAs(first);
 		}
 
         [Test]
@@ -146,7 +150,8 @@ namespace Gaucho.Test
 
 	        server.Register("pipeline", () => (EventPipeline) null);
 
-			Assert.DoesNotThrow(() => server.Dispose());
+			Action act = () => server.Dispose();
+			act.Should().NotThrow();
         }
 
         [Test]
@@ -160,7 +165,8 @@ namespace Gaucho.Test
 
 			server.Register("pipeline", bus.Object);
 
-	        Assert.DoesNotThrow(() => server.Dispose());
+	        Action act = () => server.Dispose();
+			act.Should().NotThrow();
         }
 
 		[Test]
@@ -169,7 +175,8 @@ namespace Gaucho.Test
 	        var factory = new Mock<IEventBusFactory>();
 	        var server = new ProcessingServer(factory.Object);
 
-			Assert.DoesNotThrow(() => server.Dispose());
+			Action act = () => server.Dispose();
+			act.Should().NotThrow();
         }
 
 
@@ -194,7 +201,8 @@ namespace Gaucho.Test
 	        var factory = new Mock<IEventBusFactory>();
 	        var server = new ProcessingServer(factory.Object);
 
-	        Assert.DoesNotThrow(() => server.Publish(new Event("pipeline", new EventData())));
+	        Action act = () => server.Publish(new Event("pipeline", new EventData()));
+			act.Should().NotThrow();
         }
 
 
@@ -231,7 +239,19 @@ namespace Gaucho.Test
             server.SetupPipeline("test", config);
 
             var bus = factory.GetEventBus("test");
-            Assert.AreSame(bus.PipelineFactory.Options, config.Options);
+            bus.PipelineFactory.Options.Should().BeSameAs(config.Options);
         }
-	}
+
+        [TestCase("pipeline_1", true)]
+        [TestCase("PIPELINE_1", true)]
+        [TestCase("pipeline_2", false)]
+        public void ProcessingServer_ContainsPipeline(string pipelineId, bool expected)
+        {
+            var factory = new Mock<IEventBusFactory>();
+            factory.Setup(x => x.Pipelines).Returns(() => new[] { "pipeline_1" });
+            var server = new ProcessingServer(factory.Object);
+
+            server.ContainsPipeline(pipelineId).Should().Be(expected);
+        }
+    }
 }

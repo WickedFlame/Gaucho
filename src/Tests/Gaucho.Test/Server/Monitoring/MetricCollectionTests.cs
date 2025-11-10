@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Gaucho.Server.Monitoring;
 using NUnit.Framework;
+// using AwesomeAssertions; // global using already present via project file
 
 namespace Gaucho.Test.Server.Monitoring
 {
@@ -22,7 +23,7 @@ namespace Gaucho.Test.Server.Monitoring
 				new Metric(MetricType.EventLog, "m", true)
 			};
 
-			Assert.IsTrue(col.Get(MetricType.EventLog).Title == "m");
+			col.Get(MetricType.EventLog).Title.Should().Be("m");
 		}
 
 		[Test]
@@ -42,7 +43,7 @@ namespace Gaucho.Test.Server.Monitoring
 				metric
 			};
 
-			Assert.AreSame(metric, col.Get(MetricType.EventLog));
+			col.Get(MetricType.EventLog).Should().BeSameAs(metric);
 		}
 	}
 }

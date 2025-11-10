@@ -13,17 +13,6 @@ namespace Gaucho.Dashboard.Monitoring
 	/// </summary>
 	public class PipelineMonitor : IPipelineMonitor
     {
-        private readonly IProcessingServer _server;
-
-        /// <summary>
-		/// Creates a new instance of the PipelineMonitor
-		/// </summary>
-		/// <param name="server"></param>
-        public PipelineMonitor(IProcessingServer server)
-        {
-            _server = server;
-        }
-
 		/// <summary>
 		/// Get or set the <see cref="DashboardOptions"/>
 		/// </summary>
@@ -46,8 +35,6 @@ namespace Gaucho.Dashboard.Monitoring
 		        keys = storage.GetKeys(new StorageKey($"{server.Name}:pipeline:"));
 		        pipelines.AddRange(keys.Select(key => storage.Get<PipelineModel>(new StorageKey(key))));
 	        }
-
-	        //var pipelines = _server.EventBusFactory.Pipelines;
 
             return pipelines.Select(p => Monitor(p, storage)).OrderByDescending(m => m.Hearbeat);
         }

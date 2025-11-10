@@ -27,7 +27,7 @@ namespace Gaucho
         {
             plugin.PipelineId = pipelineId;
 
-            _plugins[pipelineId] = plugin;
+            _plugins[pipelineId.ToLower()] = plugin;
         }
 
         /// <summary>
@@ -38,12 +38,13 @@ namespace Gaucho
         /// <returns></returns>
         public IInputHandler<T> GetHandler<T>(string pipelineId)
         {
-            if (!_plugins.ContainsKey(pipelineId))
+            var id = pipelineId.ToLower();
+            if (!_plugins.ContainsKey(id))
             {
                 return null;
             }
 
-            return _plugins[pipelineId] as IInputHandler<T>;
+            return _plugins[id] as IInputHandler<T>;
         }
 
         /// <summary>

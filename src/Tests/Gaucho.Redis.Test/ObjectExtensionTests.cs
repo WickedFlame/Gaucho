@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using StackExchange.Redis;
 using Gaucho.Redis.Serializer;
+using AwesomeAssertions;
 
 namespace Gaucho.Redis.Test
 {
@@ -19,8 +20,8 @@ namespace Gaucho.Redis.Test
 			};
 			var result = hash.DeserializeRedis<HashTest>();
 
-			Assert.AreEqual(1, result.Id);
-			Assert.AreEqual("test", result.Value);
+			result.Id.Should().Be(1);
+			result.Value.Should().Be("test");
 		}
 
 		[Test]
@@ -29,7 +30,7 @@ namespace Gaucho.Redis.Test
 			var hash = new HashEntry[] { };
 			var result = hash.DeserializeRedis<HashTest>();
 
-			Assert.IsNull(result);
+			result.Should().BeNull();
 		}
 
 		[Test]
@@ -41,8 +42,8 @@ namespace Gaucho.Redis.Test
 			};
 			var result = hash.DeserializeRedis<HashTest>();
 
-			Assert.AreEqual(1, result.Id);
-			Assert.IsNull(result.Value);
+			result.Id.Should().Be(1);
+			result.Value.Should().BeNull();
 		}
 
 		[Test]
@@ -54,8 +55,8 @@ namespace Gaucho.Redis.Test
 			};
 			var result = hash.DeserializeRedis<HashTest>();
 
-			Assert.AreEqual(0, result.Id);
-			Assert.AreEqual("test", result.Value);
+			result.Id.Should().Be(0);
+			result.Value.Should().Be("test");
 		}
 
 		[Test]
@@ -68,8 +69,8 @@ namespace Gaucho.Redis.Test
 			};
 			var result = hash.DeserializeRedis<HashTest>();
 
-			Assert.AreEqual(0, result.Id);
-			Assert.AreEqual("test", result.Value);
+			result.Id.Should().Be(0);
+			result.Value.Should().Be("test");
 		}
 
 		[Test]
@@ -82,8 +83,8 @@ namespace Gaucho.Redis.Test
 			};
 			var result = hash.DeserializeRedis<HashTest>();
 
-			Assert.AreEqual(0, result.Id);
-			Assert.IsNull(result.Value);
+			result.Id.Should().Be(0);
+			result.Value.Should().BeNull();
 		}
 
 		[Test]
@@ -95,7 +96,7 @@ namespace Gaucho.Redis.Test
 			};
 			var result = hash.DeserializeRedis<int>();
 
-			Assert.AreEqual(1, result);
+			result.Should().Be(1);
 		}
 
 		[Test]
@@ -105,7 +106,8 @@ namespace Gaucho.Redis.Test
 			{
 				new HashEntry("id", "test")
 			};
-			Assert.Throws<NullReferenceException>(() => hash.DeserializeRedis<int>());
+			Action act = () => hash.DeserializeRedis<int>();
+			act.Should().Throw<NullReferenceException>();
 		}
 
 		public class HashTest

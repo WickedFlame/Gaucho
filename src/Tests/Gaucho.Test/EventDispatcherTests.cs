@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Moq;
-using NUnit.Framework;
+﻿using Moq;
+using System;
 
 namespace Gaucho.Test
 {
@@ -11,7 +8,8 @@ namespace Gaucho.Test
 		[Test]
 		public void EventDispatcher()
 		{
-			Assert.IsNotNull(new EventDispatcher(new ProcessingServer()));
+			var act = () => new EventDispatcher(new ProcessingServer());
+			act.Should().NotThrow();
 		}
 
 		[Test]
@@ -36,7 +34,9 @@ namespace Gaucho.Test
 			server.Setup(exp => exp.GetHandler<Message>("pipeline")).Returns((IInputHandler<Message>)null);
 
 			var dispatcher = new EventDispatcher(server.Object);
-			Assert.Throws<InvalidOperationException>(() => dispatcher.Process("pipeline", new Message()));
+			var act = () => dispatcher.Process("pipeline", new Message());
+
+            act.Should().Throw<InvalidOperationException>();
 		}
 
         [Test]
@@ -54,7 +54,18 @@ namespace Gaucho.Test
             server.Verify(x => x.Publish(It.IsAny<Event>()), Times.Never);
         }
 
-		public class Message
+		[TestCase("pipeline_1", true)]
+        [TestCase("pipeline_2", false)]
+        public void EventDispatcher_ContainsPipeline(string pipelineId, bool expected)
+        {
+            var server = new Mock<IProcessingServer>();
+            server.Setup(exp => exp.ContainsPipeline("pipeline_1")).Returns(() => true);
+
+            var dispatcher = new EventDispatcher(server.Object);
+            dispatcher.ContainsPipeline(pipelineId).Should().Be(expected);
+        }
+
+        public class Message
 		{
 
 		}

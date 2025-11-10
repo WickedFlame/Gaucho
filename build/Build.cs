@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
@@ -10,11 +11,9 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.EnvironmentInfo;
-using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
-[CheckBuildProjectConfigurations]
 [ShutdownDotNetAfterServerBuild]
 class Build : NukeBuild
 {
@@ -37,7 +36,7 @@ class Build : NukeBuild
     AbsolutePath OutputDirectory => RootDirectory / "output";
 
     [Parameter("Version to be injected in the Build")]
-    public string Version { get; set; } = $"1.0.6";
+    public string Version { get; set; } = $"1.1.0";
 
     [Parameter("The Buildnumber provided by the CI")]
     public string BuildNo = "2";
@@ -49,9 +48,9 @@ class Build : NukeBuild
         .Before(Restore)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            EnsureCleanDirectory(OutputDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(c => c.DeleteDirectory());
+            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(c => c.DeleteDirectory());
+            OutputDirectory.CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _
@@ -95,9 +94,17 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            CopyFileToDirectory($"{SourceDirectory}/Gaucho/bin/{Configuration}/Gaucho.{PackageVersion}.nupkg", "C:\\Projects\\NuGet Store", FileExistsPolicy.Overwrite, false);
-            CopyFileToDirectory($"{SourceDirectory}/Gaucho.Dashboard/bin/{Configuration}/Gaucho.Dashboard.{PackageVersion}.nupkg", "C:\\Projects\\NuGet Store", FileExistsPolicy.Overwrite, false);
-            CopyFileToDirectory($"{SourceDirectory}/Gaucho.Redis/bin/{Configuration}/Gaucho.Redis.{PackageVersion}.nupkg", "C:\\Projects\\NuGet Store", FileExistsPolicy.Overwrite, false);
+            var files = new List<string> 
+            {
+                $"{SourceDirectory}/Gaucho/bin/{Configuration}/Gaucho.{PackageVersion}.nupkg",
+                $"{SourceDirectory}/Gaucho.Dashboard/bin/{Configuration}/Gaucho.Dashboard.{PackageVersion}.nupkg",
+                $"{SourceDirectory}/Gaucho.Redis/bin/{Configuration}/Gaucho.Redis.{PackageVersion}.nupkg"
+            };
+
+            foreach(var file in files)
+            {
+                ((AbsolutePath)file).CopyToDirectory("C:\\Projects\\NuGet Store", ExistsPolicy.FileOverwrite);
+            }
         });
 
     string PackageVersion

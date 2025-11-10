@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Gaucho.Handlers;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -26,7 +27,7 @@ namespace Gaucho.Test
 				return pipeline;
 			});
 
-			Assert.AreSame(handler, GetOutputHandlers(server, pipelineId).Single());
+			GetOutputHandlers(server, pipelineId).Single().Should().BeSameAs(handler);
 		}
 
 		[Test]
@@ -40,7 +41,7 @@ namespace Gaucho.Test
 			var server = new ProcessingServer();
 			server.Register(pipelineId, handler);
 			
-			Assert.AreSame(handler, server.InputHandlers.Single(h => h.PipelineId == pipelineId));
+			server.InputHandlers.Single(h => h.PipelineId == pipelineId).Should().BeSameAs(handler);
 		}
 
 		[Test]
@@ -62,7 +63,7 @@ namespace Gaucho.Test
 				});
 			});
 
-			Assert.AreSame(handler, GetOutputHandlers(server, pipelineId).Single());
+			GetOutputHandlers(server, pipelineId).Single().Should().BeSameAs(handler);
 		}
 
 		[Test]
@@ -84,7 +85,7 @@ namespace Gaucho.Test
 				});
 			});
 
-			Assert.IsAssignableFrom<DataFilterDecorator>(GetOutputHandlers(server, pipelineId).Single());
+			GetOutputHandlers(server, pipelineId).Single().Should().BeAssignableTo<DataFilterDecorator>();
 		}
 
 		[Test]
@@ -106,7 +107,7 @@ namespace Gaucho.Test
 				});
 			});
 
-			Assert.That(((DataFilterDecorator)GetOutputHandlers(server, pipelineId).Single()).Converter.Filters.Count() == 2);
+			((DataFilterDecorator)GetOutputHandlers(server, pipelineId).Single()).Converter.Filters.Count().Should().Be(2);
 		}
 
 		[Test]
@@ -128,7 +129,7 @@ namespace Gaucho.Test
 				});
 			});
 
-			Assert.That(((DataFilterDecorator)GetOutputHandlers(server, pipelineId).Single()).Converter.Filters.Count() == 2);
+			((DataFilterDecorator)GetOutputHandlers(server, pipelineId).Single()).Converter.Filters.Count().Should().Be(2);
 		}
 
 
@@ -151,12 +152,9 @@ namespace Gaucho.Test
 				});
 			});
 
-			Assert.AreNotSame(handler, GetOutputHandlers(server, pipelineId).Single());
-			Assert.AreSame(handler, ((DataFilterDecorator) GetOutputHandlers(server, pipelineId).Single()).InnerHandler);
+			GetOutputHandlers(server, pipelineId).Single().Should().NotBeSameAs(handler);
+			((DataFilterDecorator) GetOutputHandlers(server, pipelineId).Single()).InnerHandler.Should().BeSameAs(handler);
 		}
-
-
-
 
 		private IEnumerable<IOutputHandler> GetOutputHandlers(IProcessingServer server, string pipelineId)
 		{
@@ -173,21 +171,7 @@ namespace Gaucho.Test
 
 		public class SetupInputHandler : IInputHandler //<SetupMessage>
 		{
-			//public Event ProcessInput(SetupMessage input)
-			//{
-			//	throw new NotImplementedException();
-			//}
-
 			public string PipelineId { get; set; }
 		}
-
-		//public class SetupMessage
-		//{
-		//	public string Level { get; set; }
-
-		//	public string Message { get; set; }
-
-		//	public string Title { get; set; }
-		//}
 	}
 }

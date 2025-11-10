@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Gaucho.Filters;
 using NUnit.Framework;
+using AwesomeAssertions; // added
 
 namespace Gaucho.Test.Filters
 {
@@ -30,7 +31,7 @@ namespace Gaucho.Test.Filters
 			data = converter.Convert(data);
 			var formatted = converter.Format("prop", data);
 
-			Assert.AreEqual(formatted, "Info_error_The message");
+			formatted.Should().Be("Info_error_The message");
 		}
 
 		[Test]
@@ -61,7 +62,7 @@ namespace Gaucho.Test.Filters
 			data = converter.Convert(data);
 			var formatted = converter.Format("prop", data);
 
-			Assert.AreEqual(formatted, "Info_error_The message");
+			formatted.Should().Be("Info_error_The message");
 		}
 
 		[Test]
@@ -92,7 +93,8 @@ namespace Gaucho.Test.Filters
 			data = converter.Convert(data);
 			var formatted = converter.Format("PROP", data);
 
-			Assert.That(formatted.Contains("lvl -> Info") && formatted.Contains("Message -> The message"));
+			formatted.Contains("lvl -> Info").Should().BeTrue();
+			formatted.Contains("Message -> The message").Should().BeTrue();
 		}
 	}
 }

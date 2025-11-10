@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Gaucho.Storage.Inmemory;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Storage
 {
@@ -11,7 +12,7 @@ namespace Gaucho.Test.Storage
 		[Test]
 		public void ValueItem_Ctor()
 		{
-			Assert.IsNotNull(new ValueItem());
+			new ValueItem().Should().NotBeNull();
 		}
 
 		[Test]
@@ -19,7 +20,7 @@ namespace Gaucho.Test.Storage
 		{
 			var item = new ValueItem();
 			item.SetValue("value");
-			Assert.AreEqual(item.Value, "value");
+			item.Value.Should().Be("value");
 		}
 
 		[Test]
@@ -27,7 +28,7 @@ namespace Gaucho.Test.Storage
 		{
 			var item = new ValueItem();
 			item.SetValue("value");
-			Assert.AreEqual(item.GetValue(), "value");
+			item.GetValue().Should().Be("value");
 		}
 	}
 }

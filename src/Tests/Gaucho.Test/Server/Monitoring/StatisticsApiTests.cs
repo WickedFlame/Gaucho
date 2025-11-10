@@ -7,6 +7,7 @@ using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
+using AwesomeAssertions; // added
 
 namespace Gaucho.Test.Server.Monitoring
 {
@@ -26,7 +27,7 @@ namespace Gaucho.Test.Server.Monitoring
 
 			var stats = new StatisticsApi("EventBus_2", storage.Object);
 
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.WorkersLog));
+			stats.GetMetricValue(MetricType.WorkersLog).Should().NotBeNull();
 		}
 
 		[Test]
@@ -37,7 +38,7 @@ namespace Gaucho.Test.Server.Monitoring
 
 			var stats = new StatisticsApi("EventBus_2", storage.Object);
 
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.EventLog));
+			stats.GetMetricValue(MetricType.EventLog).Should().NotBeNull();
 		}
 
 		[Test]
@@ -48,29 +49,29 @@ namespace Gaucho.Test.Server.Monitoring
 			storage.Setup(exp => exp.GetKeys(It.Is<StorageKey>(k => k.Key == $"metric:"))).Returns(() => new[] {$"metric:{MetricType.ThreadCount}"});
 			var statistics = new StatisticsApi("stats_checkmetricvalue", storage.Object);
 
-			Assert.AreEqual(true, statistics.GetMetricValue(MetricType.ThreadCount));
+			statistics.GetMetricValue(MetricType.ThreadCount).Should().Be(true);
 		}
 
 		[Test]
 		public void StatisticsAPi_GetMetricValue_QueueSize()
 		{
 			var storage = new Mock<IStorage>();
-			storage.Setup(exp => exp.Get<Metric>(It.Is<StorageKey>(k => k.Key == $"metric:{MetricType.QueueSize}"))).Returns(() => new Metric(MetricType.QueueSize, "stats", 1));
+			storage.Setup(exp => exp.Get<Metric>(It.Is<StorageKey>(k => k.Key == $"metric:{MetricType.QueueSize}"))).Returns(() => new Metric(MetricType.QueueSize, "stats",1));
 			storage.Setup(exp => exp.GetKeys(It.Is<StorageKey>(k => k.Key == $"metric:"))).Returns(() => new[] { $"metric:{MetricType.QueueSize}" });
 			var statistics = new StatisticsApi("stats_checkmetricvalue", storage.Object);
 
-			Assert.AreEqual(1, statistics.GetMetricValue(MetricType.QueueSize));
+			statistics.GetMetricValue(MetricType.QueueSize).Should().Be(1);
 		}
 
 		[Test]
 		public void StatisticsAPi_GetMetricValue_ProcessedEvents()
 		{
 			var storage = new Mock<IStorage>();
-			storage.Setup(exp => exp.Get<Metric>(It.Is<StorageKey>(k => k.Key == $"metric:{MetricType.ProcessedEvents}"))).Returns(() => new Metric(MetricType.ProcessedEvents, "stats", 5));
+			storage.Setup(exp => exp.Get<Metric>(It.Is<StorageKey>(k => k.Key == $"metric:{MetricType.ProcessedEvents}"))).Returns(() => new Metric(MetricType.ProcessedEvents, "stats",5));
 			storage.Setup(exp => exp.GetKeys(It.Is<StorageKey>(k => k.Key == $"metric:"))).Returns(() => new[] { $"metric:{MetricType.ProcessedEvents}" });
 			var statistics = new StatisticsApi("stats_checkmetricvalue", storage.Object);
 
-			Assert.AreEqual(5, statistics.GetMetricValue(MetricType.ProcessedEvents));
+			statistics.GetMetricValue(MetricType.ProcessedEvents).Should().Be(5);
 		}
 	}
 }

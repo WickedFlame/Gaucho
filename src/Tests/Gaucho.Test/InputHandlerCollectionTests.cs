@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Moq;
 using System.Linq;
-using System.Text;
-using Moq;
-using NUnit.Framework;
+using System;
 
 namespace Gaucho.Test
 {
@@ -12,7 +9,8 @@ namespace Gaucho.Test
         [Test]
         public void InputHandlerCollection_ctor()
         {
-            Assert.DoesNotThrow(() => new InputHandlerCollection());
+            Action act = () => new InputHandlerCollection();
+            act.Should().NotThrow();
         }
 
         [Test]
@@ -23,7 +21,7 @@ namespace Gaucho.Test
             var collection = new InputHandlerCollection();
             collection.Register("pipeline", handler.Object);
 
-            Assert.AreSame(handler.Object, collection.Single());
+            collection.Single().Should().BeSameAs(handler.Object);
         }
 
         [Test]
@@ -35,7 +33,7 @@ namespace Gaucho.Test
             collection.Register("pipeline", new Mock<IInputHandler>().Object);
             collection.Register("pipeline", handler.Object);
 
-            Assert.AreSame(handler.Object, collection.Single());
+            collection.Single().Should().BeSameAs(handler.Object);
         }
 
         [Test]
@@ -46,7 +44,7 @@ namespace Gaucho.Test
             var collection = new InputHandlerCollection();
             collection.Register("pipeline", handler.Object);
 
-            Assert.AreSame(handler.Object, collection.GetHandler<TestObject>("pipeline"));
+            collection.GetHandler<TestObject>("pipeline").Should().BeSameAs(handler.Object);
         }
 
         [Test]
@@ -57,7 +55,7 @@ namespace Gaucho.Test
             var collection = new InputHandlerCollection();
             collection.Register("pipeline", handler.Object);
 
-            Assert.IsNull(collection.GetHandler<InputHandlerCollectionTests>("pipeline"));
+            collection.GetHandler<InputHandlerCollectionTests>("pipeline").Should().BeNull();
         }
 
         [Test]
@@ -65,7 +63,16 @@ namespace Gaucho.Test
         {
             var collection = new InputHandlerCollection();
 
-            Assert.IsNull(collection.GetHandler<IInputHandler>("pipeline"));
+            collection.GetHandler<IInputHandler>("pipeline").Should().BeNull();
+        }
+
+        [Test]
+        public void InputHandlerCollection_Gethandler_IgnoreCase()
+        {
+            var collection = new InputHandlerCollection();
+            collection.Register("PIPELINE", new Mock<IInputHandler<TestObject>>().Object);
+
+            collection.GetHandler<TestObject>("pipeline").Should().NotBeNull();
         }
 
         public class TestObject

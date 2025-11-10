@@ -6,6 +6,7 @@ using Gaucho.Diagnostics.MetricCounters;
 using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Diagnostics
 {
@@ -14,7 +15,8 @@ namespace Gaucho.Test.Diagnostics
         [Test]
         public void ActiveWorkersLogCleanupTask_ctor()
         {
-            Assert.DoesNotThrow(() => new ActiveWorkersLogCleanupTask(new StorageKey("test")));
+            Action act = () => new ActiveWorkersLogCleanupTask(new StorageKey("test"));
+            act.Should().NotThrow();
         }
 
         [Test]
@@ -25,7 +27,7 @@ namespace Gaucho.Test.Diagnostics
             var task = new ActiveWorkersLogCleanupTask(new StorageKey("test"));
             task.Execute(new StorageContext(new Mock<IStorage>().Object, locker));
 
-            Assert.IsFalse(locker.IsLocked());
+            locker.IsLocked().Should().BeFalse();
         }
 
         [Test]

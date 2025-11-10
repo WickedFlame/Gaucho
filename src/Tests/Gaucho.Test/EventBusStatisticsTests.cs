@@ -5,6 +5,7 @@ using System.Text;
 using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -18,14 +19,14 @@ namespace Gaucho.Test
 			var eventBus = new EventBus(() => null, "EventBus_1");
 
 			var stats = new StatisticsApi("EventBus_1");
-			Assert.AreEqual(5, stats.Count());
+			stats.Count().Should().Be(5);
 
-			Assert.AreEqual(1, stats.GetMetricValue(MetricType.ThreadCount));
-			Assert.AreEqual(0, stats.GetMetricValue(MetricType.QueueSize));
-			Assert.AreEqual(0, stats.GetMetricValue(MetricType.ProcessedEvents));
+			stats.GetMetricValue(MetricType.ThreadCount).Should().Be(1);
+			stats.GetMetricValue(MetricType.QueueSize).Should().Be(0);
+			stats.GetMetricValue(MetricType.ProcessedEvents).Should().Be(0);
 
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.EventLog));
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.WorkersLog));
+			stats.GetMetricValue(MetricType.EventLog).Should().NotBeNull();
+			stats.GetMetricValue(MetricType.WorkersLog).Should().NotBeNull();
 
 			GlobalConfiguration.Setup(c => c.Register<IStorage>(new InmemoryStorage()));
 		}
@@ -36,17 +37,17 @@ namespace Gaucho.Test
 			GlobalConfiguration.Setup(c => c.Register<IStorage>(new InmemoryStorage()));
 
 			var stats = new StatisticsApi("EventBus_2");
-			Assert.IsNull(stats.GetMetricValue(MetricType.ThreadCount));
-			Assert.IsNull(stats.GetMetricValue(MetricType.QueueSize));
-			Assert.IsNull(stats.GetMetricValue(MetricType.ProcessedEvents));
+			stats.GetMetricValue(MetricType.ThreadCount).Should().BeNull();
+			stats.GetMetricValue(MetricType.QueueSize).Should().BeNull();
+			stats.GetMetricValue(MetricType.ProcessedEvents).Should().BeNull();
 
 			var eventBus = new EventBus(() => null, "EventBus_2");
 			eventBus.Publish(new Event("EventBus_2", new EventData()));
 
 			stats = new StatisticsApi("EventBus_2");
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.ThreadCount));
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.QueueSize));
-			Assert.IsNotNull(stats.GetMetricValue(MetricType.ProcessedEvents));
+			stats.GetMetricValue(MetricType.ThreadCount).Should().NotBeNull();
+			stats.GetMetricValue(MetricType.QueueSize).Should().NotBeNull();
+			stats.GetMetricValue(MetricType.ProcessedEvents).Should().NotBeNull();
 
 			GlobalConfiguration.Setup(c => c.Register<IStorage>(new InmemoryStorage()));
 		}

@@ -159,6 +159,7 @@ namespace Gaucho
             if (disposing)
             {
                 _isRunning = false;
+                WaitHandle.Set();
             }
         }
     }

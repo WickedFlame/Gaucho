@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -17,7 +18,7 @@ namespace Gaucho.Test
 
             server.Register(Guid.NewGuid().ToString(), handler);
 
-            Assert.AreSame(server, handler.Server);
+            handler.Server.Should().BeSameAs(server);
         }
 
         public class InitialieableHandler : IInputHandler, IServerInitialize

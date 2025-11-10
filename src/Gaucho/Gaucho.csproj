@@ -1,29 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>A .NET Message Broker Middleware for handling, converting and delegating log messages</Description>
-    <Company>WickedFlame</Company>
-    <Authors>Christian Walpen</Authors>
-    <Copyright>@ WickedFlame 2019</Copyright>
-	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>Messagebroker Broker EventBus</PackageTags>
-    <Version>1.0.0-RC01</Version>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0-RC01</FileVersion>
-    <PackageVersion>1.0.0-RC01</PackageVersion>
-    <NeutralLanguage>en</NeutralLanguage>
-    <Title>Gaucho</Title>
-    <PackageProjectUrl>https://wickedflame.github.io/Gaucho/</PackageProjectUrl>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Description>A .NET Message Broker Middleware for handling, converting and delegating log messages</Description>
+		<Company>WickedFlame</Company>
+		<Authors>Christian Walpen</Authors>
+		<Copyright>@ WickedFlame 2019</Copyright>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageTags>Messagebroker Broker EventBus</PackageTags>
+		<Version>1.0.0-RC01</Version>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<FileVersion>1.0.0-RC01</FileVersion>
+		<PackageVersion>1.0.0-RC01</PackageVersion>
+		<LangVersion>latest</LangVersion>
+		<NeutralLanguage>en</NeutralLanguage>
+		<Title>Gaucho</Title>
+		<PackageProjectUrl>https://wickedflame.github.io/Gaucho/</PackageProjectUrl>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DocumentationFile></DocumentationFile>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Gaucho.xml</DocumentationFile>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DocumentationFile>bin\Release\netstandard2.1\Gaucho.xml</DocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.10" />
+	</ItemGroup>
 
 </Project>

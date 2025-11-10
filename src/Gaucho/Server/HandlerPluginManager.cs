@@ -76,7 +76,9 @@ namespace Gaucho.Server
                 {
                     try
                     {
-                        var assembly = Assembly.LoadFrom(file);
+                        // switched from Assembly.LoadFrom(file) to Assembly.Load for safer load context
+                        var assemblyName = AssemblyName.GetAssemblyName(file);
+                        var assembly = Assembly.Load(assemblyName);
                         assemblies.Add(assembly);
                     }
                     catch (Exception e)

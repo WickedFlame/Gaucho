@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Gaucho.Server;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Server.Activation
 {
@@ -15,7 +16,7 @@ namespace Gaucho.Test.Server.Activation
             var ctx = new ActivationContext();
             var item = ctx.Resolve<First>();
 
-            Assert.IsNotNull(item);
+            item.Should().NotBeNull();
         }
 
         [Test]
@@ -24,7 +25,7 @@ namespace Gaucho.Test.Server.Activation
             var ctx = new ActivationContext();
             var item = ctx.Resolve<Second>();
 
-            Assert.IsNotNull(item);
+            item.Should().NotBeNull();
         }
 
         [Test]
@@ -35,7 +36,7 @@ namespace Gaucho.Test.Server.Activation
 
             var item = ctx.Resolve<IOne>();
 
-            Assert.IsNotNull(item);
+            item.Should().NotBeNull();
         }
 
         [Test]
@@ -47,7 +48,7 @@ namespace Gaucho.Test.Server.Activation
 
             var item = ctx.Resolve<ITwo>();
 
-            Assert.IsNotNull(item);
+            item.Should().NotBeNull();
         }
 
         public class First { }

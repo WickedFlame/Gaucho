@@ -5,6 +5,7 @@ using Gaucho.Server.Monitoring;
 using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Server.Monitoring
 {
@@ -14,20 +15,20 @@ namespace Gaucho.Test.Server.Monitoring
 		public void PipelineHeartbeatBackgroundProcess_ctor()
 		{
 			var storage = new Mock<IStorage>();
-			Assert.DoesNotThrow(() => new PipelineHeartbeatBackgroundProcess(storage.Object, "pipelineId"));
+			new PipelineHeartbeatBackgroundProcess(storage.Object, "pipelineId").Should().NotBeNull();
 		}
 
 		[Test]
 		public void PipelineHeartbeatBackgroundProcess_ctor_NullStorage()
 		{
-			Assert.Throws<ArgumentNullException>(() => new PipelineHeartbeatBackgroundProcess(null, "pipelineId"));
+			((Action)(() => new PipelineHeartbeatBackgroundProcess(null, "pipelineId"))).Should().Throw<ArgumentNullException>();
 		}
 
 		[Test]
 		public void PipelineHeartbeatBackgroundProcess_ctor_NullPipelineId()
 		{
 			var storage = new Mock<IStorage>();
-			Assert.Throws<ArgumentNullException>(() => new PipelineHeartbeatBackgroundProcess(storage.Object, null));
+			((Action)(() => new PipelineHeartbeatBackgroundProcess(storage.Object, null))).Should().Throw<ArgumentNullException>();
 		}
 
 		[Test]
@@ -35,7 +36,7 @@ namespace Gaucho.Test.Server.Monitoring
 		{
 			var storage = new Mock<IStorage>();
 			var process = new PipelineHeartbeatBackgroundProcess(storage.Object, "pipelineId");
-			Assert.DoesNotThrow(() => process.Dispose());
+			((Action)(() => process.Dispose())).Should().NotThrow();
 		}
 	}
 }

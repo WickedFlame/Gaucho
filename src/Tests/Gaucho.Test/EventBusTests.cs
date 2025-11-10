@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Gaucho.Server.Monitoring;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -25,9 +26,8 @@ namespace Gaucho.Test
 
             Task.Delay(1000).Wait();
 
-			// event was not processed
 			var stats = new StatisticsApi("EventBus_2");
-			Assert.AreEqual(0, (int)stats.GetMetricValue(MetricType.QueueSize));
+			((int)stats.GetMetricValue(MetricType.QueueSize)).Should().Be(0);
 		}
 
 		[Test]
@@ -37,12 +37,10 @@ namespace Gaucho.Test
 			eventBus.Publish(new Event("EventBus_3", "data"));
 
 			eventBus.WaitAll();
-            
-            Task.Delay(1000).Wait();
+ Task.Delay(1000).Wait();
 
-			// event was not processed
 			var stats = new StatisticsApi("EventBus_3");
-			Assert.AreEqual(1, (int)stats.GetMetricValue(MetricType.QueueSize));
+			((int)stats.GetMetricValue(MetricType.QueueSize)).Should().Be(1);
 		}
 
 		[Test]
@@ -51,7 +49,7 @@ namespace Gaucho.Test
 			new EventBus(() => null, "EventBus_4");
 
 			var stats = new StatisticsApi("EventBus_4");
-			Assert.AreEqual(stats.GetMetricValue(MetricType.ThreadCount), 1);
+			stats.GetMetricValue(MetricType.ThreadCount).Should().Be(1);
 		}
 
 		[Test]
@@ -61,7 +59,7 @@ namespace Gaucho.Test
 			eventBus.Close();
 			
 			var stats = new StatisticsApi("EventBus_5");
-			Assert.IsTrue((int)stats.GetMetricValue(MetricType.QueueSize) == 0);
+			((int)stats.GetMetricValue(MetricType.QueueSize) ==0).Should().BeTrue();
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Text;
 using Gaucho.Diagnostics;
 using Moq;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -33,11 +34,11 @@ namespace Gaucho.Test
 
 			System.Threading.Tasks.Task.Delay(1000).Wait();
 
-            processor.Stop();
+			processor.Stop();
 
 			processor.Task.Wait();
 
-			Assert.IsTrue(called);
+			called.Should().BeTrue();
 		}
 
 		[Test]
@@ -46,14 +47,14 @@ namespace Gaucho.Test
 			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
 			processor.Start();
 
-			Assert.IsNotNull(processor.Task);
+			processor.Task.Should().NotBeNull();
 		}
 
 		[Test]
 		public void EventProcessor_NoThread()
 		{
 			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
-			Assert.IsNull(processor.Task);
+			processor.Task.Should().BeNull();
 		}
 
 		[Test]
@@ -63,37 +64,37 @@ namespace Gaucho.Test
 			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
 			processor.Start();
 
-			Assert.IsTrue(processor.IsWorking);
+			processor.IsWorking.Should().BeTrue();
 
-            processor.Stop();
+			processor.Stop();
 
 			processor.Task.Wait();
 
-			Assert.IsFalse(processor.IsWorking);
+			processor.IsWorking.Should().BeFalse();
 		}
 
 		[Test]
 		public void EventProcessor_Stop()
 		{
-			var processor = new EventProcessor( _worker.Object, () => { }, p => { }, new Logger());
+			var processor = new EventProcessor(_worker.Object, () => { }, p => { }, new Logger());
 			processor.Start();
-            processor.Stop();
+			processor.Stop();
 
 			processor.Task.Wait();
 
-			Assert.IsFalse(processor.IsWorking);
+			processor.IsWorking.Should().BeFalse();
 		}
 
-        [Test]
-        public void EventProcessor_OnEndProcessing()
-        {
-            var processor = new EventProcessor(_worker.Object, () => { }, p => p.Stop(), new Logger());
-            processor.Start();
+		[Test]
+		public void EventProcessor_OnEndProcessing()
+		{
+			var processor = new EventProcessor(_worker.Object, () => { }, p => p.Stop(), new Logger());
+			processor.Start();
 
-            processor.Task.Wait();
+			processor.Task.Wait();
 
-            Assert.IsFalse(processor.IsWorking);
-        }
+			processor.IsWorking.Should().BeFalse();
+		}
 
 		[Test]
 		public void EventProcessor_Continuation()
@@ -101,24 +102,24 @@ namespace Gaucho.Test
 			var called = false;
 			var processor = new EventProcessor(_worker.Object, () => called = true, p => { }, new Logger());
 			processor.Start();
-            processor.Stop();
+			processor.Stop();
 
 			processor.Task.Wait();
 
-			Assert.IsTrue(called);
+			called.Should().BeTrue();
 		}
 
-        [Test]
-        public void EventProcessor_OnEndTask()
-        {
+		[Test]
+		public void EventProcessor_OnEndTask()
+		{
 			var ended = false;
 
-            var processor = new EventProcessor(_worker.Object, () => ended = true, p => p.Stop(), new Logger());
-            processor.Start();
+			var processor = new EventProcessor(_worker.Object, () => ended = true, p => p.Stop(), new Logger());
+			processor.Start();
 
-            processor.Task.Wait();
+			processor.Task.Wait();
 
-            Assert.IsTrue(ended);
-        }
+			ended.Should().BeTrue();
+		}
 	}
 }

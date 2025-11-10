@@ -13,7 +13,7 @@ namespace Gaucho.Test
 		public void Event_StringToSimpleData()
 		{
 			var e = new Event("", "data");
-			Assert.IsAssignableFrom<SimpleData>(e.Data);
+			e.Data.Should().BeOfType<SimpleData>();
 		}
 
 		[Test]
@@ -21,7 +21,7 @@ namespace Gaucho.Test
 		{
 			var item = new
 			{
-				Id = 1,
+				Id =1,
 				Value = "value"
 			};
 			var e = new Event("id", f => f.BuildFrom(item));

@@ -5,6 +5,7 @@ using System.Text;
 using Gaucho.Storage;
 using Gaucho.Storage.Inmemory;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Storage
 {
@@ -13,7 +14,7 @@ namespace Gaucho.Test.Storage
 		[Test]
 		public void ListItem_Ctor()
 		{
-			Assert.IsNotNull(new ListItem());
+			new ListItem().Should().NotBeNull();
 		}
 
 		[Test]
@@ -30,7 +31,7 @@ namespace Gaucho.Test.Storage
 			item.SetValue("one");
 			item.SetValue("two");
 
-			Assert.IsTrue(((List<object>) item.GetValue()).Count() == 2);
+			((List<object>)item.GetValue()).Count().Should().Be(2);
 		}
 
 		[Test]
@@ -46,9 +47,7 @@ namespace Gaucho.Test.Storage
 			var item = new ListItem();
 			item.SetValue("value");
 
-			var tmp = item.GetValue().GetType();
-
-			Assert.IsAssignableFrom<List<object>>(item.GetValue());
+			item.GetValue().Should().BeOfType<List<object>>();
 
 		}
 
@@ -65,9 +64,9 @@ namespace Gaucho.Test.Storage
 			item.SetValue(items[1]);
 
 			var resolved = item.GetValue() as List<object>;
-			for (var i = 0; i < resolved.Count; i++)
+			for (var i =0; i < resolved.Count; i++)
 			{
-				Assert.AreSame(items[i], resolved[i]);
+				resolved[i].Should().BeSameAs(items[i]);
 			}
 		}
 	}
