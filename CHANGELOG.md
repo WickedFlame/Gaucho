@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Changelog.md to document changes
 - Measure and log the time it takes to publish a event
 - Show the servername in pipeline header of the dashboard
+- Added Meter to expose Metrics
  
 ### Changed
 - Added a timeout to items that are stored in Redis
