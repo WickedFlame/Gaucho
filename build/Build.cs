@@ -36,7 +36,7 @@ class Build : NukeBuild
     AbsolutePath OutputDirectory => RootDirectory / "output";
 
     [Parameter("Version to be injected in the Build")]
-    public string Version { get; set; } = $"1.0.6";
+    public string Version { get; set; } = $"1.1.0";
 
     [Parameter("The Buildnumber provided by the CI")]
     public string BuildNo = "2";
