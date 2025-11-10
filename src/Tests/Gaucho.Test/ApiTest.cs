@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
-using Gaucho.Diagnostics;
-using NUnit.Framework;
 
 namespace Gaucho.Test
 {
@@ -188,7 +184,7 @@ namespace Gaucho.Test
         {
             var pipelineId = new Guid("FB4336C9-23E7-42B0-B25F-0A92D06508A7").ToString();
 
-            var cnt = 0;
+            var cnt =0;
 
             ProcessingServer.Server.SetupPipeline(pipelineId, s =>
             {
@@ -196,7 +192,7 @@ namespace Gaucho.Test
                 {
                     var pipeline = new EventPipeline();
                     pipeline.AddHandler(new ConsoleOutputHandler());
-                    cnt = cnt + 1;
+                    cnt = cnt +1;
 
                     return pipeline;
                 });
@@ -209,11 +205,11 @@ namespace Gaucho.Test
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent1" });
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent2" });
 
-            Assert.That(cnt >= 0);
+            (cnt >=0).Should().BeTrue();
 
             ProcessingServer.Server.WaitAll(pipelineId);
 
-            Assert.That(cnt >= 1);
+            (cnt >=1).Should().BeTrue();
         }
 
         [Test]
@@ -244,14 +240,14 @@ namespace Gaucho.Test
 
             ProcessingServer.Server.WaitAll(pipelineId);
 
-            Assert.AreEqual(2, logHandler.Log.Count());
+            logHandler.Log.Count().Should().Be(2);
 
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent3" });
             client.Process(pipelineId, new LogMessage { Message = "StaticServer_NewPipelinePerEvent4" });
 
             ProcessingServer.Server.WaitAll(pipelineId);
 
-            Assert.AreEqual(4, logHandler.Log.Count());
+            logHandler.Log.Count().Should().Be(4);
         }
 
         public class ThreadWaitHandler : IOutputHandler

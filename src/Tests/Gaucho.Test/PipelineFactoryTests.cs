@@ -11,7 +11,7 @@ namespace Gaucho.Test
 		[Test]
 		public void PipelineFactory()
 		{
-			Assert.IsNotNull(new PipelineFactory(() => null, new PipelineOptions()));
+			new PipelineFactory(() => null, new PipelineOptions()).Should().NotBeNull();
 		}
 
 		[Test]
@@ -20,7 +20,7 @@ namespace Gaucho.Test
 			var pipeline = new Mock<IEventPipeline>();
 			var factory = new PipelineFactory(() => pipeline.Object, new PipelineOptions());
 
-			Assert.IsNotNull(factory.Setup());
+			factory.Setup().Should().NotBeNull();
 		}
 	}
 }

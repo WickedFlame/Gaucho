@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Gaucho.Configuration;
-using Gaucho.Diagnostics;
+﻿using Gaucho.Configuration;
 using Gaucho.Handlers;
 using Gaucho.Server;
 using Gaucho.Storage;
-using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Gaucho.Test
 {
@@ -23,14 +20,14 @@ namespace Gaucho.Test
 		public void GlobalConfiguration_Default_Storage()
 		{
 			var storage = GlobalConfiguration.Configuration.Resolve<IStorage>();
-			Assert.IsAssignableFrom<InmemoryStorage>(storage);
+			storage.Should().BeAssignableTo<InmemoryStorage>();
 		}
 
 		[Test]
 		public void GlobalConfiguration_Default_Options()
 		{
 			var options = GlobalConfiguration.Configuration.Resolve<Options>();
-			Assert.IsAssignableFrom<Options>(options);
+			options.Should().BeAssignableTo<Options>();
 		}
 
 		[Test]
@@ -53,7 +50,7 @@ namespace Gaucho.Test
 
 			var handlers = GetOutputHandlers(server, "pipeline1");
 
-			Assert.IsInstanceOf<ConsoleOutputHandler>(handlers.Single());
+			handlers.Single().Should().BeOfType<ConsoleOutputHandler>();
 		}
 
 		[Test]
@@ -76,8 +73,8 @@ namespace Gaucho.Test
 
 			var handler = server.InputHandlers.Single();
 
-			Assert.IsInstanceOf<CustomInputHandler>(handler);
-			Assert.AreEqual("pipeline1", handler.PipelineId);
+			handler.Should().BeOfType<CustomInputHandler>();
+			handler.PipelineId.Should().Be("pipeline1");
 		}
 
 		[Test]
@@ -108,12 +105,12 @@ namespace Gaucho.Test
 			}));
 
 			var handler = GetOutputHandlers(server, "pipeline1").Single();
-			Assert.IsAssignableFrom<DataFilterDecorator>(handler);
+			handler.Should().BeAssignableTo<DataFilterDecorator>();
 
 			var converter = ((DataFilterDecorator) handler).Converter;
-			Assert.That(converter.Filters.Any(f => f.Key == "Level" && f.FilterType == Gaucho.Filters.FilterType.Property));
-			Assert.That(converter.Filters.Any(f => f.Key == "Message" && f.FilterType == Gaucho.Filters.FilterType.Property));
-			Assert.That(converter.Filters.Any(f => f.Key == "Id" && f.FilterType == Gaucho.Filters.FilterType.Formatter));
+			converter.Filters.Any(f => f.Key == "Level" && f.FilterType == Gaucho.Filters.FilterType.Property).Should().BeTrue();
+			converter.Filters.Any(f => f.Key == "Message" && f.FilterType == Gaucho.Filters.FilterType.Property).Should().BeTrue();
+			converter.Filters.Any(f => f.Key == "Id" && f.FilterType == Gaucho.Filters.FilterType.Formatter).Should().BeTrue();
 		}
 
 		[Test]
@@ -138,7 +135,7 @@ namespace Gaucho.Test
 				}))
 				.AddService<IDependency>(() => dependency);
 
-			Assert.AreSame(dependency, ((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance);
+			((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance.Should().BeSameAs(dependency);
 		}
 
 		[Test]
@@ -163,7 +160,7 @@ namespace Gaucho.Test
 				}).AddService<IDependency>(() => dependency)
 			);
 
-			Assert.AreSame(dependency, ((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance);
+			((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance.Should().BeSameAs(dependency);
 		}
 
 		[Test]
@@ -187,7 +184,7 @@ namespace Gaucho.Test
 				})
 			).AddService<IDependency, Dependency>();
 
-			Assert.IsNotNull(((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance);
+			((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance.Should().NotBeNull();
 		}
 
 		[Test]
@@ -211,7 +208,7 @@ namespace Gaucho.Test
 				}).AddService<IDependency, Dependency>()
 			);
 
-			Assert.IsNotNull(((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance);
+			((DependencyHandler)GetOutputHandlers(server, "dependency_handler").Single()).Instance.Should().NotBeNull();
 		}
 
 		[Test]
@@ -222,7 +219,7 @@ namespace Gaucho.Test
 			GlobalConfiguration.Configuration
 				.Register<IActivationContext>(context);
 
-			Assert.AreSame(context, GlobalConfiguration.Configuration.Resolve<IActivationContext>());
+			GlobalConfiguration.Configuration.Resolve<IActivationContext>().Should().BeSameAs(context);
 		}
 
 		public interface IDependency{}

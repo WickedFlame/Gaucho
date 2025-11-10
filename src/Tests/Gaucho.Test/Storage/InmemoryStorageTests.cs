@@ -5,6 +5,7 @@ using System.Text;
 using Gaucho.Storage;
 using NUnit.Framework;
 using Polaroider;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Storage
 {
@@ -44,7 +45,7 @@ namespace Gaucho.Test.Storage
 			var storage = new InmemoryStorage();
 			storage.Set(new StorageKey("storage", "key"), "value");
 
-			Assert.AreEqual("value", storage.Get<string>(new StorageKey("storage", "key")));
+			storage.Get<string>(new StorageKey("storage", "key")).Should().Be("value");
 		}
 
 		[Test]
@@ -54,15 +55,15 @@ namespace Gaucho.Test.Storage
 			storage.Set(new StorageKey("storage", "key"), "value");
 			storage.Set(new StorageKey("storage", "key"), "reset");
 
-			Assert.AreEqual("reset", storage.Get<string>(new StorageKey("storage", "key")));
+			storage.Get<string>(new StorageKey("storage", "key")).Should().Be("reset");
 		}
 
 		[Test]
 		public void InmemoryStorage_List_Objects()
 		{
 			var storage = new InmemoryStorage();
-			storage.AddToList(new StorageKey("storage", "key"), new StorageModel {Id = 1, Value = "one"});
-			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id = 2, Value = "two" });
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel {Id =1, Value = "one"});
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id =2, Value = "two" });
 
 			var items = storage.GetList<StorageModel>(new StorageKey("storage", "key"));
 			items.MatchSnapshot();
@@ -72,7 +73,7 @@ namespace Gaucho.Test.Storage
 		public void InmemoryStorage_Item_Object()
 		{
 			var storage = new InmemoryStorage();
-			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id =1, Value = "one" });
 
 			var item = storage.Get<StorageModel>(new StorageKey("storage", "key"));
 			item.MatchSnapshot();
@@ -82,44 +83,44 @@ namespace Gaucho.Test.Storage
 		public void InmemoryStorage_RemoveRange()
 		{
 			var storage = new InmemoryStorage();
-			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
-			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id =1, Value = "one" });
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id =1, Value = "one" });
 
-			Assert.AreEqual(2, storage.GetList<StorageModel>(new StorageKey("storage", "key")).Count());
+			storage.GetList<StorageModel>(new StorageKey("storage", "key")).Count().Should().Be(2);
 
-			storage.RemoveRangeFromList(new StorageKey("storage", "key"), 3);
+			storage.RemoveRangeFromList(new StorageKey("storage", "key"),3);
 
-			Assert.IsEmpty(storage.GetList<StorageModel>(new StorageKey("storage", "key")));
+			storage.GetList<StorageModel>(new StorageKey("storage", "key")).Should().BeEmpty();
 		}
 
 		[Test]
 		public void InmemoryStorage_Get_Invalid()
 		{
 			var storage = new InmemoryStorage();
-			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+			storage.AddToList(new StorageKey("storage", "key"), new StorageModel { Id =1, Value = "one" });
 
-			Assert.IsNull(storage.Get<StorageModel>(new StorageKey("storage", "key")));
+			storage.Get<StorageModel>(new StorageKey("storage", "key")).Should().BeNull();
 		}
 
 		[Test]
 		public void InmemoryStorage_GetList_Invalid()
 		{
 			var storage = new InmemoryStorage();
-			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id =1, Value = "one" });
 
-			Assert.IsEmpty(storage.GetList<StorageModel>(new StorageKey("storage", "key")));
+			storage.GetList<StorageModel>(new StorageKey("storage", "key")).Should().BeEmpty();
 		}
 
-        [Test]
-        public void InmemoryStorage_Delete()
-        {
-            var storage = new InmemoryStorage();
-			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
+ [Test]
+ public void InmemoryStorage_Delete()
+ {
+ var storage = new InmemoryStorage();
+			storage.Set(new StorageKey("storage", "key"), new StorageModel { Id =1, Value = "one" });
 
-            storage.Delete(new StorageKey("storage", "key"));
+ storage.Delete(new StorageKey("storage", "key"));
 
-			Assert.IsEmpty(storage.GetList<StorageModel>(new StorageKey("storage", "key")));
-        }
+			storage.GetList<StorageModel>(new StorageKey("storage", "key")).Should().BeEmpty();
+ }
 
 		public class StorageModel
 		{

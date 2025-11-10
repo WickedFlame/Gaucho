@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Gaucho.Configuration;
 using Gaucho.Diagnostics;
-using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Configuration
 {
@@ -13,7 +13,7 @@ namespace Gaucho.Test.Configuration
 		public void Options_LogLevel_Default()
 		{
 			var def = new Options();
-			Assert.AreEqual(LogLevel.Info, def.LogLevel);
+			def.LogLevel.Should().Be(LogLevel.Info);
 		}
 
 		[Test]
@@ -21,7 +21,7 @@ namespace Gaucho.Test.Configuration
 		{
 			var def = new Options();
 			def.Merge(new Options());
-			Assert.AreEqual(LogLevel.Info, def.LogLevel);
+			def.LogLevel.Should().Be(LogLevel.Info);
 		}
 
 		[Test]
@@ -29,7 +29,7 @@ namespace Gaucho.Test.Configuration
 		{
 			var def = new Options();
 			def.Merge(new Options {LogLevel = LogLevel.Warning});
-			Assert.AreEqual(LogLevel.Warning, def.LogLevel);
+			def.LogLevel.Should().Be(LogLevel.Warning);
 		}
 
 		[Test]
@@ -37,7 +37,7 @@ namespace Gaucho.Test.Configuration
 		{
 			var def = new Options { LogLevel = LogLevel.Warning };
 			def.Merge(new Options());
-			Assert.AreEqual(LogLevel.Warning, def.LogLevel);
+			def.LogLevel.Should().Be(LogLevel.Warning);
 		}
 
 		[Test]
@@ -45,7 +45,7 @@ namespace Gaucho.Test.Configuration
 		{
 			var def = new Options { ServerName = "original" };
 			def.Merge(new Options());
-			Assert.AreEqual("original", def.ServerName);
+			def.ServerName.Should().Be("original");
 		}
 
 		[Test]
@@ -53,23 +53,23 @@ namespace Gaucho.Test.Configuration
 		{
 			var def = new Options {ServerName = "original"};
 			def.Merge(new Options { ServerName = "overwrite" });
-			Assert.AreEqual("overwrite", def.ServerName);
+			def.ServerName.Should().Be("overwrite");
 		}
 
 		[Test]
 		public void Options_Merge_HeartbeatInterval_Default()
 		{
-			var def = new Options { HeartbeatInterval = 20};
+			var def = new Options { HeartbeatInterval =20};
 			def.Merge(new Options());
-			Assert.AreEqual(20, def.HeartbeatInterval);
+			def.HeartbeatInterval.Should().Be(20);
 		}
 
 		[Test]
 		public void Options_Merge_HeartbeatInterval_Overwrite()
 		{
 			var def = new Options();
-			def.Merge(new Options { HeartbeatInterval = 22 });
-			Assert.AreEqual(22, def.HeartbeatInterval);
+			def.Merge(new Options { HeartbeatInterval =22 });
+			def.HeartbeatInterval.Should().Be(22);
 		}
 	}
 }

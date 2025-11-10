@@ -1,19 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Gaucho.Configuration;
+﻿using Gaucho.Configuration;
 using Gaucho.Dashboard;
-using Gaucho.Diagnostics;
+using Gaucho.Server.Monitoring;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Gaucho.Server.Test
@@ -41,6 +37,18 @@ namespace Gaucho.Server.Test
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gaucho Test API", Version = "v1" });
             });
+
+
+
+            services.AddOpenTelemetry()
+                .WithMetrics(mb => mb
+                    .AddMeter(TelemetryProvider.MeterName)
+                    .AddAspNetCoreInstrumentation()
+                    //.AddRuntimeInstrumentation()
+                    //.AddProcessInstrumentation()
+                    // choose an exporter:
+                    .AddConsoleExporter()
+                    .AddOtlpExporter());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using Polaroider;
 using StackExchange.Redis;
+using AwesomeAssertions; // added
 
 namespace Gaucho.Redis.Test
 {
@@ -71,8 +72,8 @@ namespace Gaucho.Redis.Test
 			});
 			var storage = new RedisStorage(_multiplexer.Object);
 
-			Assert.AreEqual("value", storage.Get<StorageModel>(new StorageKey("storage", "key")).Value);
-			Assert.AreEqual(1, storage.Get<StorageModel>(new StorageKey("storage", "key")).Id);
+			storage.Get<StorageModel>(new StorageKey("storage", "key")).Value.Should().Be("value");
+			storage.Get<StorageModel>(new StorageKey("storage", "key")).Id.Should().Be(1);
 		}
 
 		[Test]
@@ -99,7 +100,6 @@ namespace Gaucho.Redis.Test
 			});
 
 			var storage = new RedisStorage(_multiplexer.Object);
-			//storage.Set(new StorageKey("storage", "key"), new StorageModel { Id = 1, Value = "one" });
 
 			var item = storage.Get<StorageModel>(new StorageKey("storage", "key"));
 			item.MatchSnapshot();
@@ -121,15 +121,15 @@ namespace Gaucho.Redis.Test
 			_db.Verify();
 		}
 
-        [Test]
-        public void RedisStorage_Delete()
-        {
-            var storage = new RedisStorage(_multiplexer.Object);
+		[Test]
+		public void RedisStorage_Delete()
+		{
+			var storage = new RedisStorage(_multiplexer.Object);
 
-            storage.Delete(new StorageKey("storage", "key", "server"));
+			storage.Delete(new StorageKey("storage", "key", "server"));
 
-            _db.Verify(x => x.KeyDelete(It.Is<RedisKey>(k => k == "{gaucho}:server:storage:key"), It.IsAny<CommandFlags>()));
-        }
+			_db.Verify(x => x.KeyDelete(It.Is<RedisKey>(k => k == "{gaucho}:server:storage:key"), It.IsAny<CommandFlags>()));
+		}
 
 		public class StorageModel
 		{

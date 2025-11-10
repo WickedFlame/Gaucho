@@ -6,6 +6,7 @@ using Gaucho.Configuration;
 using Gaucho.Filters;
 using Gaucho.Server;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -25,7 +26,7 @@ namespace Gaucho.Test
         {
             var plugins = _pluginMgr.GetPlugins(typeof(IInputHandler));
 
-            Assert.That(plugins.Count() > 2);
+            (plugins.Count() >2).Should().BeTrue();
         }
 
         [Test]
@@ -37,7 +38,7 @@ namespace Gaucho.Test
             var ctx = new ActivationContext();
             var obj = ctx.Resolve<IInputHandler>(plugin.Type);
 
-            Assert.That(obj is LogInputHandler);
+            obj.Should().BeOfType<LogInputHandler>();
         }
 
         [Test]
@@ -47,7 +48,7 @@ namespace Gaucho.Test
             var ctx = new ActivationContext();
             var obj = ctx.Resolve<IInputHandler>(plugin.Type);
 
-            Assert.That(obj is LogInputHandler);
+            obj.Should().BeOfType<LogInputHandler>();
         }
 
         [Test]
@@ -66,7 +67,7 @@ namespace Gaucho.Test
 
             var loghandler = new LogQueueHandler();
 
-            var cnt = 0;
+            var cnt =0;
 
             var server = new ProcessingServer();
             server.SetupPipeline(pipelineId, s =>
@@ -77,7 +78,7 @@ namespace Gaucho.Test
                     pipeline.AddHandler(output);
                     pipeline.AddHandler(loghandler);
 
-                    cnt = cnt + 1;
+                    cnt = cnt +1;
 
                     return pipeline;
                 });
@@ -92,8 +93,8 @@ namespace Gaucho.Test
 
             server.WaitAll(pipelineId);
 
-            //Assert.That(cnt == 1, () => $"Count is {cnt} but is expected to be 1");
-            Assert.That(loghandler.Log.Count() == 2, () => $"Logcount is {loghandler.Log.Count()} but is expected to be 2");
+            //Assert.That(cnt ==1, () => $"Count is {cnt} but is expected to be1");
+            (loghandler.Log.Count() ==2).Should().BeTrue($"Logcount is {loghandler.Log.Count()} but is expected to be2");
         }
 
         [Test]
@@ -102,44 +103,7 @@ namespace Gaucho.Test
             var mgr = new HandlerPluginManager();
             var plugin = mgr.GetPlugin(typeof(IInputHandler), new HandlerNode());
 
-            Assert.IsNull(plugin);
+            plugin.Should().BeNull();
         }
-
-        //[Test]
-        //public void PluginManagerTests_ReadConfigFromFile()
-        //{
-        //    var reader = new YamlReader();
-        //    var config = reader.Read("Config1.yml");
-
-        //    var pipelineId = Guid.NewGuid().ToString();
-
-        //    var server = new ProcessingServer();
-
-        //    ProcessingServer.SetupPipeline(pipelineId, server, s =>
-        //    {
-        //        s.Register(() =>
-        //        {
-        //            var pipeline = new EventPipeline();
-        //            foreach (var handler in _pluginMgr.GetOutputHandlers(config))
-        //            {
-        //                pipeline.AddHandler(handler);
-        //            }
-
-        //            return pipeline;
-        //        });
-
-        //        s.Register(_pluginMgr.GetInputHandler(config));
-        //    });
-
-        //    var bus = server.EventBusFactory.GetEventBus(pipelineId);
-        //    var p = bus.PipelineSetup.Setup();
-
-        //    var inputhandler = server.GetHandler<LogMessage>(pipelineId);
-        //    Assert.IsNotNull(inputhandler);
-        //    Assert.That(inputhandler.Converter.Filters.Any());
-
-        //    Assert.That(p.Handlers.Count() == 2);
-        //    Assert.That(p.Handlers.All(h => h.Converter.Filters.Any()));
-        //}
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test
 {
@@ -14,7 +15,8 @@ namespace Gaucho.Test
 	        var bus = new EventBus(() => null, "one");
             var factory = new EventBusFactory();
 
-            Assert.Throws<Exception>(() => factory.Register("two", bus));
+            Action act = () => factory.Register("two", bus);
+            act.Should().Throw<Exception>();
         }
 
         [Test]
@@ -32,7 +34,7 @@ namespace Gaucho.Test
 	        var first = factory.GetEventBus("test");
 	        var second = factory.GetEventBus("test");
 
-	        Assert.AreSame(first, second);
+	        second.Should().BeSameAs(first);
 
 			factory.Register("test", () =>
 	        {
@@ -44,7 +46,7 @@ namespace Gaucho.Test
 
 	        var third = factory.GetEventBus("test");
 
-	        Assert.AreNotSame(first, third);
+	        third.Should().NotBeSameAs(first);
         }
     }
 }

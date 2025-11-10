@@ -7,6 +7,7 @@ using Gaucho.Diagnostics;
 using Gaucho.Storage;
 using Moq;
 using NUnit.Framework;
+using AwesomeAssertions;
 
 namespace Gaucho.Test.Diagnostics
 {
@@ -16,7 +17,8 @@ namespace Gaucho.Test.Diagnostics
         [Test]
         public void LogEventStatisticWriter_ctor()
         {
-            Assert.DoesNotThrow(() => new LogEventStatisticWriter("pipeline"));
+            Action act = () => new LogEventStatisticWriter("pipeline");
+            act.Should().NotThrow();
         }
 
         [Test]
@@ -27,7 +29,7 @@ namespace Gaucho.Test.Diagnostics
             var log = new LogEvent { Level = LogLevel.Info };
             writer.Write(log);
 
-            Assert.AreSame(log, writer.Logs.Single());
+            writer.Logs.Single().Should().BeSameAs(log);
         }
 
         [Test]
@@ -51,7 +53,7 @@ namespace Gaucho.Test.Diagnostics
             var log = new LogEvent();
             writer.Write(log);
 
-            Assert.IsEmpty(writer.Logs);
+            writer.Logs.Should().BeEmpty();
         }
 
         [Test]
@@ -73,24 +75,24 @@ namespace Gaucho.Test.Diagnostics
             var config = GlobalConfiguration.Setup(s => s.Register<IStorage>(new Mock<IStorage>().Object)
                 .UseOptions(new Options
                 {
-                    MaxLogSize = 10,
-                    LogShrinkSize = 5
+                    MaxLogSize =10,
+                    LogShrinkSize =5
                 }));
 
             var writer = new LogEventStatisticWriter("pipeline", config);
-            for(var i = 0; i < 10; i++)
+            for(var i =0; i <10; i++)
             {
                 writer.Write(new LogEvent { Level = LogLevel.Info });
             }
 
-            Assert.AreEqual(10, writer.Logs.Count());
+            writer.Logs.Count().Should().Be(10);
 
             writer.Write(new LogEvent { Level = LogLevel.Info });
 
             // wait for the async task to complete
             writer.WaitAll();
 
-            Assert.AreEqual(5, writer.Logs.Count());
+            writer.Logs.Count().Should().Be(5);
         }
 
         [Test]
@@ -100,19 +102,19 @@ namespace Gaucho.Test.Diagnostics
             var config = GlobalConfiguration.Setup(s => s.Register<IStorage>(storage.Object)
                 .UseOptions(new Options
                 {
-                    MaxLogSize = 10,
-                    LogShrinkSize = 5
+                    MaxLogSize =10,
+                    LogShrinkSize =5
                 }));
 
             var writer = new LogEventStatisticWriter("pipeline", config);
-            for (var i = 0; i < 11; i++)
+            for (var i =0; i <11; i++)
             {
                 writer.Write(new LogEvent { Level = LogLevel.Info });
             }
 
             writer.WaitAll();
 
-            storage.Verify(x => x.RemoveRangeFromList(It.Is<StorageKey>(k => k.ToString().EndsWith(":pipeline:logs")), 6), Times.Once);
+            storage.Verify(x => x.RemoveRangeFromList(It.Is<StorageKey>(k => k.ToString().EndsWith(":pipeline:logs")),6), Times.Once);
         }
     }
 }

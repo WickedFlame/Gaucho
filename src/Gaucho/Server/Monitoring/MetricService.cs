@@ -44,7 +44,10 @@ namespace Gaucho.Server.Monitoring
 		/// <param name="metric"></param>
 		public void SetMetric(IMetric metric)
 		{
-			_storage.Set(new StorageKey(PipelineId, $"metric:{metric.Key}"), metric);
+			var key = new StorageKey(PipelineId, $"metric:{metric.Key}");
+            _storage.Set(key, metric);
+
+			TelemetryProvider.WriteMeter(PipelineId, metric);
 		}
 
 		public void SetPipelineHeartbeat()

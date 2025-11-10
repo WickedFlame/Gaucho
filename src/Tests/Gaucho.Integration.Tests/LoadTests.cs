@@ -22,25 +22,25 @@ namespace Gaucho.Integration.Tests
 		public void LoadTest_HeavyWork()
 		{
 			// start with the warmup...
-			var cnt = 0;
-			var proc = 0;
+			var cnt =0;
+			var proc =0;
 
 			var pipelineId = Guid.NewGuid().ToString();
 
 			var server = new ProcessingServer();
-            server.Register(pipelineId, () =>
-            {
-                var pipeline = new EventPipeline();
-                pipeline.AddHandler(new LoadTestOuptuHandler(e =>
-                {
-                    proc += 1;
-                    // do some heavy work
-                    Trace.WriteLine($"WORK TASK {proc}");
-                    Thread.Sleep(10);
-                }));
+ server.Register(pipelineId, () =>
+ {
+ var pipeline = new EventPipeline();
+ pipeline.AddHandler(new LoadTestOuptuHandler(e =>
+ {
+ proc +=1;
+ // do some heavy work
+ Trace.WriteLine($"WORK TASK {proc}");
+ Thread.Sleep(10);
+ }));
 
-                return pipeline;
-            }, new PipelineOptions { MinProcessors = 10 });
+ return pipeline;
+ }, new PipelineOptions { MinProcessors =10 });
 			server.Register(pipelineId, new InputHandler<InputItem>());
 			
 
@@ -54,10 +54,10 @@ namespace Gaucho.Integration.Tests
 				{
 					lock(pipelineId)
 					{
-						cnt += 1;
+						cnt +=1;
 					}
 
-                    Trace.WriteLine($"SEND {cnt}");
+ Trace.WriteLine($"SEND {cnt}");
 					client.Process(pipelineId, new InputItem
 					{
 						Value = "StaticServer",
@@ -71,7 +71,7 @@ namespace Gaucho.Integration.Tests
 
 			var monitor = new StatisticsApi(pipelineId);
 			var processed = monitor.GetMetricValue<long>(MetricType.ProcessedEvents);
-			Assert.AreEqual(processed, cnt, "Processed events are not equal to sent events {0} to {1}", processed, cnt);
+			processed.Should().Be(cnt, "Processed events are not equal to sent events {0} to {1}", processed, cnt);
 		}
 
 		[Test]
@@ -79,8 +79,8 @@ namespace Gaucho.Integration.Tests
 		public void LoadTest_MetricCounter()
 		{
 			// start with the warmup...
-			var sent = 0;
-			var processed = 0;
+			var sent =0;
+			var processed =0;
 
 			var pipelineId = Guid.NewGuid().ToString();
 
@@ -92,7 +92,7 @@ namespace Gaucho.Integration.Tests
 				{
 					lock (_lock)
 					{
-						processed += 1;
+						processed +=1;
 					}
 
 					// to some heavy work
@@ -118,7 +118,7 @@ namespace Gaucho.Integration.Tests
 						Name = "test",
 						Number = sent
 					});
-					sent += 1;
+					sent +=1;
 				}).RunSession();
 
 			server.WaitAll(pipelineId);
@@ -126,7 +126,7 @@ namespace Gaucho.Integration.Tests
 
 			var monitor = new StatisticsApi(pipelineId);
 			var metrics = monitor.GetMetricValue<long>(MetricType.ProcessedEvents);
-			Assert.AreEqual(metrics, processed, "Metric event counter is not equal to processed events {0} to {1}", metrics, processed);
+			metrics.Should().Be(processed, "Metric event counter is not equal to processed events {0} to {1}", metrics, processed);
 		}
 
 		[Test]
@@ -134,7 +134,7 @@ namespace Gaucho.Integration.Tests
 		public void LoadTest_Simple()
 		{
 			// start with the warmup...
-			var cnt = 0;
+			var cnt =0;
 
 			var pipelineId = Guid.NewGuid().ToString();
 
@@ -151,7 +151,7 @@ namespace Gaucho.Integration.Tests
 
 			var client = new EventDispatcher(server);
 
-			var profiler  = ProfilerSession.StartSession()
+			var profiler = ProfilerSession.StartSession()
 				.SetIterations(1000)
 				.SetThreads(5)
 				.Settings(s => s.RunWarmup = false)
@@ -161,12 +161,12 @@ namespace Gaucho.Integration.Tests
 					{
 						Value = "StaticServer",
 						Name = "test",
-						Number = 1
+						Number =1
 					});
 
 					lock(pipelineId)
 					{
-						cnt += 1;
+						cnt +=1;
 					}
 				}).RunSession();
 
@@ -175,7 +175,7 @@ namespace Gaucho.Integration.Tests
 
 			var monitor = new StatisticsApi(pipelineId);
 			var metrics = monitor.GetMetricValue<long>(MetricType.ProcessedEvents);
-			Assert.AreEqual(metrics, cnt, "Processed events are not equal to sent events {0} to {1}", metrics, cnt);
+			metrics.Should().Be(cnt, "Processed events are not equal to sent events {0} to {1}", metrics, cnt);
 		}
 	}
 

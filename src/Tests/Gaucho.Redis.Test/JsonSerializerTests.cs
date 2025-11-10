@@ -4,6 +4,7 @@ using System.Text;
 using Gaucho.Redis.Serializer;
 using NUnit.Framework;
 using Polaroider;
+using AwesomeAssertions;
 
 namespace Gaucho.Redis.Test
 {
@@ -15,12 +16,12 @@ namespace Gaucho.Redis.Test
 			var serializer = new JsonSerializer();
 			var value = serializer.Serialize(new JsonModel
 			{
-				Id = 1,
+				Id =1,
 				Name = "first value",
-				Doubl = 2.2
+				Doubl =2.2
 			});
 
-			Assert.AreEqual("{Id: '1', Name: 'first value', Doubl: '2.2'}", value);
+			value.Should().Be("{Id: '1', Name: 'first value', Doubl: '2.2'}");
 		}
 
 		[Test]
@@ -29,7 +30,7 @@ namespace Gaucho.Redis.Test
 			var serializer = new JsonSerializer();
 			var value = serializer.Serialize("test");
 
-			Assert.AreEqual("test", value);
+			value.Should().Be("test");
 		}
 
 		[Test]
@@ -38,7 +39,7 @@ namespace Gaucho.Redis.Test
 			var serializer = new JsonSerializer();
 			var value = serializer.Serialize(12345);
 
-			Assert.AreEqual("12345", value);
+			value.Should().Be("12345");
 		}
 
 		[Test]
@@ -47,12 +48,8 @@ namespace Gaucho.Redis.Test
 			var serializer = new JsonSerializer();
 			var value = serializer.Serialize(true);
 
-			Assert.AreEqual("True", value);
+			value.Should().Be("True");
 		}
-
-
-
-
 
 		[Test]
 		public void JsonSerializer_Deserialize_Object()
@@ -60,21 +57,10 @@ namespace Gaucho.Redis.Test
 			var serializer = new JsonSerializer();
 			var value = serializer.Deserialize<JsonModel>("{Id: '1', Name: 'first value', Doubl: '2.2'}");
 
-			Assert.IsNotNull(value.Name);
+			value.Name.Should().NotBeNull();
 
 			value.MatchSnapshot();
 		}
-
-		//[Test]
-		//public void JsonSerializer_Deserialize_String()
-		//{
-		//	var serializer = new JsonSerializer();
-		//	var value = serializer.Deserialize<string>("test");
-
-		//	Assert.IsNotNull(value.Name);
-
-		//	value.MatchSnapshot();
-		//}
 
 		public class JsonModel
 		{

@@ -12,6 +12,22 @@ Convert and broadcast events to standardized data
   
 A .NET Message Broker Middleware for handling, converting and delegating events
 
+## Metrics
+Gaucho exposes some Metrics using the Meter Object.
+- ProcessedEvents
+- QueueSize
+- ThreadCount
+
+The Metrics are provided for each Pipeline that is configured.  
+The Metrics can be captured when adding the Meter named "Gaucho" or from the constant Gaucho.Server.Monitoring.TelemetryProvider.MeterName
+```c-sharp
+services.AddOpenTelemetry()
+    .WithMetrics(mb => mb
+        .AddMeter(TelemetryProvider.MeterName)
+        .AddConsoleExporter());
+```
+
+
 ## Documentation
 Visit [https://wickedflame.github.io/Gaucho/](https://wickedflame.github.io/Gaucho/) for the full documentation.
 
